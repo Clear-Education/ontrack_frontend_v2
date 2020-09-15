@@ -5,7 +5,7 @@ import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import config from "../../../src/utils/config";
 import BackgroundLoader from "../../../src/components/commons/background_loader/background_loader";
-import { getSolicitudesService, addSolicitudesService } from "../../../src/utils/Solicitudes/services/Solicitudes_services";
+import { getSolicitudesService, addSolicitudesService } from "../../../src/utils/solicitudes/services/solicitudes_services";
 import Modal from "../../../src/components/commons/modals/modal";
 import { IconButton, Link } from "@material-ui/core";
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
