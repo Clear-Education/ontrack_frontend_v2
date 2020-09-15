@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import Modal from '../../../src/components/commons/modals/modal';
 import UserProfileForm from '../../../src/components/users/profile/profile_user_form';
 import { useEffect, useState } from "react";
 import { updateUser } from "../../../redux/actions/userActions";
