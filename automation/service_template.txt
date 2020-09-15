@@ -1,0 +1,71 @@
+import { get${mayusName}Crud, add${mayusName}Crud,edit${mayusName}Crud, delete${mayusName}Crud } from "../cruds/${name}_cruds";
+import Alert from "react-s-alert";
+
+
+export async function get${mayusName}Service(token) {
+    return await get${mayusName}Crud(token).then((result) => {
+        if (result.success) {
+
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
+            });
+        }
+        return result;
+    })
+}
+
+export async function add${mayusName}Service(data, token) {
+    return await add${mayusName}Crud(data, token).then((result) => {
+        if (result.success) {
+            Alert.success("${mayusName} creado correctamente", {
+                                effect: "stackslide",
+            });
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
+            });
+        }
+        return result;
+    })
+}
+
+export async function edit${mayusName}Service(data, token) {
+    return await edit${mayusName}Crud(data, token).then((result) => {
+        if (result.success) {
+            Alert.success("${mayusName} editado correctamente", {
+                                effect: "stackslide",
+            });
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
+            });
+        }
+        return result;
+    })
+}
+
+
+export async function delete${mayusName}Service(token,data){
+  return await delete${mayusName}Crud(token,data).then((result)=>{
+      if (result.success) {
+        Alert.success("Materia eliminada correctamente", {
+          effect: "stackslide",
+        });
+        } else {
+          result.result.forEach((element) => {
+            Alert.error(element.message, {
+
+              effect: "stackslide",
+            });
+          });
+        }
+        return result;
+  })
+}
