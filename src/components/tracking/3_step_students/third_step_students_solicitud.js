@@ -130,7 +130,8 @@ const ThirdStepStudentSolicitud = ({ handleGlobalState }) => {
                                         name: "id",
                                         label: "Id",
                                         options: {
-                                            display: false
+                                            display: false,
+                                            filter: false
                                         },
 
                                     },

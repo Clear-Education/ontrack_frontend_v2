@@ -82,10 +82,10 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
     }, [selectedUsers]);
 
     return (
-        <Row style={{ margin: 0, justifyContent: 'center', marginBottom:'20px' }}>
+        <Row style={{ margin: 0, justifyContent: 'center', marginBottom: '20px' }}>
             {
                 isLoading ?
-                    <span style={{display:'block', width:'100%', margin:'20px 0px 20px 0px'}}>Cargando...</span> :
+                    <span style={{ display: 'block', width: '100%', margin: '20px 0px 20px 0px' }}>Cargando...</span> :
                     <>
                         <div className={styles.message_alert}>
                             Recuerde que para poder ver el seguimiento creado, debe agregarse como participante del mismo
@@ -137,7 +137,8 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
                                             name: "id",
                                             label: "Id",
                                             options: {
-                                                display: false
+                                                display: false,
+                                                filter: false
                                             },
 
                                         },
