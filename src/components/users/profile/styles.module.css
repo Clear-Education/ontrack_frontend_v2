@@ -8,6 +8,13 @@
 .input_container{
     margin: 10px;
 }
+
+.input {
+  border: 0.5px solid grey;
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+}
 .decorator {
     display: inline-block;
     height: 1px;

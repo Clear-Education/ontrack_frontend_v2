@@ -11,9 +11,13 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import config from "../../../utils/config";
 import useSWR from "swr";
-import Alert from "react-s-alert";
 import { getGroupsService } from "../../../utils/user/service/user_services";
 import CountrySelector from "../../commons/country_selector/country_selector";
+import MaskedInput from 'react-text-mask';
+import Input from "@material-ui/core/Input";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+
+
 
 const list = {
     visible: {
@@ -37,6 +41,7 @@ const item = {
 };
 
 const INITIAL_STATE = {
+    dni: '',
     email: '',
     password: '',
     password2: '',
@@ -44,12 +49,64 @@ const INITIAL_STATE = {
 }
 
 const VALIDATE_INITIAL_STATE = {
+    name: false,
+    last_name: false,
     email: false,
+    dni: false,
+    legajo: false,
+    cargo: false,
+    groups: false,
+    phone: false,
     password: false,
     password2: false,
-    groups: false
-
+    date_of_birth: false,
+    direccion: false,
+    localidad: false,
+    provincia: false,
 };
+
+const CellphoneCustom = (props) => {
+    const { inputRef, ...other } = props;
+
+    return (
+        <MaskedInput
+            {...other}
+            ref={(ref) => {
+                inputRef(ref ? ref.inputElement : null);
+            }}
+            mask={[
+                "(",
+                /[1-9]/,
+                /\d/,
+                /\d/,
+                ")",
+                " ",
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+            ]}
+            placeholderChar={"\u2000"}
+            showMask
+        />
+    );
+};
+
+const theme_input_phone = createMuiTheme({
+    overrides: {
+        MuiInput: {
+            formControl: {
+                "label + &": {
+                    marginTop: "0px"
+                }
+            }
+        }
+    }
+});
 
 const AddUserForm = (props) => {
     const [state, setState] = useState(INITIAL_STATE);
@@ -68,6 +125,31 @@ const AddUserForm = (props) => {
     );
 
     const handleValidation = (prop, value) => {
+        if (prop == "dni") {
+            if (value.toString().length != 8) {
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
+        if (prop == "date_of_birth") {
+            if (Date.parse(value) < Date.parse(new Date('2003'))) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                console.log(value);
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
         setValidation({
             ...validation,
             [prop]: !(value.trim().length > 0),
@@ -75,6 +157,7 @@ const AddUserForm = (props) => {
     };
 
     const handleValidationPassword = (prop, value) => {
+        console.log(state.password, value)
         if (state.password != value) {
             setValidation({
                 ...validation,
@@ -92,12 +175,23 @@ const AddUserForm = (props) => {
     const handleChange = (prop) => (event) => {
         if (prop == "password2") {
             handleValidationPassword(prop, event.target.value);
+            setState({ ...state, [prop]: event.target.value });
         }
-        if (prop == "email" || prop == "password") {
+        else if (prop == "phone") {
+            let value = event.target.value.replace("(", "");
+            value = value.replace(")", "");
+            value = value.replace("-", "");
+            value = value.replace(" ", "");
+            setState({ ...state, phone: value });
+        }
+        else if (prop == "groups") {
+            setState({ ...state, [prop]: event.target.value });
+        } else {
             handleValidation(prop, event.target.value);
+            setState({ ...state, [prop]: event.target.value });
         }
 
-        setState({ ...state, [prop]: event.target.value });
+
     };
 
     const handleChangeCountryRegion = (prop, value) => {
@@ -116,31 +210,19 @@ const AddUserForm = (props) => {
     const handleChangeDate = (date) => {
         setDate(date);
         let formatedDate = convertDate(date);
+        handleValidation("date_of_birth", date);
         setState({ ...state, ["date_of_birth"]: formatedDate });
     };
 
 
 
     const handleSubmit = (e) => {
-        let validateForm = true;
-        Object.values(validation).map(element => {
-            if (element == true) {
-                validateForm = false;
-            }
-        })
-        if (validateForm) {
-            for (var key in state) {
-                if (key == "legajo" || key == "dni") {
-                    if (state[key] === "") {
-                        delete state[key]
-                    }
-                }
-            }
-            props.handleSubmitNewUser(e, state);
-            props.handleClose(false);
-        } else {
-            e.preventDefault();
+        if (Object.values(validation).includes(true)) {
+            e.preventDefault()
+            return
         }
+        props.handleSubmitNewUser(e, state);
+        props.handleClose(false);
     }
 
     return (
@@ -165,6 +247,7 @@ const AddUserForm = (props) => {
                                             variant="outlined"
                                             value={state.name}
                                             onChange={handleChange("name")}
+                                            required
 
                                         />
                                     </FormControl>
@@ -222,7 +305,7 @@ const AddUserForm = (props) => {
                                             className="helper-text"
                                             style={{ color: "rgb(182, 60, 47)" }}
                                         >
-                                            Esta campo no puede estar vacio
+                                            Introduzca un número válido de DNI
                                         </FormHelperText>
                                     )}
                                 </motion.li>
@@ -291,11 +374,11 @@ const AddUserForm = (props) => {
                                             placeholder="01/05/2020"
                                             onChange={(date) => handleChangeDate(date)}
                                             inputVariant="outlined"
-                                            maxDate={new Date()}
+                                            maxDate={new Date('2003')}
                                             format="dd/MM/yyyy"
                                             invalidDateMessage="El formato de fecha es inválido"
                                             minDateMessage="La fecha no puede ser menor al día de hoy"
-                                            maxDateMessage="La fecha no puede ser mayor al máximo permitido"
+                                            maxDateMessage="El usuario debe ser mayor de 18 años"
 
                                         />
                                     </FormControl>
@@ -307,15 +390,32 @@ const AddUserForm = (props) => {
                             <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                 <motion.li variants={item}>
                                     <FormControl variant="outlined">
-                                        <TextField
-                                            id="cargo"
+                                        <InputLabel id="cargo">Cargo Institución</InputLabel>
+                                        <Select
+                                            labelId="cargo"
                                             name="cargo"
-                                            label="Cargo"
-                                            variant="outlined"
+                                            id="cargo"
+                                            defaultValue={state.cargo || ''}
                                             value={state.cargo}
                                             onChange={handleChange("cargo")}
                                             required
-                                        />
+                                        >
+                                            <MenuItem value="" disabled>
+                                                <em>Seleccionar</em>
+                                            </MenuItem>
+                                            <MenuItem value="Administrativo">
+                                                <em>Administrativo</em>
+                                            </MenuItem>
+                                            <MenuItem value="Directivo">
+                                                <em>Directivo</em>
+                                            </MenuItem>
+                                            <MenuItem value="Profesor">
+                                                <em>Profesor</em>
+                                            </MenuItem>
+                                            <MenuItem value="Pedagogo">
+                                                <em>Pedagogo</em>
+                                            </MenuItem>
+                                        </Select>
                                     </FormControl>
                                     {validation.cargo && (
                                         <FormHelperText
@@ -410,25 +510,25 @@ const AddUserForm = (props) => {
                             <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                 <motion.li variants={item}>
                                     <FormControl variant="outlined">
-                                        <TextField
-                                            id="phone"
-                                            name="phone"
-                                            label="Telefono"
-                                            variant="outlined"
-                                            value={state.phone}
-                                            onChange={handleChange("phone")}
-                                            type="number"
-
-                                        />
+                                        <MuiThemeProvider theme={theme_input_phone}>
+                                            <InputLabel
+                                                htmlFor="phone"
+                                                required
+                                            >
+                                                Celular
+                                            </InputLabel>
+                                            <Input
+                                                value={state.phone}
+                                                onChange={handleChange("phone")}
+                                                name="phone"
+                                                id="phone"
+                                                className={styles.input}
+                                                required
+                                                inputComponent={CellphoneCustom}
+                                            />
+                                            <FormHelperText id="helper-text">(cod area) xxx-xxxx</FormHelperText>
+                                        </MuiThemeProvider>
                                     </FormControl>
-                                    {validation.phone && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
                                 </motion.li>
                             </Col>
                             <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
@@ -459,58 +559,6 @@ const AddUserForm = (props) => {
                         <div style={{ margin: 15 }}>
                             <CountrySelector setState={handleChangeCountryRegion} />
                         </div>
-
-                        {/*                         <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-
-                            <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="provincia"
-                                            name="provincia"
-                                            label="Provincia"
-                                            variant="outlined"
-                                            value={state.provincia}
-                                            onChange={handleChange("provincia")}
-
-                                        />
-                                    </FormControl>
-                                    {validation.localidad && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-
-                            <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="localidad"
-                                            name="localidad"
-                                            label="Localidad"
-                                            variant="outlined"
-                                            value={state.localidad}
-                                            onChange={handleChange("localidad")}
-
-                                        />
-                                    </FormControl>
-                                    {validation.provincia && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-                        </Row> */}
-
                         <motion.li variants={item}>
                             <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
                                 <Col>

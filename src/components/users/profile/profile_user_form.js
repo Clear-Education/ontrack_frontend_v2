@@ -4,12 +4,59 @@ import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import { Row, Col } from "react-bootstrap";
-import { useTheme, useMediaQuery } from "@material-ui/core";
+import { InputLabel, Select, MenuItem, useTheme, useMediaQuery } from "@material-ui/core";
+import CountrySelector from "../../commons/country_selector/country_selector";
 
 import styles from './styles.module.css';
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Avatar from '@material-ui/core/Avatar';
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import MaskedInput from 'react-text-mask';
+import Input from "@material-ui/core/Input";
+
+const CellphoneCustom = (props) => {
+    const { inputRef, ...other } = props;
+
+    return (
+        <MaskedInput
+            {...other}
+            ref={(ref) => {
+                inputRef(ref ? ref.inputElement : null);
+            }}
+            mask={[
+                "(",
+                /[1-9]/,
+                /\d/,
+                /\d/,
+                ")",
+                " ",
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+            ]}
+            placeholderChar={"\u2000"}
+            showMask
+        />
+    );
+};
+
+const theme_input_phone = createMuiTheme({
+    overrides: {
+        MuiInput: {
+            formControl: {
+                "label + &": {
+                    marginTop: "0px"
+                }
+            }
+        }
+    }
+});
 
 const list = {
     visible: {
@@ -34,26 +81,29 @@ const item = {
 
 
 const VALIDATE_INITIAL_STATE = {
-    name: false,
-    last_name: false,
     email: false,
     dni: false,
+    groups: false,
+
+};
+
+const VALIDATE_INITIAL_STATE_PASSWORDS = {
+    name: false,
+    last_name: false,
     legajo: false,
     cargo: false,
-    groups: false,
-    phone: false,
+    password: false,
     date_of_birth: false,
     direccion: false,
     localidad: false,
     provincia: false,
-};
-
-const VALIDATE_INITIAL_STATE_PASSWORDS = {
-    password: false,
+    phone: false,
     new_password: false,
     new_password2: false
 
 };
+
+
 
 const UserProfileForm = (props) => {
 
@@ -73,6 +123,31 @@ const UserProfileForm = (props) => {
 
 
     const handleValidation = (prop, value) => {
+        if (prop == "dni") {
+            if (value.toString().length != 8) {
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
+        if (prop == "date_of_birth") {
+            if (Date.parse(value) < Date.parse(new Date('2003'))) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                console.log(value);
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
         setValidation({
             ...validation,
             [prop]: !(value.split("").length > 0),
@@ -95,9 +170,24 @@ const UserProfileForm = (props) => {
     };
 
     const handleChange = (prop) => (event) => {
-        handleValidation(prop, event.target.value)
-        setState({ ...state, [prop]: event.target.value })
+        if (prop == "phone") {
+            let value = event.target.value.replace("(", "");
+            value = value.replace(")", "");
+            value = value.replace("-", "");
+            value = value.replace(" ", "");
+            setState({ ...state, phone: value });
+        } else if (prop == "direccion") {
+            setState({ ...state, [prop]: event.target.value })
+        } else {
+            handleValidation(prop, event.target.value)
+            setState({ ...state, [prop]: event.target.value })
+        }
+
     };
+
+    const handleChangeCountryRegion = (prop, value) => {
+        setState({ ...state, [prop]: value })
+    }
 
     const handleChangePasswordSection = (prop) => (event) => {
         if (prop == "new_password2") {
@@ -131,11 +221,17 @@ const UserProfileForm = (props) => {
     const handleChangeDate = (date) => {
         setDate(date);
         let formatedDate = convertDate(date);
+        handleValidation("date_of_birth", date);
         setState({ ...state, ["date_of_birth"]: formatedDate });
     };
 
 
     const handleSubmit = (e) => {
+        if (Object.values(validation).includes(true)) {
+            e.preventDefault()
+            return
+        }
+
         props.handleSubmitAction(e, state);
     }
 
@@ -211,15 +307,32 @@ const UserProfileForm = (props) => {
                                         <Col lg={12} md={12} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
                                                 <FormControl variant="outlined">
-                                                    <TextField
-                                                        id="cargo"
+                                                    <InputLabel id="cargo">Cargo Institución</InputLabel>
+                                                    <Select
+                                                        labelId="cargo"
                                                         name="cargo"
-                                                        label="Cargo"
-                                                        variant="outlined"
+                                                        id="cargo"
+                                                        defaultValue={state.cargo || ''}
                                                         value={state.cargo}
                                                         onChange={handleChange("cargo")}
                                                         required
-                                                    />
+                                                    >
+                                                        <MenuItem value="" disabled>
+                                                            <em>Seleccionar</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Administrativo">
+                                                            <em>Administrativo</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Directivo">
+                                                            <em>Directivo</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Profesor">
+                                                            <em>Profesor</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Pedagogo">
+                                                            <em>Pedagogo</em>
+                                                        </MenuItem>
+                                                    </Select>
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
@@ -259,11 +372,11 @@ const UserProfileForm = (props) => {
                                                         placeholder="01/05/2020"
                                                         onChange={(date) => handleChangeDate(date)}
                                                         inputVariant="outlined"
-                                                        maxDate={new Date()}
+                                                        maxDate={new Date('2003')}
                                                         format="dd/MM/yyyy"
                                                         invalidDateMessage="El formato de fecha es inválido"
                                                         minDateMessage="La fecha no puede ser menor al día de hoy"
-                                                        maxDateMessage="La fecha no puede ser mayor al máximo permitido"
+                                                        maxDateMessage="El usuario debe ser mayor de 18 años"
                                                         required
                                                     />
                                                 </FormControl>
@@ -275,15 +388,24 @@ const UserProfileForm = (props) => {
                                         <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
                                                 <FormControl variant="outlined">
-                                                    <TextField
-                                                        id="phone"
-                                                        name="phone"
-                                                        label="Telefono"
-                                                        variant="outlined"
-                                                        value={state.phone}
-                                                        onChange={handleChange("phone")}
-                                                        type="number"
-                                                    />
+                                                    <MuiThemeProvider theme={theme_input_phone}>
+                                                        <InputLabel
+                                                            htmlFor="phone"
+                                                            required
+                                                        >
+                                                            Celular
+                                                        </InputLabel>
+                                                        <Input
+                                                            value={state.phone}
+                                                            onChange={handleChange("phone")}
+                                                            name="phone"
+                                                            id="phone"
+                                                            className={styles.input}
+                                                            required
+                                                            inputComponent={CellphoneCustom}
+                                                        />
+                                                        <FormHelperText id="helper-text">(cod area) xxx-xxxx</FormHelperText>
+                                                    </MuiThemeProvider>
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
@@ -302,6 +424,11 @@ const UserProfileForm = (props) => {
                                             </motion.li>
                                         </Col>
                                     </Row>
+                                    <div style={{ margin: 15 }}>
+                                        <CountrySelector
+                                            setState={handleChangeCountryRegion}
+                                            user={state} />
+                                    </div>
                                     <motion.li variants={item}>
                                         <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
                                             <Col>

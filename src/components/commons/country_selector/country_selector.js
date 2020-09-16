@@ -26,18 +26,18 @@ const item = {
     hidden: { opacity: 0, x: -100 },
 };
 
-const CountrySelector = ({setState}) => {
+const CountrySelector = ({ setState, user }) => {
 
-    const [country, setCountry] = useState();
-    const [region, setRegion] = useState();
+    const [country, setCountry] = useState(user ? user.provincia : null);
+    const [region, setRegion] = useState(user ? user.localidad : null);
 
-    const handleSetCountry = (country) =>{
-        setState('provincia',country);
+    const handleSetCountry = (country) => {
+        setState('provincia', country);
         setCountry(country);
     }
 
-    const handleSetRegion = (region) =>{
-        setState('localidad',region);
+    const handleSetRegion = (region) => {
+        setState('localidad', region);
         setRegion(region);
     }
 

@@ -4,8 +4,8 @@ import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import { Row, Col } from "react-bootstrap";
-import { InputLabel, Select, MenuItem, useTheme, useMediaQuery } from "@material-ui/core";
-
+import { InputLabel, Select, MenuItem, useTheme, useMediaQuery, MuiThemeProvider } from "@material-ui/core";
+import { createMuiTheme } from "@material-ui/core/styles";
 import styles from './styles.module.css';
 import { useState } from "react";
 import { useSelector } from "react-redux";
@@ -13,6 +13,10 @@ import config from "../../../utils/config";
 import useSWR from "swr";
 import { getGroupsService } from "../../../utils/user/service/user_services";
 import CountrySelector from "../../commons/country_selector/country_selector";
+import MaskedInput from 'react-text-mask';
+import Input from "@material-ui/core/Input";
+
+
 
 const list = {
     visible: {
@@ -51,6 +55,49 @@ const VALIDATE_INITIAL_STATE = {
     provincia: false,
 };
 
+const CellphoneCustom = (props) => {
+    const { inputRef, ...other } = props;
+
+    return (
+        <MaskedInput
+            {...other}
+            ref={(ref) => {
+                inputRef(ref ? ref.inputElement : null);
+            }}
+            mask={[
+                "(",
+                /[1-9]/,
+                /\d/,
+                /\d/,
+                ")",
+                " ",
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+            ]}
+            placeholderChar={"\u2000"}
+            showMask
+        />
+    );
+};
+
+const theme_input_phone = createMuiTheme({
+    overrides: {
+        MuiInput: {
+            formControl: {
+                "label + &": {
+                    marginTop: "0px"
+                }
+            }
+        }
+    }
+});
+
 const EditUserForm = (props) => {
     const [state, setState] = useState(props.user);
     const initialStateUserAccount = props.user.is_active;
@@ -69,6 +116,31 @@ const EditUserForm = (props) => {
     );
 
     const handleValidation = (prop, value) => {
+        if (prop == "dni") {
+            if (value.toString().length != 8) {
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
+        if (prop == "date_of_birth") {
+            if (Date.parse(value) < Date.parse(new Date('2003'))) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                console.log(value);
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
         setValidation({
             ...validation,
             [prop]: !(value.trim().length > 0),
@@ -76,13 +148,19 @@ const EditUserForm = (props) => {
     };
 
     const handleChange = (prop) => (event) => {
-        if (prop !== "groups") {
-            handleValidation(prop, event.target.value);
+        if (prop == "phone") {
+            let value = event.target.value.replace("(", "");
+            value = value.replace(")", "");
+            value = value.replace("-", "");
+            value = value.replace(" ", "");
+            setState({ ...state, phone: value });
         }
-        if (prop !== "is_active") {
-            setState({ ...state, [prop]: event.target.value });
-        } else {
+        else if (prop == "is_active") {
             setState({ ...state, [prop]: JSON.parse(event.target.value) });
+        }
+        else if (prop !== "groups" && prop !== "direccion") {
+            handleValidation(prop, event.target.value);
+            setState({ ...state, [prop]: event.target.value });
         }
     };
 
@@ -101,6 +179,7 @@ const EditUserForm = (props) => {
     const handleChangeDate = (date) => {
         setDate(date);
         let formatedDate = convertDate(date);
+        handleValidation("date_of_birth", date);
         setState({ ...state, ["date_of_birth"]: formatedDate });
     };
 
@@ -112,14 +191,9 @@ const EditUserForm = (props) => {
             props.handleClose(false);
         } else if (initialStateUserAccount == true) {
 
-            for (var key in state) {
-                if (key == "legajo" || key == "dni") {
-                    if (state[key] === null || state[key] === "") {
-                        delete state[key]
-                    }
-                } else if (state[key] === null) {
-                    delete state[key]
-                }
+            if (Object.values(validation).includes(true)) {
+                e.preventDefault()
+                return
             }
 
             props.handleSubmitEditUser(e, state);
@@ -153,7 +227,7 @@ const EditUserForm = (props) => {
                                             variant="outlined"
                                             value={state.name}
                                             onChange={handleChange("name")}
-
+                                            required
                                             disabled={initialStateUserAccount == false ? true : false}
                                         />
                                     </FormControl>
@@ -170,7 +244,7 @@ const EditUserForm = (props) => {
                                             variant="outlined"
                                             value={state.last_name}
                                             onChange={handleChange("last_name")}
-
+                                            required
                                             disabled={initialStateUserAccount == false ? true : false}
                                         />
                                     </FormControl>
@@ -188,7 +262,7 @@ const EditUserForm = (props) => {
                                             value={state.dni}
                                             onChange={handleChange("dni")}
                                             type="number"
-
+                                            required
                                             disabled={initialStateUserAccount == false ? true : false}
                                         />
                                     </FormControl>
@@ -197,7 +271,7 @@ const EditUserForm = (props) => {
                                             className="helper-text"
                                             style={{ color: "rgb(182, 60, 47)" }}
                                         >
-                                            Esta campo no puede estar vacio
+                                            Introduzca un número válido de DNI
                                         </FormHelperText>
                                     )}
                                 </motion.li>
@@ -243,7 +317,7 @@ const EditUserForm = (props) => {
                                             value={state.legajo}
                                             onChange={handleChange("legajo")}
                                             type="number"
-
+                                            required
                                             disabled={initialStateUserAccount == false ? true : false}
                                         />
                                     </FormControl>
@@ -268,12 +342,11 @@ const EditUserForm = (props) => {
                                             placeholder="01/05/2020"
                                             onChange={(date) => handleChangeDate(date)}
                                             inputVariant="outlined"
-                                            maxDate={new Date()}
+                                            maxDate={new Date('2003')}
                                             format="dd/MM/yyyy"
                                             invalidDateMessage="El formato de fecha es inválido"
-                                            minDateMessage="La fecha no puede ser menor al día de hoy"
-                                            maxDateMessage="La fecha no puede ser mayor al máximo permitido"
-
+                                            maxDateMessage="El usuario debe ser mayor de 18 años"
+                                            required
                                             disabled={initialStateUserAccount == false ? true : false}
                                         />
                                     </FormControl>
@@ -285,33 +358,58 @@ const EditUserForm = (props) => {
                             <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                 <motion.li variants={item}>
                                     <FormControl variant="outlined">
-                                        <TextField
-                                            id="cargo"
+                                        <InputLabel id="cargo">Cargo Institución</InputLabel>
+                                        <Select
+                                            labelId="cargo"
                                             name="cargo"
-                                            label="Cargo"
-                                            variant="outlined"
+                                            id="cargo"
+                                            defaultValue={state.cargo || ''}
                                             value={state.cargo}
                                             onChange={handleChange("cargo")}
-
                                             disabled={initialStateUserAccount == false ? true : false}
-                                        />
+                                            required
+                                        >
+                                            <MenuItem value="" disabled>
+                                                <em>Seleccionar</em>
+                                            </MenuItem>
+                                            <MenuItem value="Administrativo">
+                                                <em>Administrativo</em>
+                                            </MenuItem>
+                                            <MenuItem value="Directivo">
+                                                <em>Directivo</em>
+                                            </MenuItem>
+                                            <MenuItem value="Profesor">
+                                                <em>Profesor</em>
+                                            </MenuItem>
+                                            <MenuItem value="Pedagogo">
+                                                <em>Pedagogo</em>
+                                            </MenuItem>
+                                        </Select>
                                     </FormControl>
                                 </motion.li>
                             </Col>
                             <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                 <motion.li variants={item}>
                                     <FormControl variant="outlined">
-                                        <TextField
-                                            id="phone"
-                                            name="phone"
-                                            label="Telefono"
-                                            variant="outlined"
-                                            value={state.phone}
-                                            onChange={handleChange("phone")}
-                                            type="number"
-
-                                            disabled={initialStateUserAccount == false ? true : false}
-                                        />
+                                        <MuiThemeProvider theme={theme_input_phone}>
+                                            <InputLabel
+                                                htmlFor="phone"
+                                                required
+                                            >
+                                                Celular
+                                    </InputLabel>
+                                            <Input
+                                                value={state.phone}
+                                                onChange={handleChange("phone")}
+                                                name="phone"
+                                                id="phone"
+                                                className={styles.input}
+                                                required
+                                                inputComponent={CellphoneCustom}
+                                                disabled={initialStateUserAccount == false ? true : false}
+                                            />
+                                            <FormHelperText id="helper-text">(cod area) xxx-xxxx</FormHelperText>
+                                        </MuiThemeProvider>
                                     </FormControl>
                                 </motion.li>
                             </Col>
@@ -349,11 +447,10 @@ const EditUserForm = (props) => {
                                         <TextField
                                             id="direccion"
                                             name="direccion"
-                                            label="Direccion"
+                                            label="Dirección, Localidad, Calle, Número"
                                             variant="outlined"
                                             value={state.direccion}
                                             onChange={handleChange("direccion")}
-
                                             disabled={initialStateUserAccount == false ? true : false}
                                         />
                                     </FormControl>
