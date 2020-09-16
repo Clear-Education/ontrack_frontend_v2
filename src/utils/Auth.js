@@ -9,6 +9,9 @@ export function validateLoggedInUser() {
   return state;
 }
 
+export function validateFirstLogin(){
+  return true;
+}
 export async function login(user, password) {
   var formData = new FormData();
   formData.append("username", user);
