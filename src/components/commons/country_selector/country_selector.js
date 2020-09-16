@@ -1,5 +1,5 @@
 import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './country_selector.module.scss'
 import { Row, Col } from 'react-bootstrap';
 import { motion } from 'framer-motion';
@@ -31,7 +31,11 @@ const CountrySelector = ({setState, previousValue}) => {
     const [country, setCountry] = useState(previousValue ? previousValue.provincia : '');
     const [region, setRegion] = useState(previousValue ? previousValue.localidad : '');
 
-
+    useEffect(()=>{
+       setCountry(previousValue.provincia)
+       setRegion(previousValue.localidad)
+    },[previousValue]);
+    
     const handleSetCountry = (country) =>{
         setState('provincia',country);
         setCountry(country);

@@ -1,5 +1,5 @@
 import styles from '../tracking.module.scss'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Alert from "react-s-alert";
 
 import Stepper from '@material-ui/core/Stepper';
@@ -8,6 +8,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import SelectInput from "../../../../pages/dashboard/cursos/selectInput";
+import { getActualSchoolYearService } from '../../../utils/school_year/services/school_year_services';
 
 const INITIAL_STATE = {
     department: '',
@@ -19,7 +20,13 @@ const INITIAL_STATE = {
 const SecondStepDepYearCourse = ({ handleGlobalState }) => {
 
     const [state, setState] = useState(INITIAL_STATE);
+    const user = useSelector((store) => store.user);
 
+    useEffect(()=>{
+        getActualSchoolYearService(user.user.token).then((result)=>{
+            setState({...state,anio_lectivo: result.result.id});
+        })
+    },[])
 
     const handleChange = (prop, value) => {
         setState({ ...state, [prop]: value })
@@ -29,10 +36,9 @@ const SecondStepDepYearCourse = ({ handleGlobalState }) => {
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
-            'Seleccione el año lectivo deseado',
-            'Seleccione el año deseado',
-            'Seleccione el curso deseado',
-        ];
+                'Seleccione el año deseado',
+                'Seleccione el curso deseado',
+                ];
     }
 
     function getStepContent(step) {
@@ -40,10 +46,8 @@ const SecondStepDepYearCourse = ({ handleGlobalState }) => {
             case 0:
                 return <SelectInput type="department" data={state} changeAction={handleChange} />
             case 1:
-                return <SelectInput type="anio_lectivo" data={state} changeAction={handleChange} />;
+                return <SelectInput type="year" data={state} changeAction={handleChange} show_school_year={false}/>;
             case 2:
-                return <SelectInput type="year" data={state} changeAction={handleChange} />;
-            case 3:
                 return <SelectInput type="curso" data={state} changeAction={handleChange} />;
             default:
                 return 'Unknown step';

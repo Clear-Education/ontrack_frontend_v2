@@ -2,15 +2,13 @@ import { useState, useEffect } from "react";
 
 import FormControl from "@material-ui/core/FormControl";
 import { InputLabel, Select, MenuItem } from "@material-ui/core";
-import { getYearService } from "../../../src/utils/year/services/year_services";
-import config from "../../../src/utils/config";
+import { getYearService } from "../../../utils/year/services/year_services";
 import { useSelector } from "react-redux";
-import useSWR from "swr";
-import { getDepartmentService } from "../../../src/utils/department/services/department_services";
-import { getCourseService } from "../../../src/utils/course/services/course_services";
-import { getSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
-import { getSubjectsService } from "../../../src/utils/subject/services/subject_services";
-import { getExamsService } from "../../../src/utils/exam/services/exam_services";
+import { getDepartmentService } from "../../../utils/department/services/department_services";
+import { getCourseService } from "../../../utils/course/services/course_services";
+import { getSchoolYearService } from "../../../utils/school_year/services/school_year_services";
+import { getSubjectsService } from "../../../utils/subject/services/subject_services";
+import { getExamsService } from "../../../utils/exam/services/exam_services";
 
 
 const INITIAL_STATE = {
@@ -26,7 +24,6 @@ const SelectInput = ({ type, data, changeAction }) => {
     const [renderType, setRenderType] = useState();
     const [state, setState] = useState(data ? data : INITIAL_STATE);
     const user = useSelector((store) => store.user)
-    const [schoolYearData, setSchoolYearData] = useState(null)
     const [departmentData, setDepartmentData] = useState(null)
     const [yearData, setYearData] = useState(null)
     const [courseData, setCourseData] = useState(null)
@@ -42,27 +39,23 @@ const SelectInput = ({ type, data, changeAction }) => {
         setState(data);
     }, [data]);
 
+
+    useEffect(() => {
+        setRenderType(type);
+    }, [type])
+
     useEffect(() => {
         if (type === 'department') {
             getDepartmentService(user.user.token).then((result) => {
-                setDepartmentData(result.result);
+                setDepartmentData(result.result)
             })
         }
     }, [])
 
-    useEffect(() => {
-        if (type === 'anio_lectivo') {
-            getSchoolYearService(user.user.token).then((result) => {
-                setSchoolYearData(result.result);
-            })
-        }
-    }, [state.department])
-
-
-    useEffect(() => {
+    useEffect(() => { 
         if (state.department !== '' && state.school_year !== '' && type === 'year') {
             getYearService(user.user.token, state.department).then((result) => {
-                setYearData(result.result);
+               setYearData(result.result)
             })
         }
     }, [state.school_year])
@@ -70,7 +63,7 @@ const SelectInput = ({ type, data, changeAction }) => {
     useEffect(() => {
         if (state.year !== '' && type === 'curso') {
             getCourseService(user.user.token, state.year).then((result) => {
-                setCourseData(result.result);
+                setCourseData(result.result)
             })
         }
     }, [state.year])
@@ -78,31 +71,18 @@ const SelectInput = ({ type, data, changeAction }) => {
     useEffect(() => {
         if (state.curso !== '' && type === 'subject') {
             getSubjectsService(user.user.token, state.year).then((result) => {
-                setSubjectData(result.result);
+                setSubjectData(result.result)
             })
         }
     }, [state.curso])
 
     useEffect(() => {
         if (state.subject !== '' && type === 'exam') {
-            getExamsService(user.user.token, state.subject).then((result) => {
-                let examList = []
-                result.result.forEach((element) => {
-                    if (element.anio_lectivo == state.school_year) {
-                        examList.push(element);
-                    }
-                })
-
-                setExamData(examList);
+            getExamsService(user.user.token, state.subject,state.school_year).then((result) => {
+                setExamData(result.result);
             })
         }
     }, [state.subject])
-
-
-
-    useEffect(() => {
-        setRenderType(type);
-    }, [type])
 
     return (
         <>
@@ -125,25 +105,6 @@ const SelectInput = ({ type, data, changeAction }) => {
                         })}
                     </Select>
                 </FormControl>
-                : renderType === 'anio_lectivo' ?
-                    <FormControl variant="outlined">
-                        <InputLabel id="anio_lectivo">Año Lectivo</InputLabel>
-                        <Select
-                            labelId="anio_lectivo"
-                            id="anio_lectivo"
-                            value={state.school_year}
-                            onChange={handleChange("school_year")}
-                        >
-                            <MenuItem value="">
-                                <em>Seleccionar</em>
-                            </MenuItem>
-                            {schoolYearData && schoolYearData.map((school_year) => {
-                                return (
-                                    <MenuItem value={school_year.id} key={school_year.id}>{school_year.nombre}</MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </FormControl>
                     : renderType === 'year' ?
                         <FormControl variant="outlined">
                             <InputLabel id="department">Año</InputLabel>

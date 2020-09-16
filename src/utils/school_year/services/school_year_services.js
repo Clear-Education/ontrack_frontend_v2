@@ -1,9 +1,24 @@
-import { getSchoolYearCrud, getOneSchoolYearCrud, addSchoolYearCrud, deleteSchoolYearCrud, editSchoolYearCrud } from "../cruds/school_year_cruds";
+import { getSchoolYearCrud, getOneSchoolYearCrud, addSchoolYearCrud, deleteSchoolYearCrud, editSchoolYearCrud, getActualSchoolYearCrud } from "../cruds/school_year_cruds";
 import Alert from "react-s-alert";
 
 
 export async function getSchoolYearService(token) {
   return await getSchoolYearCrud(token).then((result) => {
+    if (result.success) {
+
+    } else {
+      result.result.forEach((element) => {
+        Alert.error(element.message, {
+          effect: "stackslide",
+        });
+      });
+    }
+    return result;
+  })
+}
+
+export async function getActualSchoolYearService(token) {
+  return await getActualSchoolYearCrud(token).then((result) => {
     if (result.success) {
 
     } else {

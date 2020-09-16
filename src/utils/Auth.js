@@ -10,7 +10,7 @@ export function validateLoggedInUser() {
 }
 
 export function validateFirstLogin(){
-  return true;
+  return false;
 }
 export async function login(user, password) {
   var formData = new FormData();

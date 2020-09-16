@@ -1,6 +1,6 @@
 import TitlePage from "../../../src/components/commons/title_page/title_page";
 import styles from './styles.module.scss'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Alert from "react-s-alert";
 
 import Stepper from '@material-ui/core/Stepper';
@@ -10,18 +10,21 @@ import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import SelectInput from "./selectInput";
+import SelectInput from "../../../src/components/commons/select_input/select_input"
 import StudentTable from "./studentTable";
 import { addMultipleStudentsCourseService, deleteMultipleStudentsCourseService } from "../../../src/utils/student/service/student_service";
 import { useSelector } from "react-redux";
+import { getActualSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
+import TransferList from "./tranferTable";
 
 const INITIAL_STATE = {
-    anio_lectivo: '',
+    school_year: '',
     department: '',
     year: '',
     curso: '',
     studentsToAdd: [],
     studentsToDelete: [],
+    students:[],
 }
 
 const Cursos = () => {
@@ -30,44 +33,21 @@ const Cursos = () => {
     const [selectedStudentTable, setSelectedStudentTable] = useState("add");
     const user = useSelector((store) => store.user);
 
+    useEffect(() => {
+        getActualSchoolYearService(user.user.token).then((result) => {
+            setState({ ...state, school_year: result.result.id });
+        })
+    }, [])
+
+
     const handleChange = (prop, value, _student_course_id) => {
-        let studentList = selectedStudentTable === 'add' ? state.studentsToAdd : state.studentsToDelete
-        let students_ids = value;
-        if (prop === 'students') {
-            if (!students_ids.length) {
-                selectedStudentTable === 'add' ? state.studentsToAdd = [] : state.studentsToDelete = [];
-            } else {
-                let deleted = false;
-                students_ids.map((student_id) => {
-
-                    let indexOfStudent = studentList.map((student) => { return student.alumno }).indexOf(student_id);
-                    if (indexOfStudent !== -1) {
-                        studentList.splice(indexOfStudent, 1)
-                        deleted = true;
-                    }
-                    if (!deleted) {
-                        let student_data = {
-                            alumno: student_id,
-                            curso: state.curso,
-                            anio_lectivo: state.anio_lectivo,
-                            student_course_id: _student_course_id
-                        }
-                        studentList.push(student_data)
-                    }
-                })
-
-            }
-
-        } else {
-            setState({ ...state, [prop]: value })
-        }
-
+        setState({ ...state, [prop]: value })
     }
 
     const handleSelectedStudentTable = (table) => {
         setSelectedStudentTable(table);
         setState((prevState) => ({
-            anio_lectivo: prevState.anio_lectivo,
+            school_year: prevState.school_year,
             department: prevState.department,
             year: prevState.year,
             curso: prevState.curso,
@@ -78,11 +58,10 @@ const Cursos = () => {
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
-            'Seleccione el año lectivo deseado',
-            'Seleccione el año deseado',
-            'Seleccione el curso deseado',
-            'Seleccione los alumnos'
-        ];
+                'Seleccione el año deseado',
+                'Seleccione el curso deseado',
+                'Seleccione los alumnos'
+            ];
     }
 
     function getStepContent(step) {
@@ -90,13 +69,11 @@ const Cursos = () => {
             case 0:
                 return <SelectInput type="department" data={state} changeAction={handleChange} />
             case 1:
-                return <SelectInput type="anio_lectivo" data={state} changeAction={handleChange} />;
-            case 2:
                 return <SelectInput type="year" data={state} changeAction={handleChange} />;
-            case 3:
+            case 2:
                 return <SelectInput type="curso" data={state} changeAction={handleChange} />;
-            case 4:
-                return <StudentTable type="Alumnos" data={state} changeAction={handleChange} handleSelectedStudentTable={handleSelectedStudentTable} />;
+            case 3:
+                return <TransferList type="Alumnos" data={state} changeAction={handleChange}/>;
             default:
                 return 'Unknown step';
         }
@@ -115,28 +92,7 @@ const Cursos = () => {
                 });
             }
         } else {
-            if (!!state.studentsToAdd.length || !!state.studentsToDelete.length) {
-                if (selectedStudentTable === 'add') {
-                    addMultipleStudentsCourseService(user.user.token, state.studentsToAdd).then((result) => {
-                        if (result.success) {
-                            setActiveStep((prevActiveStep) => prevActiveStep + 1);
-                            state.studentsToAdd = [];
-                            state.studentsToDelete = [];
-                        }
-                    })
-                } else {
-                    deleteMultipleStudentsCourseService(user.user.token, state.studentsToDelete).then((result) => {
-                        if (result.success) {
-                            setActiveStep((prevActiveStep) => prevActiveStep + 1);
-                        }
-                    })
-                }
-            } else {
-                Alert.error("Debes seleccionar una opción!", {
-                    effect: "stackslide",
-                });
-            }
-
+            console.log(state.students);
         }
 
 
@@ -171,7 +127,7 @@ const Cursos = () => {
                                         Anterior
                                     </Button>
                                     <button
-                                        onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'anio_lectivo' : activeStep === 2 ? 'year' : activeStep === 3 ? 'curso' : 'send')}
+                                        onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'year' : activeStep === 2 ? 'curso' : 'send')}
                                         className={`ontrack_btn csv_btn ${styles.stepper_button}`}
                                     >
                                         {activeStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
