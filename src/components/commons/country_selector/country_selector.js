@@ -41,8 +41,8 @@ const CountrySelector = ({setState, previousValue}) => {
         setCountry(country);
     }
 
-    const handleSetRegion = (region) =>{
-        setState('localidad',region);
+    const handleSetRegion = (region) => {
+        setState('localidad', region);
         setRegion(region);
     }
 

@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { getStudentService } from "../../../utils/student/service/student_service";
 import CountrySelector from "../../commons/country_selector/country_selector";
+import MaskedInput from "react-text-mask";
 
 const list = {
     visible: {
@@ -88,7 +89,6 @@ const AddEditStudentForm = (props) => {
         }
     }, [])
 
-
     const hadleValidation = (prop, value) => {
         if (prop == "dni") {
             if (value.toString().length != 8) {
@@ -98,6 +98,39 @@ const AddEditStudentForm = (props) => {
                 })
                 return
             }
+        }
+        if (prop == "fecha_nacimiento") {
+            if (Date.parse(value) < Date.parse(new Date('2003'))) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                console.log(value);
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
+        if (prop == "fecha_inscripcion") {
+            if (Date.parse(value) < Date.parse(new Date())) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                console.log(value);
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+
         }
         setValidation({
             ...validation,
@@ -125,16 +158,19 @@ const AddEditStudentForm = (props) => {
     };
 
 
-    const handleChangeDate = (date, type) => {
-        if (type === 'birth') {
-            setState({ ...state, ['fecha_nacimiento']: date })
-        } else {
-            setState({ ...state, ['fecha_inscripcion']: date })
-        }
+    const handleChangeDate = (date, prop) => {
+        hadleValidation(prop, date)
+        setState({ ...state, [prop]: date })
     };
 
 
     const handleSubmit = (e) => {
+
+        if (Object.values(validation).includes(true)) {
+            e.preventDefault()
+            return
+        }
+
         e.preventDefault();
         setIsLoading(true);
         let parseData = { ...state };
@@ -145,11 +181,6 @@ const AddEditStudentForm = (props) => {
             parseData['fecha_inscripcion'] = convertDate(parseData['fecha_inscripcion']);
         }
 
-        if (validation.dni == true) {
-            e.preventDefault()
-            setIsLoading(false);
-            return
-        }
         props.handleSubmitAction(e, parseData).then((result) => {
             setIsLoading(false)
             if (result.success) {
@@ -157,7 +188,6 @@ const AddEditStudentForm = (props) => {
             }
         });
     }
-
 
     return (
         <motion.span
@@ -298,21 +328,21 @@ const AddEditStudentForm = (props) => {
                                     </motion.li>
                                 </Col>
 
-                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                    <motion.li variants={item}>
-                                        <FormControl variant="outlined">
-                                            <KeyboardDatePicker
-                                                clearable
-                                                label="Fecha de nacimiento"
-                                                value={state.fecha_nacimiento ? state.fecha_nacimiento : null}
-                                                placeholder="01/05/2020"
-                                                onChange={(date) => handleChangeDate(date, 'birth')}
-                                                inputVariant="outlined"
-                                                maxDate={new Date('2003')}
-                                                format="dd/MM/yyyy"
-                                                invalidDateMessage="El formato de fecha es inválido"
-                                                minDateMessage="La fecha no puede ser menor al día de hoy"
-                                                maxDateMessage="La fecha no puede ser mayor al máximo permitido"
+                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                <motion.li variants={item}>
+                                    <FormControl variant="outlined">
+                                        <KeyboardDatePicker
+                                            clearable
+                                            label="Fecha de nacimiento"
+                                            value={state.fecha_nacimiento ? state.fecha_nacimiento : null}
+                                            placeholder="01/05/2020"
+                                            onChange={(date) => handleChangeDate(date, 'fecha_nacimiento')}
+                                            inputVariant="outlined"
+                                            maxDate={new Date('2003')}
+                                            format="dd/MM/yyyy"
+                                            invalidDateMessage="El formato de fecha es inválido"
+                                            minDateMessage="La fecha no puede ser menor al día de hoy"
+                                            maxDateMessage="La fecha no puede ser mayor al máximo permitido"
 
                                             />
                                         </FormControl>
@@ -334,38 +364,38 @@ const AddEditStudentForm = (props) => {
                                                 value={state.direccion}
                                                 onChange={handleChange("direccion")}
 
-                                            />
-                                        </FormControl>
-                                        {validation.direccion && (
-                                            <FormHelperText
-                                                className="helper-text"
-                                                style={{ color: "rgb(182, 60, 47)" }}
-                                            >
-                                                Esta campo no puede estar vacio
-                                            </FormHelperText>
-                                        )}
-                                    </motion.li>
-                                </Col>
-                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                    <motion.li variants={item}>
-                                        <FormControl variant="outlined">
-                                            <KeyboardDatePicker
-                                                clearable
-                                                label="Fecha de inscripción"
-                                                value={state.fecha_inscripcion ? state.fecha_inscripcion : null}
-                                                placeholder="01/05/2020"
-                                                onChange={(date) => handleChangeDate(date, "inscription")}
-                                                inputVariant="outlined"
-                                                maxDate={new Date()}
-                                                format="dd/MM/yyyy"
-                                                invalidDateMessage="El formato de fecha es inválido"
-                                                minDateMessage="La fecha no puede ser menor al día de hoy"
-                                                maxDateMessage="La fecha no puede ser mayor al máximo permitido"
-                                            />
-                                        </FormControl>
-                                    </motion.li>
-                                </Col>
-                            </Row>
+                                        />
+                                    </FormControl>
+                                    {validation.direccion && (
+                                        <FormHelperText
+                                            className="helper-text"
+                                            style={{ color: "rgb(182, 60, 47)" }}
+                                        >
+                                            Esta campo no puede estar vacio
+                                        </FormHelperText>
+                                    )}
+                                </motion.li>
+                            </Col>
+                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                <motion.li variants={item}>
+                                    <FormControl variant="outlined">
+                                        <KeyboardDatePicker
+                                            clearable
+                                            label="Fecha de inscripción"
+                                            value={state.fecha_inscripcion ? state.fecha_inscripcion : null}
+                                            placeholder="01/05/2020"
+                                            onChange={(date) => handleChangeDate(date, "fecha_inscripcion")}
+                                            inputVariant="outlined"
+                                            maxDate={new Date()}
+                                            format="dd/MM/yyyy"
+                                            invalidDateMessage="El formato de fecha es inválido"
+                                            minDateMessage="La fecha no puede ser menor al día de hoy"
+                                            maxDateMessage="La fecha no puede ser mayor a la fecha actual"
+                                        />
+                                    </FormControl>
+                                </motion.li>
+                            </Col>
+                        </Row>
 
                             <div style={{ margin: 15 }}>
                                 <CountrySelector setState={handleChangeCountryRegion} previousValue={{ provincia: state.provincia, localidad: state.localidad }} />

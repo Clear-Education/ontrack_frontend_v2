@@ -3,6 +3,7 @@ import UserProfileForm from '../../../src/components/users/profile/profile_user_
 import { useEffect, useState } from "react";
 import { updateUser } from "../../../redux/actions/userActions";
 import { getOneUserService, editUserProfileService, changeUserPasswordService } from '../../../src/utils/user/service/user_services';
+import BackgroundLoader from '../../../src/components/commons/background_loader/background_loader';
 
 
 const UserProfile = () => {
@@ -67,14 +68,17 @@ const UserProfile = () => {
     }
 
     return (
-        <div>
-            <h1 className="mb-5">Perfil de Usuario</h1>
-            <UserProfileForm
-                handleSubmitAction={editUserProfile}
-                handleChangePassword={changeUserPassword}
-                user={profileData}></UserProfileForm>
+        <>
+            {isLoading && <BackgroundLoader show={isLoading} />}
+            <div>
+                <h1 className="mb-5">Perfil de Usuario</h1>
+                <UserProfileForm
+                    handleSubmitAction={editUserProfile}
+                    handleChangePassword={changeUserPassword}
+                    user={profileData}></UserProfileForm>
 
-        </div>
+            </div>
+        </>
     )
 }
 

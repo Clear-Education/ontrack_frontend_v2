@@ -128,6 +128,7 @@ const Accounts = () => {
             />
           )
         },
+        filter: false
       },
     }
   ];
@@ -201,10 +202,8 @@ const Accounts = () => {
                   user.name,
                   user.last_name,
                   user.dni,
-                  user.legajo,
                   user.cargo,
                   user.email,
-                  estado
                 ]
               })}
               columns={columns}

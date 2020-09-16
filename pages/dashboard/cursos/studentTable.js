@@ -27,9 +27,9 @@ const StudentTable = ({ changeAction, data, handleSelectedStudentTable }) => {
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => { 
+    useEffect(() => {
         setIsLoading(true);
-        getStudentsService(user.user.token,data.school_year).then((result) => {
+        getStudentsService(user.user.token, data.school_year).then((result) => {
             setIsLoading(false);
             setAddStudentData(result.result.results)
         })
@@ -37,15 +37,15 @@ const StudentTable = ({ changeAction, data, handleSelectedStudentTable }) => {
 
     useEffect(() => {
         setIsLoading(true);
-        getStudentsCourseService(user.user.token, data.curso,data.school_year).then((result) => {
+        getStudentsCourseService(user.user.token, data.curso, data.school_year).then((result) => {
             setIsLoading(false);
             let students = [];
-            result.result.results.forEach((element)=>{
+            result.result.results.forEach((element) => {
                 students.push(element.alumno);
             })
             setDeleteStudentData(students);
         })
-    }, [tableToShow]); 
+    }, [tableToShow]);
 
     const handleTableToShow = (table) => {
         setTableToShow(table);
@@ -67,7 +67,7 @@ const StudentTable = ({ changeAction, data, handleSelectedStudentTable }) => {
     }
 
     return (
-        <Row style={{margin:0,justifyContent: 'center'}}>
+        <Row style={{ margin: 0, justifyContent: 'center' }}>
             <Col
                 md={11}
                 sm={11}
@@ -83,81 +83,14 @@ const StudentTable = ({ changeAction, data, handleSelectedStudentTable }) => {
                     </Col>
                 </Row>
                 {
-                    isLoading && tableToShow !== undefined? 
-                    "Cargando..." :
-                    tableToShow === 'add' ?
+                    isLoading && tableToShow !== undefined ?
+                        "Cargando..." :
+                        tableToShow === 'add' ?
 
-                        <MuiThemeProvider theme={theme}>
-                            <MUIDataTable
-                                title={"Agregar alumnos al curso"}
-                                data={addStudentData}
-                                options={
-                                    {
-                                        searchFieldStyle: { width: '30%', margin: 'auto', marginRight: '0px' },
-                                        selection: true,
-                                        onRowSelectionChange: (students) => handleSelectStudents(students),
-                                        selectToolbarPlacement: 'none',
-                                        actionsColumnIndex: -1,
-                                        downloadOptions: { filename: `Alumnos del Curso.csv` },
-                                        viewColumns: false,
-                                        sort: true,
-                                        filter: true,
-                                        responsive: 'standard',
-                                        textLabels: {
-                                            body: {
-                                                noMatch: "No se encontraron registros",
-                                            },
-                                            pagination: {
-                                                next: "Siguiente Página",
-                                                previous: "Página Anterior",
-                                                rowsPerPage: "Filas por página:",
-                                                displayRows: "de",
-                                            },
-                                            toolbar: {
-                                                search: "Buscar",
-                                                downloadCsv: "Descargar CSV",
-                                                print: "Imprimir",
-                                            },
-                                        }
-
-                                    }
-                                }
-                                components={MTConfig().components}
-                                localization={MTConfig().localization}
-                                columns={[
-
-                                    {
-                                        name: "id",
-                                        label: "Id",
-                                        options: {
-                                            display: false
-                                        },
-
-                                    },
-                                    {
-                                        name: "nombre",
-                                        label: "Nombre",
-                                    },
-                                    {
-                                        name: "apellido",
-                                        label: "Apellido",
-                                    },
-                                    {
-                                        name: "legajo",
-                                        label: "Legajo",
-                                    },
-                                    {
-                                        name: "email",
-                                        label: "Email",
-                                    }
-                                ]}
-                            />
-                        </MuiThemeProvider>
-                        : tableToShow === 'delete' ?
                             <MuiThemeProvider theme={theme}>
                                 <MUIDataTable
-                                    title={"Eliminar alumnos del curso"}
-                                    data={deleteStudentData}
+                                    title={"Agregar alumnos al curso"}
+                                    data={addStudentData}
                                     options={
                                         {
                                             searchFieldStyle: { width: '30%', margin: 'auto', marginRight: '0px' },
@@ -197,7 +130,8 @@ const StudentTable = ({ changeAction, data, handleSelectedStudentTable }) => {
                                             name: "id",
                                             label: "Id",
                                             options: {
-                                                display: false
+                                                display: false,
+                                                filter: false
                                             },
 
                                         },
@@ -220,8 +154,76 @@ const StudentTable = ({ changeAction, data, handleSelectedStudentTable }) => {
                                     ]}
                                 />
                             </MuiThemeProvider>
-                            :
-                            null
+                            : tableToShow === 'delete' ?
+                                <MuiThemeProvider theme={theme}>
+                                    <MUIDataTable
+                                        title={"Eliminar alumnos del curso"}
+                                        data={deleteStudentData}
+                                        options={
+                                            {
+                                                searchFieldStyle: { width: '30%', margin: 'auto', marginRight: '0px' },
+                                                selection: true,
+                                                onRowSelectionChange: (students) => handleSelectStudents(students),
+                                                selectToolbarPlacement: 'none',
+                                                actionsColumnIndex: -1,
+                                                downloadOptions: { filename: `Alumnos del Curso.csv` },
+                                                viewColumns: false,
+                                                sort: true,
+                                                filter: true,
+                                                responsive: 'standard',
+                                                textLabels: {
+                                                    body: {
+                                                        noMatch: "No se encontraron registros",
+                                                    },
+                                                    pagination: {
+                                                        next: "Siguiente Página",
+                                                        previous: "Página Anterior",
+                                                        rowsPerPage: "Filas por página:",
+                                                        displayRows: "de",
+                                                    },
+                                                    toolbar: {
+                                                        search: "Buscar",
+                                                        downloadCsv: "Descargar CSV",
+                                                        print: "Imprimir",
+                                                    },
+                                                }
+
+                                            }
+                                        }
+                                        components={MTConfig().components}
+                                        localization={MTConfig().localization}
+                                        columns={[
+
+                                            {
+                                                name: "id",
+                                                label: "Id",
+                                                options: {
+                                                    display: false,
+                                                    filter: false
+                                                },
+
+                                            },
+                                            {
+                                                name: "nombre",
+                                                label: "Nombre",
+                                            },
+                                            {
+                                                name: "apellido",
+                                                label: "Apellido",
+                                            },
+                                            {
+                                                name: "legajo",
+                                                label: "Legajo",
+                                            },
+                                            {
+                                                name: "email",
+                                                label: "Email",
+                                            }
+                                        ]}
+                                    />
+                                </MuiThemeProvider>
+                                :
+                                null
                 }
 
             </Col>

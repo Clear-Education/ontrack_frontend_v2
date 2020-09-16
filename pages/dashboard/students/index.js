@@ -33,7 +33,7 @@ const Students = () => {
   });
 
 
-async function addStudent(e, data) {
+  async function addStudent(e, data) {
     let parsedData = { ...data };
     Object.keys(parsedData).forEach((key) => {
       if (parsedData[key] === "") {
@@ -78,7 +78,7 @@ async function addStudent(e, data) {
         transition={{ duration: 0.3 }}
       >
         <Row lg={12} md={12} sm={12} xs={12} style={{ margin: '0 5% 0 5%' }}>
-          <Row lg={12} md={12} sm={12} xs={12} style={{width:'100%'}}>
+          <Row lg={12} md={12} sm={12} xs={12} style={{ width: '100%' }}>
             <Col lg={6} md={6} sm={6} xs={6}>
               <TitlePage title="Alumnos" />
             </Col>
@@ -108,7 +108,8 @@ async function addStudent(e, data) {
                   name: "id",
                   label: "Id",
                   options: {
-                    display: false
+                    display: false,
+                    filter: false
                   },
 
                 },
@@ -157,6 +158,7 @@ async function addStudent(e, data) {
                         </div>
                       </>)
                     },
+                    filter: false
                   },
                 }
               ]}
