@@ -26,10 +26,11 @@ const item = {
     hidden: { opacity: 0, x: -100 },
 };
 
-const CountrySelector = ({setState}) => {
+const CountrySelector = ({setState, previousValue}) => {
 
-    const [country, setCountry] = useState();
-    const [region, setRegion] = useState();
+    const [country, setCountry] = useState(previousValue ? previousValue.provincia : '');
+    const [region, setRegion] = useState(previousValue ? previousValue.localidad : '');
+
 
     const handleSetCountry = (country) =>{
         setState('provincia',country);
@@ -57,7 +58,6 @@ const CountrySelector = ({setState}) => {
                             onChange={(country) => handleSetCountry(country)}
                             style={{
                                 padding: '15px 0 15px 8px',
-                                background: '#f1f1f1',
                                 borderRadius: '5px',
                                 color: '#6c7175',
                                 borderColor: '#bfbfbf',
@@ -79,7 +79,6 @@ const CountrySelector = ({setState}) => {
                             onChange={(region) => handleSetRegion(region)}
                             style={{
                                 padding: '15px 0 15px 8px',
-                                background: '#f1f1f1',
                                 borderRadius: '5px',
                                 color: '#6c7175',
                                 borderColor: '#bfbfbf',
