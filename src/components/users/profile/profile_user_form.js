@@ -81,13 +81,6 @@ const item = {
 
 
 const VALIDATE_INITIAL_STATE = {
-    email: false,
-    dni: false,
-    groups: false,
-
-};
-
-const VALIDATE_INITIAL_STATE_PASSWORDS = {
     name: false,
     last_name: false,
     legajo: false,
@@ -109,7 +102,7 @@ const UserProfileForm = (props) => {
 
     const [state, setState] = useState(null);
     const [passwordsData, setPasswordsData] = useState(null)
-    const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE_PASSWORDS);
+    const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE);
     const theme = useTheme();
     const fullscreen = useMediaQuery(theme.breakpoints.down("719"));
     const [date, setDate] = useState(props.user.date_of_birth);

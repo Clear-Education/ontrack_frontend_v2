@@ -484,7 +484,7 @@ const EditUserForm = (props) => {
                         </Row>
 
                         <div style={{ margin: 15 }}>
-                            <CountrySelector setState={handleChangeCountryRegion} />
+                            <CountrySelector setState={handleChangeCountryRegion} user={state} />
                         </div>
 
                         <motion.li variants={item}>
