@@ -24,7 +24,7 @@ const INITIAL_STATE = {
     curso: '',
     studentsToAdd: [],
     studentsToDelete: [],
-    students:[],
+    students: [],
 }
 
 const Cursos = () => {
@@ -58,10 +58,10 @@ const Cursos = () => {
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
-                'Seleccione el año deseado',
-                'Seleccione el curso deseado',
-                'Seleccione los alumnos'
-            ];
+            'Seleccione el año deseado',
+            'Seleccione el curso deseado',
+            'Seleccione los alumnos'
+        ];
     }
 
     function getStepContent(step) {
@@ -73,7 +73,7 @@ const Cursos = () => {
             case 2:
                 return <SelectInput type="curso" data={state} changeAction={handleChange} />;
             case 3:
-                return <TransferList type="Alumnos" data={state} changeAction={handleChange}/>;
+                return <TransferList type="Alumnos" data={state} changeAction={handleChange} />;
             default:
                 return 'Unknown step';
         }

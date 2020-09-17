@@ -27,11 +27,27 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);
 
+    console.log(selectedUsers);
+
+    useEffect(() => {
+        let selectedUserList = []
+        let encargado = {
+            name: user.user.name,
+            last_name: user.user.last_name,
+            id: user.user.id,
+            role: 3
+        }
+        selectedUserList.push(encargado);
+        setSelectedUsers(selectedUserList)
+    }, [])
+
 
     useEffect(() => {
         setIsLoading(true);
         getUserService(user.user.token).then((result) => {
-            let userFilter = result.result.results.filter(user => user.groups.name == "Pedagogía" || user.groups.name == "Docente")
+            let userFilter = result.result.results.filter(usuario => {
+                return (usuario.id != user.user.id) && (usuario.groups.name == "Pedagogía" || usuario.groups.name == "Docente")
+            })
             setIsLoading(false);
             setUserData(userFilter);
         })
@@ -88,7 +104,7 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
                     <span style={{ display: 'block', width: '100%', margin: '20px 0px 20px 0px' }}>Cargando...</span> :
                     <>
                         <div className={styles.message_alert}>
-                            Recuerde que para poder ver el seguimiento creado, debe agregarse como participante del mismo
+                            Recuerde que usted ya forma parte del seguimiento con el rol de Encargado
                         </div>
                         <Col
                             md={11}

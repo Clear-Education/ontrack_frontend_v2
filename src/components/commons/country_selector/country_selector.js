@@ -26,18 +26,18 @@ const item = {
     hidden: { opacity: 0, x: -100 },
 };
 
-const CountrySelector = ({setState, previousValue}) => {
+const CountrySelector = ({ setState, previousValue }) => {
 
     const [country, setCountry] = useState(previousValue ? previousValue.provincia : '');
     const [region, setRegion] = useState(previousValue ? previousValue.localidad : '');
 
-    useEffect(()=>{
-       setCountry(previousValue.provincia)
-       setRegion(previousValue.localidad)
-    },[previousValue]);
-    
-    const handleSetCountry = (country) =>{
-        setState('provincia',country);
+    useEffect(() => {
+        setCountry(previousValue.provincia)
+        setRegion(previousValue.localidad)
+    }, [previousValue]);
+
+    const handleSetCountry = (country) => {
+        setState('provincia', country);
         setCountry(country);
     }
 

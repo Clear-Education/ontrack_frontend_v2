@@ -48,11 +48,12 @@ const UserProfile = () => {
                             }
                         }
                     );
-                    setIsLoading(false);
+
                     return result;
                 })
 
             }
+            setIsLoading(false)
 
         })
     }
