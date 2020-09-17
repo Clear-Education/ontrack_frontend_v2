@@ -557,7 +557,7 @@ const AddUserForm = (props) => {
                         </Row>
 
                         <div style={{ margin: 15 }}>
-                            <CountrySelector setState={handleChangeCountryRegion} />
+                            <CountrySelector setState={handleChangeCountryRegion} previousValue={{ provincia: state.provincia, localidad: state.localidad }} />
                         </div>
                         <motion.li variants={item}>
                             <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
