@@ -12,6 +12,7 @@ import { useSelector } from "react-redux";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { getStudentService } from "../../../utils/student/service/student_service";
 import CountrySelector from "../../commons/country_selector/country_selector";
+import MaskedInput from "react-text-mask";
 
 const list = {
     visible: {
@@ -74,7 +75,9 @@ const AddEditStudentForm = (props) => {
 
     useEffect(() => {
         if (props.data) {
+            setIsLoading(true)
             getStudentService(user.user.token, props.data).then((result) => {
+                setIsLoading(false)
                 if (result.success) {
                     setState(result.result);
                 } else {
@@ -85,7 +88,6 @@ const AddEditStudentForm = (props) => {
         }
     }, [])
 
-
     const hadleValidation = (prop, value) => {
         if (prop == "dni") {
             if (value.toString().length != 8) {
@@ -95,6 +97,37 @@ const AddEditStudentForm = (props) => {
                 })
                 return
             }
+        }
+        if (prop == "fecha_nacimiento") {
+            if (Date.parse(value) < Date.parse(new Date('2003'))) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
+        if (prop == "fecha_inscripcion") {
+            if (Date.parse(value) < Date.parse(new Date())) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+
         }
         setValidation({
             ...validation,
@@ -122,16 +155,19 @@ const AddEditStudentForm = (props) => {
     };
 
 
-    const handleChangeDate = (date, type) => {
-        if (type === 'birth') {
-            setState({ ...state, ['fecha_nacimiento']: date })
-        } else {
-            setState({ ...state, ['fecha_inscripcion']: date })
-        }
+    const handleChangeDate = (date, prop) => {
+        hadleValidation(prop, date)
+        setState({ ...state, [prop]: date })
     };
 
 
     const handleSubmit = (e) => {
+
+        if (Object.values(validation).includes(true)) {
+            e.preventDefault()
+            return
+        }
+
         e.preventDefault();
         setIsLoading(true);
         let parseData = { ...state };
@@ -142,11 +178,6 @@ const AddEditStudentForm = (props) => {
             parseData['fecha_inscripcion'] = convertDate(parseData['fecha_inscripcion']);
         }
 
-        if (validation.dni == true) {
-            e.preventDefault()
-            setIsLoading(false);
-            return
-        }
         props.handleSubmitAction(e, parseData).then((result) => {
             setIsLoading(false)
             if (result.success) {
@@ -154,7 +185,6 @@ const AddEditStudentForm = (props) => {
             }
         });
     }
-
 
     return (
         <motion.span
@@ -165,229 +195,234 @@ const AddEditStudentForm = (props) => {
         >
             <Row>
                 <Col>
-                    <form onSubmit={handleSubmit}>
+                    {isLoading ? 'Cargando...' :
+                        <form onSubmit={handleSubmit}>
 
-                        <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="nombre"
-                                            name="nombre"
-                                            label="Nombre"
-                                            variant="outlined"
-                                            value={state.nombre}
-                                            onChange={handleChange("nombre")}
-                                            required
-                                        />
-                                    </FormControl>
-                                    {validation.nombre && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="apellido"
-                                            name="apellido"
-                                            label="Apellido"
-                                            variant="outlined"
-                                            value={state.apellido}
-                                            onChange={handleChange("apellido")}
-                                            required
-                                        />
-                                    </FormControl>
-                                    {validation.apellido && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-                        </Row>
-
-
-                        <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="dni"
-                                            name="dni"
-                                            label="D.N.I"
-                                            variant="outlined"
-                                            value={state.dni}
-                                            onChange={handleChange("dni")}
-                                            type='number'
-                                            required
-                                        />
-                                    </FormControl>
-                                    {validation.dni && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Introduzca un número válido de DNI
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="email"
-                                            name="email"
-                                            label="Email"
-                                            variant="outlined"
-                                            value={state.email}
-                                            onChange={handleChange("email")}
-
-                                        />
-                                    </FormControl>
-                                    {validation.email && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-
-                        </Row>
-
-                        <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="legajo"
-                                            name="legajo"
-                                            label="Legajo"
-                                            variant="outlined"
-                                            value={state.legajo}
-                                            onChange={handleChange("legajo")}
-
-                                        />
-                                    </FormControl>
-                                    {validation.legajo && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <KeyboardDatePicker
-                                            clearable
-                                            label="Fecha de nacimiento"
-                                            value={state.fecha_nacimiento ? state.fecha_nacimiento : null}
-                                            placeholder="01/05/2020"
-                                            onChange={(date) => handleChangeDate(date, 'birth')}
-                                            inputVariant="outlined"
-                                            maxDate={new Date('2003')}
-                                            format="dd/MM/yyyy"
-                                            invalidDateMessage="El formato de fecha es inválido"
-                                            minDateMessage="La fecha no puede ser menor al día de hoy"
-                                            maxDateMessage="La fecha no puede ser mayor al máximo permitido"
-
-                                        />
-                                    </FormControl>
-                                </motion.li>
-                            </Col>
-
-                        </Row>
-
-
-                        <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <TextField
-                                            id="direccion"
-                                            name="direccion"
-                                            label="Dirección, Localidad, Calle, Número"
-                                            variant="outlined"
-                                            value={state.direccion}
-                                            onChange={handleChange("direccion")}
-
-                                        />
-                                    </FormControl>
-                                    {validation.direccion && (
-                                        <FormHelperText
-                                            className="helper-text"
-                                            style={{ color: "rgb(182, 60, 47)" }}
-                                        >
-                                            Esta campo no puede estar vacio
-                                        </FormHelperText>
-                                    )}
-                                </motion.li>
-                            </Col>
-                            <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                <motion.li variants={item}>
-                                    <FormControl variant="outlined">
-                                        <KeyboardDatePicker
-                                            clearable
-                                            label="Fecha de inscripción"
-                                            value={state.fecha_inscripcion ? state.fecha_inscripcion : null}
-                                            placeholder="01/05/2020"
-                                            onChange={(date) => handleChangeDate(date, "inscription")}
-                                            inputVariant="outlined"
-                                            maxDate={new Date()}
-                                            format="dd/MM/yyyy"
-                                            invalidDateMessage="El formato de fecha es inválido"
-                                            minDateMessage="La fecha no puede ser menor al día de hoy"
-                                            maxDateMessage="La fecha no puede ser mayor al máximo permitido"
-                                        />
-                                    </FormControl>
-                                </motion.li>
-                            </Col>
-                        </Row>
-
-                        <div style={{ margin: 15 }}>
-                            <CountrySelector setState={handleChangeCountryRegion} />
-                        </div>
-
-                        <motion.li variants={item}>
-                            <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
-                                <Col>
-                                    {!isLoading ?
-                                        <button className="ontrack_btn_modal ontrack_btn add_btn" type="submit">Guardar Alumno</button>
-                                        :
-                                        <button className="ontrack_btn_modal ontrack_btn add_btn" disabled>
-                                            <CircularProgress
-                                                size={18}
-                                                color="primary"
+                            <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <TextField
+                                                id="nombre"
+                                                name="nombre"
+                                                label="Nombre"
+                                                variant="outlined"
+                                                value={state.nombre}
+                                                onChange={handleChange("nombre")}
+                                                required
                                             />
-                                            {" "}Guardando...
-                                        </button>
-                                    }
+                                        </FormControl>
+                                        {validation.nombre && (
+                                            <FormHelperText
+                                                className="helper-text"
+                                                style={{ color: "rgb(182, 60, 47)" }}
+                                            >
+                                                Esta campo no puede estar vacio
+                                            </FormHelperText>
+                                        )}
+                                    </motion.li>
+                                </Col>
+
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <TextField
+                                                id="apellido"
+                                                name="apellido"
+                                                label="Apellido"
+                                                variant="outlined"
+                                                value={state.apellido}
+                                                onChange={handleChange("apellido")}
+                                                required
+                                            />
+                                        </FormControl>
+                                        {validation.apellido && (
+                                            <FormHelperText
+                                                className="helper-text"
+                                                style={{ color: "rgb(182, 60, 47)" }}
+                                            >
+                                                Esta campo no puede estar vacio
+                                            </FormHelperText>
+                                        )}
+                                    </motion.li>
+                                </Col>
+                            </Row>
+
+
+                            <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <TextField
+                                                id="dni"
+                                                name="dni"
+                                                label="D.N.I"
+                                                variant="outlined"
+                                                value={state.dni}
+                                                onChange={handleChange("dni")}
+                                                type='number'
+                                                required
+                                            />
+                                        </FormControl>
+                                        {validation.dni && (
+                                            <FormHelperText
+                                                className="helper-text"
+                                                style={{ color: "rgb(182, 60, 47)" }}
+                                            >
+                                                Introduzca un número válido de DNI
+                                            </FormHelperText>
+                                        )}
+                                    </motion.li>
+                                </Col>
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <TextField
+                                                id="email"
+                                                name="email"
+                                                label="Email"
+                                                variant="outlined"
+                                                value={state.email}
+                                                onChange={handleChange("email")}
+
+                                            />
+                                        </FormControl>
+                                        {validation.email && (
+                                            <FormHelperText
+                                                className="helper-text"
+                                                style={{ color: "rgb(182, 60, 47)" }}
+                                            >
+                                                Esta campo no puede estar vacio
+                                            </FormHelperText>
+                                        )}
+                                    </motion.li>
                                 </Col>
 
                             </Row>
-                        </motion.li>
 
-                    </form>
+                            <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <TextField
+                                                id="legajo"
+                                                name="legajo"
+                                                label="Legajo"
+                                                variant="outlined"
+                                                value={state.legajo}
+                                                onChange={handleChange("legajo")}
 
+                                            />
+                                        </FormControl>
+                                        {validation.legajo && (
+                                            <FormHelperText
+                                                className="helper-text"
+                                                style={{ color: "rgb(182, 60, 47)" }}
+                                            >
+                                                Esta campo no puede estar vacio
+                                            </FormHelperText>
+                                        )}
+                                    </motion.li>
+                                </Col>
+
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <KeyboardDatePicker
+                                                clearable
+                                                label="Fecha de nacimiento"
+                                                value={state.fecha_nacimiento ? state.fecha_nacimiento : null}
+                                                placeholder="01/05/2020"
+                                                onChange={(date) => handleChangeDate(date, 'fecha_nacimiento')}
+                                                inputVariant="outlined"
+                                                maxDate={new Date('2003')}
+                                                format="dd/MM/yyyy"
+                                                invalidDateMessage="El formato de fecha es inválido"
+                                                minDateMessage="La fecha no puede ser menor al día de hoy"
+                                                maxDateMessage="La fecha no puede ser mayor al máximo permitido"
+
+                                            />
+                                        </FormControl>
+                                    </motion.li>
+                                </Col>
+
+                            </Row>
+
+
+                            <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <TextField
+                                                id="direccion"
+                                                name="direccion"
+                                                label="Dirección, Localidad, Calle, Número"
+                                                variant="outlined"
+                                                value={state.direccion}
+                                                onChange={handleChange("direccion")}
+
+                                            />
+                                        </FormControl>
+                                        {validation.direccion && (
+                                            <FormHelperText
+                                                className="helper-text"
+                                                style={{ color: "rgb(182, 60, 47)" }}
+                                            >
+                                                Esta campo no puede estar vacio
+                                            </FormHelperText>
+                                        )}
+                                    </motion.li>
+                                </Col>
+                                <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                    <motion.li variants={item}>
+                                        <FormControl variant="outlined">
+                                            <KeyboardDatePicker
+                                                clearable
+                                                label="Fecha de inscripción"
+                                                value={state.fecha_inscripcion ? state.fecha_inscripcion : null}
+                                                placeholder="01/05/2020"
+                                                onChange={(date) => handleChangeDate(date, "fecha_inscripcion")}
+                                                inputVariant="outlined"
+                                                maxDate={new Date()}
+                                                format="dd/MM/yyyy"
+                                                invalidDateMessage="El formato de fecha es inválido"
+                                                minDateMessage="La fecha no puede ser menor al día de hoy"
+                                                maxDateMessage="La fecha no puede ser mayor a la fecha actual"
+                                            />
+                                        </FormControl>
+                                    </motion.li>
+                                </Col>
+                            </Row>
+
+                            <div style={{ margin: 15 }}>
+                                <CountrySelector 
+                                    setState={handleChangeCountryRegion} 
+                                    previousValue={{ provincia: state.provincia, localidad: state.localidad }} 
+                                    color = {'var(--white)'}
+                                />
+                            </div>
+
+                            <motion.li variants={item}>
+                                <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
+                                    <Col>
+                                        {!isLoading ?
+                                            <button className="ontrack_btn_modal ontrack_btn add_btn" type="submit">Guardar Alumno</button>
+                                            :
+                                            <button className="ontrack_btn_modal ontrack_btn add_btn" disabled>
+                                                <CircularProgress
+                                                    size={18}
+                                                    color="primary"
+                                                />
+                                                {" "}Guardando...
+                                        </button>
+                                        }
+                                    </Col>
+
+                                </Row>
+                            </motion.li>
+
+                        </form>
+                    }
                 </Col>
             </Row>
 

@@ -88,7 +88,8 @@ const SolicitudesPedagogo = () => {
                                     name: "id",
                                     label: "Id",
                                     options: {
-                                        display: false
+                                        display: false,
+                                        filter: false
                                     },
 
                                 },
@@ -133,6 +134,7 @@ const SolicitudesPedagogo = () => {
                                                 </div>
                                             )
                                         },
+                                        filter: false
                                     },
                                 }
                             ]}

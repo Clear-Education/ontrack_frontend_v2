@@ -19,10 +19,13 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 // Import componentes
 import styles from "./index.module.css";
-
+import FirstLoginModal from '../src/components/commons/first_login/first_login';
+import ResetPasswordEmailModal from '../src/components/commons/reset_password/reset_password_email'
+import {validateTokenResetPasswordService} from '../src/utils/user/service/user_services'
 //import redux tools
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../redux/actions/userActions";
+import ResetPasswordModal from "../src/components/commons/reset_password/reset_password";
 
 const container = {
   visible: {
@@ -65,7 +68,27 @@ const Login = () => {
   const user = useSelector((store) => store.user);
   const [loginState, setLoginState] = useState(LOGIN_INITIAL_STATE);
   const [validation, setValidation] = useState(LOGIN_VALIDATION_STATE);
-  const [isLoading,setIsLoading] = useState(false);
+  const [isLoading,setIsLoading] = useState();
+  const [firstLogin, setFirstLogin] = useState();
+  const [newUser,setNewUser] = useState();
+  const [resetPasswordEmailModal,setResetPasswordEmailModal] = useState();
+  const [resetPasswordModal,setResetPasswordModal] = useState();
+  const [resetToken,setResetToken] = useState();
+ 
+
+  useEffect(()=>{
+      let path = router.asPath;
+      let token = path.split("=");
+      if(token.length === 2){
+        validateTokenResetPasswordService(token[1]).then((result)=>{
+            if(result.success){
+              setResetToken(token[1]);
+              setResetPasswordModal(true);
+            }
+        })
+      }
+  },[router.route])
+
   const hadleValidationEmail = (value) => {
     setValidation({
       ...validation,
@@ -89,6 +112,10 @@ const Login = () => {
     }
   };
 
+  const handleCloseResetModal = () =>{
+    setResetPasswordEmailModal(false);
+  }
+
   const handleClickShowPassword = () => {
     setLoginState({ ...loginState, showPassword: !loginState.showPassword });
   };
@@ -111,10 +138,15 @@ const Login = () => {
     } else {
       setIsLoading(true);
       dispatch(loginAction(loginState.email, loginState.password)).then(
-        (status) => {
+        (result) => {
           setIsLoading(false);
-          if (status) {
-            router.push("/dashboard");
+          if (result.success) {
+            if(result.first_login){
+              setFirstLogin(true);
+              setNewUser(result.user);
+            }else{
+              router.push("/dashboard");
+            }
           }
         }
       );
@@ -142,6 +174,9 @@ const Login = () => {
             id={styles.right_form}
           >
             <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 0 }}>
+            {firstLogin && <FirstLoginModal user={newUser}/>}
+            {resetPasswordModal && <ResetPasswordModal resetToken={resetToken}/>}
+            {resetPasswordEmailModal && <ResetPasswordEmailModal handleCloseResetModal={handleCloseResetModal}/>}
               <form id="form_login" style={{ width: "100%" }}>
                 <Col
                   style={{
@@ -245,9 +280,9 @@ const Login = () => {
                   sm={11}
                   xs={12}
                 >
-                  <Link href="/user/reset-password">
+                  <span onClick={()=>setResetPasswordEmailModal(true)}>
                     <a id={styles.password_reset}>Restablecer contraseña</a>
-                  </Link>
+                  </span>
                 </Col>
                 <Col
                   className="center"

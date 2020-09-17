@@ -88,7 +88,8 @@ const Seguimientos = () => {
                                     name: "id",
                                     label: "Id",
                                     options: {
-                                        display: false
+                                        display: false,
+                                        filter: false
                                     },
 
                                 },
@@ -117,10 +118,10 @@ const Seguimientos = () => {
                                     label: "Acciones",
                                     options: {
                                         customBodyRender: (value, tableMeta, updateValue) => {
-                                           
+
                                             return (
                                                 <>
-                                                    <Link href={`seguimientos/${tableMeta.rowData[0]}`}> 
+                                                    <Link href={`seguimientos/${tableMeta.rowData[0]}`}>
                                                         <IconButton>
                                                             <ArrowForwardIosIcon />
                                                         </IconButton>
@@ -128,6 +129,7 @@ const Seguimientos = () => {
                                                 </>
                                             )
                                         },
+                                        filter: false
                                     },
                                 }
                             ]}

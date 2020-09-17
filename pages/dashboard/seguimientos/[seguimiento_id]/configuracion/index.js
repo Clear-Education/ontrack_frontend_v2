@@ -41,7 +41,6 @@ const Configuracion = () => {
                 setTrackingStatus(result.result.en_progreso)
             })
             getTrackingGoalsService(user.user.token, trackingId).then((result) => {
-                console.log(result);
             })
         }
     }, [trackingId])

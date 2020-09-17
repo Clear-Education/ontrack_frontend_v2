@@ -66,37 +66,39 @@ const SixthStepRoles = ({ handleGlobalState }) => {
                                 </Col>
                             </Row>
                             <Row lg={12} md={12} sm={12} xs={12} style={{ width: '100%', margin: 'auto' }}>
-                                {trackingData.integrantes.map((participant) => {
-                                    return (
-                                        <>
-                                            <Col lg={6} md={6} sm={6} xs={6} className={styles.input_container}>
-                                                <div className={styles.name_rol_container}>
-                                                    {participant.name}  {participant.last_name}
-                                                </div>
-                                            </Col>
-                                            <Col lg={6} md={6} sm={6} xs={6} className={styles.input_container}>
-                                                <FormControl variant="outlined">
-                                                    <InputLabel id="rol">Rol</InputLabel>
-                                                    <Select
-                                                        labelId="rol"
-                                                        id="rol"
-                                                        value={participant.role}
-                                                        onChange={handleChange(participant.id)}
-                                                    >
-                                                        <MenuItem value="">
-                                                            <em>Seleccionar</em>
-                                                        </MenuItem>
-                                                        {roleData && roleData.map((role) => {
-                                                            return (
-                                                                <MenuItem value={role.id} key={role.id}>{role.nombre}</MenuItem>
-                                                            )
-                                                        })}
-                                                    </Select>
-                                                </FormControl>
-                                            </Col>
-                                        </>
-                                    )
-                                })}
+                                {trackingData.integrantes
+                                    .filter(integrante => integrante.id != user.user.id)
+                                    .map((participant) => {
+                                        return (
+                                            <>
+                                                <Col lg={6} md={6} sm={6} xs={6} className={styles.input_container}>
+                                                    <div className={styles.name_rol_container}>
+                                                        {participant.name}  {participant.last_name}
+                                                    </div>
+                                                </Col>
+                                                <Col lg={6} md={6} sm={6} xs={6} className={styles.input_container}>
+                                                    <FormControl variant="outlined">
+                                                        <InputLabel id="rol">Rol</InputLabel>
+                                                        <Select
+                                                            labelId="rol"
+                                                            id="rol"
+                                                            value={participant.role}
+                                                            onChange={handleChange(participant.id)}
+                                                        >
+                                                            <MenuItem value="">
+                                                                <em>Seleccionar</em>
+                                                            </MenuItem>
+                                                            {roleData && roleData.map((role) => {
+                                                                return (
+                                                                    <MenuItem value={role.id} key={role.id}>{role.nombre}</MenuItem>
+                                                                )
+                                                            })}
+                                                        </Select>
+                                                    </FormControl>
+                                                </Col>
+                                            </>
+                                        )
+                                    })}
                             </Row>
 
                         </Row>

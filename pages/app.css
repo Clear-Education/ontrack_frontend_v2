@@ -2,7 +2,6 @@
   --main-color-dark: #004d67;
   --black: #303030;
   --white: #f7f7f7;
-  --white: #f7f7f7;
   --gray: #e8e8e8;
   --medium-gray: #79797933;
   --secondary-gray: #cecece33;
@@ -229,6 +228,12 @@ button:focus {
 
 .subtitle {
   color: var(--orange);
+}
+
+/* TRANFER */
+
+.MuiButton-outlinedSizeSmall{
+  margin-bottom: 20px !important;
 }
 
 /* STEPPER */

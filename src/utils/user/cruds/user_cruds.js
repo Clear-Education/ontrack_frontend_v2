@@ -174,6 +174,68 @@ export async function changeUserPassword(data, auth_token) {
         });
 }
 
+
+export async function resetUserPasswordCrud(data) {
+
+    const DATA = {
+        email: data
+    }
+    return axios.post(`${config.api_url}/users/password-reset/`, DATA)
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        })
+        .catch((error) => {
+            return errorHandler(error);
+        });
+}
+
+export async function resetUserPasswordConfirmCrud(data) {
+console.log(data);
+    const DATA = {
+        token: data.token,
+        password: data.password
+    }
+    return axios.post(`${config.api_url}/users/password-reset/confirm/`, DATA)
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        })
+        .catch((error) => {
+            return errorHandler(error);
+        });
+}
+
+
+export async function validateTokenResetPasswordCrud(token) {
+    const DATA = {
+        token: token
+    }
+    return axios.post(`${config.api_url}/users/password-reset/validate_token/`, DATA)
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        })
+        .catch((error) => {
+            return errorHandler(error);
+        });
+}
+
 export async function editUserStateCrud(data, auth_token) {
     let { is_active } = data;
     let dataEditUser = {

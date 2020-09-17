@@ -4,12 +4,59 @@ import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import { Row, Col } from "react-bootstrap";
-import { useTheme, useMediaQuery } from "@material-ui/core";
+import { InputLabel, Select, MenuItem, useTheme, useMediaQuery } from "@material-ui/core";
+import CountrySelector from "../../commons/country_selector/country_selector";
 
 import styles from './styles.module.css';
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Avatar from '@material-ui/core/Avatar';
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import MaskedInput from 'react-text-mask';
+import Input from "@material-ui/core/Input";
+
+const CellphoneCustom = (props) => {
+    const { inputRef, ...other } = props;
+
+    return (
+        <MaskedInput
+            {...other}
+            ref={(ref) => {
+                inputRef(ref ? ref.inputElement : null);
+            }}
+            mask={[
+                "(",
+                /[1-9]/,
+                /\d/,
+                /\d/,
+                ")",
+                " ",
+                /\d/,
+                /\d/,
+                /\d/,
+                "-",
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+            ]}
+            placeholderChar={"\u2000"}
+            showMask
+        />
+    );
+};
+
+const theme_input_phone = createMuiTheme({
+    overrides: {
+        MuiInput: {
+            formControl: {
+                "label + &": {
+                    marginTop: "0px"
+                }
+            }
+        }
+    }
+});
 
 const list = {
     visible: {
@@ -36,35 +83,33 @@ const item = {
 const VALIDATE_INITIAL_STATE = {
     name: false,
     last_name: false,
-    email: false,
-    dni: false,
     legajo: false,
     cargo: false,
-    groups: false,
-    phone: false,
+    password: false,
     date_of_birth: false,
     direccion: false,
     localidad: false,
     provincia: false,
-};
-
-const VALIDATE_INITIAL_STATE_PASSWORDS = {
-    password: false,
+    phone: false,
     new_password: false,
     new_password2: false
 
 };
 
+
+
 const UserProfileForm = (props) => {
 
     const [state, setState] = useState(null);
     const [passwordsData, setPasswordsData] = useState(null)
-    const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE_PASSWORDS);
+    const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE);
     const theme = useTheme();
     const fullscreen = useMediaQuery(theme.breakpoints.down("719"));
     const [date, setDate] = useState(props.user.date_of_birth);
     const user = useSelector((store) => store.user);
     const [image, setImage] = useState(null);
+    const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingPass, setIsLoadingPass] = useState(false)
 
 
     useEffect(() => {
@@ -73,6 +118,30 @@ const UserProfileForm = (props) => {
 
 
     const handleValidation = (prop, value) => {
+        if (prop == "dni") {
+            if (value.toString().length != 8) {
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
+        if (prop == "date_of_birth") {
+            if (Date.parse(value) < Date.parse(new Date('2003'))) {
+                setValidation({
+                    ...validation,
+                    [prop]: false
+                })
+                return
+            } else {
+                setValidation({
+                    ...validation,
+                    [prop]: true
+                })
+                return
+            }
+        }
         setValidation({
             ...validation,
             [prop]: !(value.split("").length > 0),
@@ -95,9 +164,21 @@ const UserProfileForm = (props) => {
     };
 
     const handleChange = (prop) => (event) => {
-        handleValidation(prop, event.target.value)
-        setState({ ...state, [prop]: event.target.value })
+        if (prop == "phone") {
+            let value = event.target.value.replace("(", "");
+            value = value.replace(")", "");
+            value = value.replace("-", "");
+            value = value.replace(" ", "");
+            setState({ ...state, phone: value });
+        } else if (prop == "direccion") {
+            setState({ ...state, [prop]: event.target.value })
+        } else {
+            handleValidation(prop, event.target.value)
+            setState({ ...state, [prop]: event.target.value })
+        }
+
     };
+
 
     const handleChangePasswordSection = (prop) => (event) => {
         if (prop == "new_password2") {
@@ -131,16 +212,29 @@ const UserProfileForm = (props) => {
     const handleChangeDate = (date) => {
         setDate(date);
         let formatedDate = convertDate(date);
+        handleValidation("date_of_birth", date);
         setState({ ...state, ["date_of_birth"]: formatedDate });
     };
 
 
     const handleSubmit = (e) => {
+        if (Object.values(validation).includes(true)) {
+            e.preventDefault()
+            return
+        }
+
         props.handleSubmitAction(e, state);
     }
 
     const handleSubmitPassword = (e) => {
-        props.handleChangePassword(e, passwordsData);
+        setIsLoadingPass(true)
+        props.handleChangePassword(e, passwordsData).then((result) => {
+            setIsLoadingPass(false)
+        });
+    }
+
+    const handleChangeCountryRegion = (prop, value) => {
+        setState({ ...state, [prop]: value })
     }
 
     return (
@@ -211,15 +305,32 @@ const UserProfileForm = (props) => {
                                         <Col lg={12} md={12} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
                                                 <FormControl variant="outlined">
-                                                    <TextField
-                                                        id="cargo"
+                                                    <InputLabel id="cargo">Cargo Institución</InputLabel>
+                                                    <Select
+                                                        labelId="cargo"
                                                         name="cargo"
-                                                        label="Cargo"
-                                                        variant="outlined"
+                                                        id="cargo"
+                                                        defaultValue={state.cargo || ''}
                                                         value={state.cargo}
                                                         onChange={handleChange("cargo")}
                                                         required
-                                                    />
+                                                    >
+                                                        <MenuItem value="" disabled>
+                                                            <em>Seleccionar</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Administrativo">
+                                                            <em>Administrativo</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Directivo">
+                                                            <em>Directivo</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Profesor">
+                                                            <em>Profesor</em>
+                                                        </MenuItem>
+                                                        <MenuItem value="Pedagogo">
+                                                            <em>Pedagogo</em>
+                                                        </MenuItem>
+                                                    </Select>
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
@@ -259,18 +370,44 @@ const UserProfileForm = (props) => {
                                                         placeholder="01/05/2020"
                                                         onChange={(date) => handleChangeDate(date)}
                                                         inputVariant="outlined"
-                                                        maxDate={new Date()}
+                                                        maxDate={new Date('2003')}
                                                         format="dd/MM/yyyy"
                                                         invalidDateMessage="El formato de fecha es inválido"
                                                         minDateMessage="La fecha no puede ser menor al día de hoy"
-                                                        maxDateMessage="La fecha no puede ser mayor al máximo permitido"
+                                                        maxDateMessage="El usuario debe ser mayor de 18 años"
                                                         required
                                                     />
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
                                     </Row>
+
                                     <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
+
+                                        <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                            <motion.li variants={item}>
+                                                <FormControl variant="outlined">
+                                                    <MuiThemeProvider theme={theme_input_phone}>
+                                                        <InputLabel
+                                                            htmlFor="phone"
+                                                            required
+                                                        >
+                                                            Celular
+                                                        </InputLabel>
+                                                        <Input
+                                                            value={state.phone}
+                                                            onChange={handleChange("phone")}
+                                                            name="phone"
+                                                            id="phone"
+                                                            className={styles.input}
+                                                            required
+                                                            inputComponent={CellphoneCustom}
+                                                        />
+                                                        <FormHelperText id="helper-text">(cod area) xxx-xxxx</FormHelperText>
+                                                    </MuiThemeProvider>
+                                                </FormControl>
+                                            </motion.li>
+                                        </Col>
 
                                         <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
@@ -287,27 +424,20 @@ const UserProfileForm = (props) => {
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
-                                        <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                            <motion.li variants={item}>
-                                                <FormControl variant="outlined">
-                                                    <TextField
-                                                        id="direccion"
-                                                        name="direccion"
-                                                        label="Direccion"
-                                                        variant="outlined"
-                                                        value={state.direccion}
-                                                        onChange={handleChange("direccion")}
-                                                    />
-                                                </FormControl>
-                                            </motion.li>
-                                        </Col>
                                     </Row>
+
+                                    <div style={{ margin: 15, marginBottom: 25 }}>
+                                        <CountrySelector setState={handleChangeCountryRegion} previousValue={{ provincia: state.provincia, localidad: state.localidad }} />
+                                    </div>
+
                                     <motion.li variants={item}>
                                         <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
                                             <Col>
                                                 <button
+                                                    disabled={isLoading}
+                                                    style={{ width: '185px' }}
                                                     className="ontrack_btn_modal ontrack_btn add_btn"
-                                                    type="submit">Editar</button>
+                                                    type="submit">{isLoading ? 'Editando...' : 'Editar'}</button>
                                             </Col>
                                         </Row>
                                     </motion.li>
@@ -391,8 +521,10 @@ const UserProfileForm = (props) => {
                                         <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
                                             <Col>
                                                 <button
+                                                    disabled={isLoading}
+                                                    style={{ width: '185px' }}
                                                     className="ontrack_btn_modal ontrack_btn add_btn"
-                                                    type="submit">Cambiar Contraseña</button>
+                                                    type="submit">{isLoadingPass ? 'Guardando' : 'Cambiar Contraseña'}</button>
                                             </Col>
                                         </Row>
                                     </motion.li>

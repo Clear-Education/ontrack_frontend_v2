@@ -1,4 +1,9 @@
-import { getUserCrud, getUsersCrud, addUserCrud, editUserCrud, editUserProfile, changeUserPassword, editUserStateCrud, getGroupsCrud } from "../cruds/user_cruds";
+import { getUserCrud, getUsersCrud, 
+         addUserCrud, editUserCrud, 
+         editUserProfile, changeUserPassword, 
+         editUserStateCrud, getGroupsCrud, 
+         resetUserPasswordCrud, validateTokenResetPasswordCrud, resetUserPasswordConfirmCrud
+        } from "../cruds/user_cruds";
 import Alert from "react-s-alert";
 
 export async function getOneUserService(token, id_user) {
@@ -85,13 +90,60 @@ export async function editUserProfileService(data, token) {
 
 export async function changeUserPasswordService(data, token) {
     return await changeUserPassword(data, token).then((result) => {
-        if (result.success) {
+        if (result.success) { 
             Alert.success("Contraseña modificada, vuelva a loguearse con sus nuevas credenciales por favor", {
                 effect: "stackslide",
             });
 
         } else {
             Alert.error("La contraseña ingresada es incorrecta!")
+        }
+        return result;
+    })
+}
+
+
+export async function resetUserPasswordService(email) {
+    return await resetUserPasswordCrud(email).then((result) => {
+        if (result.success) {
+            Alert.success(`Se envió un email a ${email}. Corrobore su bandeja de spam`, {
+                effect: "stackslide",
+            });
+
+        } else {
+            let message = `Ocurrió un error al enviar el email. Puede que el email proporcionado no se encuentre registrado, 
+                           por favor intentelo de nuevo o comuníquise con el administrador`
+            Alert.error(message, {timeout: 6000, effect: "stackslide"})
+        }
+        return result;
+    })
+}
+
+export async function validateTokenResetPasswordService(token) {
+    return await validateTokenResetPasswordCrud(token).then((result) => {
+        if (result.success) {
+            Alert.success(`Email validado correctamente`, {
+                effect: "stackslide",
+            });
+
+        } else {
+            let message = `Ocurrió un error al validar el email, comuníquese con el administrador`
+            Alert.error(message, {timeout: 6000, effect: "stackslide"})
+        }
+        return result;
+    })
+}
+
+export async function resetUserPasswordConfirmService(data) {
+    return await resetUserPasswordConfirmCrud(data).then((result) => {
+        if (result.success) {
+            Alert.success(`Contraseña cambiada correctamente. Vuelve a iniciar sesión`, {
+                effect: "stackslide",
+            });
+
+        } else {
+            let message = `Ocurrió un error al actualizar la contraseña, comuníquise con el administrador para solucionarlo`
+            Alert.error(message, {effect: "stackslide"})
         }
         return result;
     })
