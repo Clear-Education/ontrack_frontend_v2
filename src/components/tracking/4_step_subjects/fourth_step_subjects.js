@@ -22,7 +22,7 @@ const FourthStepSubjects = ({ handleGlobalState }) => {
 
     const trackingData = useSelector((store) => store.tracking);
     const [subjectData, setSubjectData] = useState(trackingData.materias);
-    const [selectedSubjects,setSelectedSubjects] = useState([])
+    const [selectedSubjects, setSelectedSubjects] = useState([])
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -35,7 +35,7 @@ const FourthStepSubjects = ({ handleGlobalState }) => {
         })
     }, []);
 
-    const getSubjectIds = (subjects) =>{
+    const getSubjectIds = (subjects) => {
         const filterList = [...subjectData];
         let subjects_id = [];
         subjects.forEach(subject => {
@@ -48,27 +48,27 @@ const FourthStepSubjects = ({ handleGlobalState }) => {
     }
 
     const handleSelectSubjects = (subjects) => {
-        if(!!subjects.length){
+        if (!!subjects.length) {
             const subjectList = getSubjectIds(subjects);
             let selectedSubjectsCopy = [...selectedSubjects];
-            subjectList.map((subject_id)=>{
+            subjectList.map((subject_id) => {
                 let indexOf = selectedSubjectsCopy.indexOf(subject_id);
-                if(indexOf === -1){
+                if (indexOf === -1) {
                     selectedSubjectsCopy.push(subject_id);
-                }else{
-                    selectedSubjectsCopy.splice(indexOf,1);
+                } else {
+                    selectedSubjectsCopy.splice(indexOf, 1);
                 }
             })
             setSelectedSubjects(selectedSubjectsCopy);
-        }else{
+        } else {
             setSelectedSubjects([]);
-        }       
+        }
     }
 
-    useEffect(()=>{
-        handleGlobalState('materias',selectedSubjects);
-    },[selectedSubjects]);
-    
+    useEffect(() => {
+        handleGlobalState('materias', selectedSubjects);
+    }, [selectedSubjects]);
+
     return (
         <Row style={{ margin: 0, justifyContent: 'center' }}>
             <Col
@@ -122,7 +122,8 @@ const FourthStepSubjects = ({ handleGlobalState }) => {
                                         name: "id",
                                         label: "Id",
                                         options: {
-                                            display: false
+                                            display: false,
+                                            filter: false
                                         },
 
                                     },

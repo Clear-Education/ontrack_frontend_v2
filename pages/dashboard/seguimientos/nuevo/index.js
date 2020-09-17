@@ -140,7 +140,6 @@ const INITIAL_TRACKING_DATA = {
     integrantes: [],
     fecha_desde: '',
     fecha_hasta: '',
-    fecha_inicio_seguimiento: '',
     fecha_fin_seguimiento: '',
     promedio: '',
     asistencia: '',
@@ -180,7 +179,7 @@ const CreateTracking = () => {
             let roles;
             for (let index = 0; index < trackingData.integrantes.length; index++) {
                 roles = trackingData.integrantes[index].role;
-                if (roles === undefined || roles === '' ) {
+                if (roles === undefined || roles === '') {
                     break
                 };
             }
@@ -219,7 +218,7 @@ const CreateTracking = () => {
             case 5:
                 return validateEmptyData('role');
             case 6:
-                return Date.parse(globalTrackingData.fecha_inicio_seguimiento) > Date.parse(globalTrackingData.fecha_desde) && Date.parse(globalTrackingData.fecha_fin_seguimiento) < Date.parse(globalTrackingData.fecha_hasta) && Date.parse(globalTrackingData.fecha_fin_seguimiento) > Date.parse(globalTrackingData.fecha_inicio_seguimiento)
+                return Date.parse(globalTrackingData.fecha_fin_seguimiento) < Date.parse(globalTrackingData.fecha_hasta) && Date.parse(globalTrackingData.fecha_fin_seguimiento) > Date.parse(new Date())
             case 7:
                 return validateEmptyData('goals');
             default:

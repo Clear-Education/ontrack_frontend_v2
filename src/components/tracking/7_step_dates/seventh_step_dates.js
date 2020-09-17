@@ -20,11 +20,12 @@ const SeventhStepDates = ({ handleGlobalState }) => {
     const trackingData = useSelector((store) => store.tracking);
 
     useEffect(() => {
-        setMinDate(trackingData.fecha_desde)
+        let tomorrowDate = new Date();
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1)
+        setMinDate(tomorrowDate);
         setMaxDate(trackingData.fecha_hasta)
         setState({
             ...state,
-            ["fecha_desde"]: trackingData.fecha_inicio_seguimiento == undefined ? null : trackingData.fecha_inicio_seguimiento,
             ["fecha_hasta"]: trackingData.fecha_fin_seguimiento == undefined ? null : trackingData.fecha_fin_seguimiento
         })
     }, [])
@@ -64,24 +65,6 @@ const SeventhStepDates = ({ handleGlobalState }) => {
                     <Col lg={12} md={12} sm={12} xs={12} className={`${styles.input_container}  ${styles.name_container}`}>
                         <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
                             <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
-                                <FormLabel className="left" component="legend">Inicio del seguimiento</FormLabel>
-                                <KeyboardDatePicker
-                                    clearable
-                                    value={state.fecha_desde}
-                                    placeholder="DD/MM/YYYY"
-                                    onChange={date => handleStartDate(date)}
-                                    minDate={new Date(minDate)}
-                                    maxDate={new Date(maxDate)}
-                                    format="dd/MM/yyyy"
-                                    invalidDateMessage="Formato de fecha inválido"
-                                    minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                    maxDateMessage="La fecha no debería ser mayor a la fecha de fin del Año Lectivo seleccionado"
-                                    required
-                                />
-                            </Col>
-                        </Row>
-                        <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                            <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
                                 <FormLabel className="left" component="legend">Fin del seguimiento</FormLabel>
                                 <KeyboardDatePicker
                                     clearable
@@ -89,13 +72,12 @@ const SeventhStepDates = ({ handleGlobalState }) => {
                                     value={state.fecha_hasta}
                                     onChange={date => handleEndDate(date)}
                                     format="dd/MM/yyyy"
-                                    minDate={new Date(state.fecha_desde)}
+                                    minDate={new Date(minDate)}
                                     maxDate={new Date(maxDate)}
                                     invalidDateMessage="Formato de fecha inválido"
-                                    minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Seguimiento"
-                                    maxDateMessage="La fecha no debería ser mayor a la fecha de fin del Año Lectivo seleccionado"
+                                    minDateMessage="La fecha tiene que ser mayor a la fecha actual"
+                                    maxDateMessage="La fecha no debería ser mayor a la fecha de fin del Año Lectivo actual"
                                     required
-                                    disabled={state.fecha_desde == null ? true : false}
                                 />
                             </Col>
                         </Row>

@@ -1,5 +1,5 @@
-import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
-import { useState } from 'react';
+import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
+import { useEffect, useState } from 'react';
 import styles from './country_selector.module.scss'
 import { Row, Col } from 'react-bootstrap';
 import { motion } from 'framer-motion';
@@ -26,18 +26,23 @@ const item = {
     hidden: { opacity: 0, x: -100 },
 };
 
-const CountrySelector = ({setState}) => {
+const CountrySelector = ({ setState, previousValue, color }) => {
 
-    const [country, setCountry] = useState();
-    const [region, setRegion] = useState();
+    const [country, setCountry] = useState(previousValue ? previousValue.provincia : '');
+    const [region, setRegion] = useState(previousValue ? previousValue.localidad : '');
 
-    const handleSetCountry = (country) =>{
-        setState('provincia',country);
+    useEffect(() => {
+        setCountry(previousValue.provincia)
+        setRegion(previousValue.localidad)
+    }, [previousValue]);
+
+    const handleSetCountry = (country) => {
+        setState('provincia', country);
         setCountry(country);
     }
 
-    const handleSetRegion = (region) =>{
-        setState('localidad',region);
+    const handleSetRegion = (region) => {
+        setState('localidad', region);
         setRegion(region);
     }
 
@@ -57,13 +62,13 @@ const CountrySelector = ({setState}) => {
                             onChange={(country) => handleSetCountry(country)}
                             style={{
                                 padding: '15px 0 15px 8px',
-                                background: '#f1f1f1',
                                 borderRadius: '5px',
-                                color: '#6c7175',
+                                color: 'black',
                                 borderColor: '#bfbfbf',
                                 cursor: 'pointer',
                                 width: '100%',
                                 outline: 'none',
+                                backgroundColor: color ? '#f1f1f1' : 'unset'
                             }}
                         />
                     </motion.li>
@@ -79,13 +84,13 @@ const CountrySelector = ({setState}) => {
                             onChange={(region) => handleSetRegion(region)}
                             style={{
                                 padding: '15px 0 15px 8px',
-                                background: '#f1f1f1',
                                 borderRadius: '5px',
-                                color: '#6c7175',
+                                color: 'black',
                                 borderColor: '#bfbfbf',
                                 width: '100%',
                                 cursor: 'pointer',
                                 outline: 'none',
+                                backgroundColor: color ? '#f1f1f1' : 'unset'
                             }}
                         />
                     </motion.li>

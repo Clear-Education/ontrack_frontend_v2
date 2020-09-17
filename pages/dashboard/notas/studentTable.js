@@ -221,6 +221,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                                         </div>
                                                     )
                                                 },
+                                                filter: false
                                             },
                                         }
                                     ]}
