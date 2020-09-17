@@ -180,9 +180,6 @@ const UserProfileForm = (props) => {
 
     };
 
-    const handleChangeCountryRegion = (prop, value) => {
-        setState({ ...state, [prop]: value })
-    }
 
     const handleChangePasswordSection = (prop) => (event) => {
         if (prop == "new_password2") {
@@ -232,7 +229,7 @@ const UserProfileForm = (props) => {
 
     const handleSubmitPassword = (e) => {
         setIsLoadingPass(true)
-        props.handleChangePassword(e, passwordsData).then((result)=>{
+        props.handleChangePassword(e, passwordsData).then((result) => {
             setIsLoadingPass(false)
         });
     }
@@ -529,7 +526,7 @@ const UserProfileForm = (props) => {
                                             <Col>
                                                 <button
                                                     disabled={isLoading}
-                                                    style={{width:'185px'}}
+                                                    style={{ width: '185px' }}
                                                     className="ontrack_btn_modal ontrack_btn add_btn"
                                                     type="submit">{isLoadingPass ? 'Guardando' : 'Cambiar Contraseña'}</button>
                                             </Col>
