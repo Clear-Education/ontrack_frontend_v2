@@ -34,15 +34,12 @@ export const ResetPasswordEmailModal = ({handleCloseResetModal}) => {
 
     const handleResetPassword = (e) => {
         e.preventDefault();
-        const DATA = {
-            email: state.email
-        }
-        if(!validation.email){
+        if(!validation.email && state.email !== undefined){
             setLoading(true);
-            resetUserPasswordService(DATA).then((result) => {
+            resetUserPasswordService(state.email).then((result) => {
                 setLoading(false);
                 if (result.success) {
-                    setOpen(false);
+                    handleCloseModal();
                 }
             })
         }else{

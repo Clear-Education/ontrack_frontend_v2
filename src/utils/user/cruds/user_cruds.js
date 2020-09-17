@@ -180,7 +180,6 @@ export async function resetUserPasswordCrud(data) {
     const DATA = {
         email: data
     }
-
     return axios.post(`${config.api_url}/users/password-reset/`, DATA)
         .then((json) => {
             let response = {

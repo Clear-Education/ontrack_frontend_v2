@@ -88,9 +88,6 @@ export const ResetPasswordModal = ({ resetToken }) => {
                     <p className={styles.body}>
                         Último paso, ingresa una nueva contraseña para ingresar a Ontrack
                     </p>
-                    <p className={styles.body_advice}>
-                        Recuerda la contraseña nueva no puede ser igual a la actual
-                    </p>
                     <FormControl variant="outlined" style={{ marginTop: 10 }}>
                         <InputLabel
                             className="password-label"

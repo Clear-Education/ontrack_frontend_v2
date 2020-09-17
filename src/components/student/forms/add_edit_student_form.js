@@ -395,7 +395,11 @@ const AddEditStudentForm = (props) => {
                             </Row>
 
                             <div style={{ margin: 15 }}>
-                                <CountrySelector setState={handleChangeCountryRegion} previousValue={{ provincia: state.provincia, localidad: state.localidad }} />
+                                <CountrySelector 
+                                    setState={handleChangeCountryRegion} 
+                                    previousValue={{ provincia: state.provincia, localidad: state.localidad }} 
+                                    color = {'var(--white)'}
+                                />
                             </div>
 
                             <motion.li variants={item}>

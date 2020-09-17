@@ -10,7 +10,6 @@ import { useRouter } from "next/router";
 // Import componentes
 import styles from "../index.module.css";
 import { useDispatch, useSelector } from "react-redux";
-import Alert from "react-s-alert";
 import { logoutAction } from "../../../../../redux/actions/userActions";
 //import { Stats, Clients, MessageTemplate } from "../icons";
 

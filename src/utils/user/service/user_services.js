@@ -103,10 +103,10 @@ export async function changeUserPasswordService(data, token) {
 }
 
 
-export async function resetUserPasswordService(data) {
-    return await resetUserPasswordCrud(data).then((result) => {
+export async function resetUserPasswordService(email) {
+    return await resetUserPasswordCrud(email).then((result) => {
         if (result.success) {
-            Alert.success(`Se envió un email a ${data.email}. Corrobore su bandeja de spam`, {
+            Alert.success(`Se envió un email a ${email}. Corrobore su bandeja de spam`, {
                 effect: "stackslide",
             });
 

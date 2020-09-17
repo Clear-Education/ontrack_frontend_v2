@@ -1,4 +1,4 @@
-import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
+import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import { useEffect, useState } from 'react';
 import styles from './country_selector.module.scss'
 import { Row, Col } from 'react-bootstrap';
@@ -26,7 +26,7 @@ const item = {
     hidden: { opacity: 0, x: -100 },
 };
 
-const CountrySelector = ({ setState, previousValue }) => {
+const CountrySelector = ({ setState, previousValue, color }) => {
 
     const [country, setCountry] = useState(previousValue ? previousValue.provincia : '');
     const [region, setRegion] = useState(previousValue ? previousValue.localidad : '');
@@ -63,11 +63,12 @@ const CountrySelector = ({ setState, previousValue }) => {
                             style={{
                                 padding: '15px 0 15px 8px',
                                 borderRadius: '5px',
-                                color: '#6c7175',
+                                color: 'black',
                                 borderColor: '#bfbfbf',
                                 cursor: 'pointer',
                                 width: '100%',
                                 outline: 'none',
+                                backgroundColor: color ? '#f1f1f1' : 'unset'
                             }}
                         />
                     </motion.li>
@@ -84,11 +85,12 @@ const CountrySelector = ({ setState, previousValue }) => {
                             style={{
                                 padding: '15px 0 15px 8px',
                                 borderRadius: '5px',
-                                color: '#6c7175',
+                                color: 'black',
                                 borderColor: '#bfbfbf',
                                 width: '100%',
                                 cursor: 'pointer',
                                 outline: 'none',
+                                backgroundColor: color ? '#f1f1f1' : 'unset'
                             }}
                         />
                     </motion.li>
