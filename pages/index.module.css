@@ -44,7 +44,13 @@
     font-size: 16px;
     font-weight: 700;
     transition: all 0.3s;
+    cursor: pointer;
   }
+
+  #password_reset:hover{
+    text-decoration: underline;
+  }
+
   .circular_progress {
     position: relative;
     right: 10px;

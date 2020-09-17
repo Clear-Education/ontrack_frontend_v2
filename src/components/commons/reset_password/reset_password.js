@@ -1,21 +1,17 @@
-import { Dialog, DialogContent, DialogTitle, TextField, FormControl, DialogActions, InputLabel, OutlinedInput, InputAdornment, IconButton, Slide, FormHelperText } from "@material-ui/core"
+import { Dialog, DialogContent, DialogTitle, FormControl, DialogActions, InputLabel, OutlinedInput, InputAdornment, IconButton, Slide, FormHelperText } from "@material-ui/core"
 import { Visibility, VisibilityOff } from "@material-ui/icons";
-import { useState } from "react";
-import { useSelector } from "react-redux";
-import { changeUserPasswordService } from "../../../utils/user/service/user_services";
+import { useEffect, useState } from "react";
+import { resetUserPasswordConfirmService } from "../../../utils/user/service/user_services";
 import styles from './styles.module.scss';
 
 const INITIAL_STATE = {
-    oldPass: '',
     newPass: '',
     newPass2: '',
-    showOldPass: false,
     showNewPass: false,
     showNewPass2: false
 }
 
 const INITIAL_VALIDATION = {
-    oldPass: false,
     newPass: false
 }
 
@@ -24,21 +20,25 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 
-export const FirstLoginModal = ({user}) => {
+export const ResetPasswordModal = ({ resetToken }) => {
     const [open, setOpen] = useState(true);
     const [state, setState] = useState(INITIAL_STATE);
     const [validation, setValidation] = useState(INITIAL_VALIDATION);
     const [loading, setLoading] = useState(false);
+    const [token,setToken] = useState();
+
+    useEffect(()=>{
+        setToken(resetToken);
+    },[token])
 
     const handleChangePassword = (e) => {
         e.preventDefault();
         const DATA = {
-            password: state.oldPass,
-            new_password: state.newPass,
-            new_password2: state.newPass2
+            token: token,
+            password: state.newPass,
         }
         setLoading(true);
-        changeUserPasswordService(DATA, user && user.token).then((result) => {
+        resetUserPasswordConfirmService(DATA).then((result) => {
             setLoading(false);
             if (result.success) {
                 setOpen(false);
@@ -46,9 +46,6 @@ export const FirstLoginModal = ({user}) => {
         })
     }
 
-    const handleClickShowOldPassword = () => {
-        setState({ ...state, showOldPass: !state.showOldPass });
-    };
     const handleClickShowNewPassword = () => {
         setState({ ...state, showNewPass: !state.showNewPass });
     };
@@ -58,7 +55,7 @@ export const FirstLoginModal = ({user}) => {
     };
 
     const handleValidation = (name, value) => {
-        if (name === 'oldPass' || name === 'newPass') {
+        if (name === 'newPass') {
             setValidation({ ...validation, [name]: !(value.trim().length > 0) })
         }
         if (name === 'newPass2') {
@@ -73,65 +70,27 @@ export const FirstLoginModal = ({user}) => {
         handleValidation(prop, event.target.value);
         setState({ ...state, [prop]: event.target.value })
     }
+
     return (
         <Dialog
             open={open}
             className={'center'}
             TransitionComponent={Transition}
         >
+
             <DialogTitle>
                 <span style={{ fontWeight: '600' }}>
-                    ¡ Bienvenido <spas className={styles.name_label}>{user && user.name}</spas> !
+                    Nueva contraseña
                 </span>
             </DialogTitle>
             <form onSubmit={handleChangePassword}>
                 <DialogContent>
                     <p className={styles.body}>
-                        Gracias por registrare en OnTrack. Por motivos de seguiridad, al ser tu primer inicio de sesión, te pediremos que cambies tu contraseña!
+                        Último paso, ingresa una nueva contraseña para ingresar a Ontrack
                     </p>
                     <p className={styles.body_advice}>
-                       Recuerda la contraseña nueva no puede ser igual a la actual
-                    </p>    
-                    <FormControl variant="outlined">
-                        <InputLabel
-                            className="password-label"
-                            htmlFor="password"
-                        >
-                            Contraseña brindada por el administrador
-                        </InputLabel>
-                        <OutlinedInput
-                            required
-                            id="oldPass"
-                            type={state.showOldPass ? "text" : "password"}
-                            value={state.oldPass}
-                            onChange={handleChange("oldPass")}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowOldPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                        edge="end"
-                                    >
-                                        {state.showOldPass ? (
-                                            <Visibility style={{ color: "#bebebe" }} />
-                                        ) : (
-                                                <VisibilityOff style={{ color: "#bebebe" }} />
-                                            )}
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            labelWidth={90}
-                        />
-                    </FormControl>
-                    {validation.oldPass && (
-                        <FormHelperText
-                            className="helper-text"
-                            style={{ color: "rgb(182, 60, 47)" }}
-                        >
-                            Este campo es obligatorio
-                        </FormHelperText>
-                    )}
+                        Recuerda la contraseña nueva no puede ser igual a la actual
+                    </p>
                     <FormControl variant="outlined" style={{ marginTop: 10 }}>
                         <InputLabel
                             className="password-label"
@@ -227,4 +186,4 @@ export const FirstLoginModal = ({user}) => {
 }
 
 
-export default FirstLoginModal;
+export default ResetPasswordModal;
