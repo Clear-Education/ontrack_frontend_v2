@@ -108,6 +108,8 @@ const UserProfileForm = (props) => {
     const [date, setDate] = useState(props.user.date_of_birth);
     const user = useSelector((store) => store.user);
     const [image, setImage] = useState(null);
+    const [isLoading, setIsLoading] = useState(false)
+    const [isLoadingPass, setIsLoadingPass] = useState(false)
 
 
     useEffect(() => {
@@ -229,7 +231,14 @@ const UserProfileForm = (props) => {
     }
 
     const handleSubmitPassword = (e) => {
-        props.handleChangePassword(e, passwordsData);
+        setIsLoadingPass(true)
+        props.handleChangePassword(e, passwordsData).then((result)=>{
+            setIsLoadingPass(false)
+        });
+    }
+
+    const handleChangeCountryRegion = (prop, value) => {
+        setState({ ...state, [prop]: value })
     }
 
     return (
@@ -376,6 +385,10 @@ const UserProfileForm = (props) => {
                                             </motion.li>
                                         </Col>
                                     </Row>
+                                    <div style={{ margin: 15, marginBottom: 25 }}>
+                                        <CountrySelector setState={handleChangeCountryRegion} previousValue={{ provincia: user.user.provincia, localidad: user.user.localidad }} />
+                                    </div>
+
                                     <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
 
                                         <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
@@ -402,16 +415,18 @@ const UserProfileForm = (props) => {
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
+
                                         <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
                                                 <FormControl variant="outlined">
                                                     <TextField
-                                                        id="direccion"
-                                                        name="direccion"
-                                                        label="Direccion"
+                                                        id="phone"
+                                                        name="phone"
+                                                        label="Telefono"
                                                         variant="outlined"
-                                                        value={state.direccion}
-                                                        onChange={handleChange("direccion")}
+                                                        value={state.phone}
+                                                        onChange={handleChange("phone")}
+                                                        type="number"
                                                     />
                                                 </FormControl>
                                             </motion.li>
@@ -426,8 +441,10 @@ const UserProfileForm = (props) => {
                                         <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
                                             <Col>
                                                 <button
+                                                    disabled={isLoading}
+                                                    style={{ width: '185px' }}
                                                     className="ontrack_btn_modal ontrack_btn add_btn"
-                                                    type="submit">Editar</button>
+                                                    type="submit">{isLoading ? 'Editando...' : 'Editar'}</button>
                                             </Col>
                                         </Row>
                                     </motion.li>
@@ -511,8 +528,10 @@ const UserProfileForm = (props) => {
                                         <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
                                             <Col>
                                                 <button
+                                                    disabled={isLoading}
+                                                    style={{width:'185px'}}
                                                     className="ontrack_btn_modal ontrack_btn add_btn"
-                                                    type="submit">Cambiar Contraseña</button>
+                                                    type="submit">{isLoadingPass ? 'Guardando' : 'Cambiar Contraseña'}</button>
                                             </Col>
                                         </Row>
                                     </motion.li>

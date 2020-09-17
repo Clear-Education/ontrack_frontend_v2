@@ -1,5 +1,5 @@
 import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './country_selector.module.scss'
 import { Row, Col } from 'react-bootstrap';
 import { motion } from 'framer-motion';
@@ -26,13 +26,18 @@ const item = {
     hidden: { opacity: 0, x: -100 },
 };
 
-const CountrySelector = ({ setState, user }) => {
+const CountrySelector = ({setState, previousValue}) => {
 
-    const [country, setCountry] = useState(user ? user.provincia : null);
-    const [region, setRegion] = useState(user ? user.localidad : null);
+    const [country, setCountry] = useState(previousValue ? previousValue.provincia : '');
+    const [region, setRegion] = useState(previousValue ? previousValue.localidad : '');
 
-    const handleSetCountry = (country) => {
-        setState('provincia', country);
+    useEffect(()=>{
+       setCountry(previousValue.provincia)
+       setRegion(previousValue.localidad)
+    },[previousValue]);
+    
+    const handleSetCountry = (country) =>{
+        setState('provincia',country);
         setCountry(country);
     }
 
@@ -57,7 +62,6 @@ const CountrySelector = ({ setState, user }) => {
                             onChange={(country) => handleSetCountry(country)}
                             style={{
                                 padding: '15px 0 15px 8px',
-                                background: '#f1f1f1',
                                 borderRadius: '5px',
                                 color: '#6c7175',
                                 borderColor: '#bfbfbf',
@@ -79,7 +83,6 @@ const CountrySelector = ({ setState, user }) => {
                             onChange={(region) => handleSetRegion(region)}
                             style={{
                                 padding: '15px 0 15px 8px',
-                                background: '#f1f1f1',
                                 borderRadius: '5px',
                                 color: '#6c7175',
                                 borderColor: '#bfbfbf',

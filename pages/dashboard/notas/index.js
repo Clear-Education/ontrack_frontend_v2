@@ -1,6 +1,6 @@
 import TitlePage from "../../../src/components/commons/title_page/title_page";
 import styles from './styles.module.scss'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Alert from "react-s-alert";
 
 import Stepper from '@material-ui/core/Stepper';
@@ -8,10 +8,11 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
-import SelectInput from "./selectInput";
+import SelectInput from "../../../src/components/commons/select_input/select_input"
 import StudentTable from "./studentTable";
 import { addNotasService, editNotasService, deleteNotasService } from "../../../src/utils/notas/services/notas_services";
 import { useSelector } from "react-redux";
+import { getActualSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
 
 
 const INITIAL_STATE = {
@@ -25,49 +26,32 @@ const INITIAL_STATE = {
 
 const Notas = () => {
 
-    /* const url = `${config.api_url}/` */
     const [state, setState] = useState(INITIAL_STATE);
-    const [selectedData, setSelectedData] = useState()
     const user = useSelector((store) => store.user);
-    const [isLoading, setIsLoading] = useState(false)
 
-
-
-    /* 
-        let { data } = useSWR(url, () => {
-            setIsLoading(true);
-            return getnotasService(user.user.token).then((result) => {
-                setIsLoading(false)
-                return result.result
-            })
-        }
-        );
-     */
-
+    useEffect(()=>{
+        getActualSchoolYearService(user.user.token).then((result)=>{
+            setState({...state,school_year: result.result.id});
+        })
+    },[])
 
     async function addnotas(e, data) {
         e.preventDefault();
-        setIsLoading(true);
         return await addNotasService(user.user.token, data).then((result) => {
-            setIsLoading(false);
             return result;
         })
     }
 
     async function editnotas(e, data) {
         e.preventDefault();
-        setIsLoading(true);
         return await editNotasService(user.user.token, data).then((result) => {
-            setIsLoading(false);
             return result;
         })
     }
 
     async function deletenotas(e, data) {
         e.preventDefault();
-        setIsLoading(true);
         return await deleteNotasService(user.user.token, data).then((result) => {
-            setIsLoading(false);
             return result;
         })
     }
@@ -79,13 +63,12 @@ const Notas = () => {
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
-            'Seleccione el año lectivo deseado',
-            'Seleccione el año deseado',
-            'Seleccione el curso deseado',
-            'Seleccione la materia deseada',
-            'Seleccione el examen deseado',
-            'Seleccione los alumnos'
-        ];
+                'Seleccione el año deseado',
+                'Seleccione el curso deseado',
+                'Seleccione la materia deseada',
+                'Seleccione el examen deseado',
+                'Seleccione los alumnos'
+                ];
     }
 
     function getStepContent(step) {
@@ -93,16 +76,14 @@ const Notas = () => {
             case 0:
                 return <SelectInput type="department" data={state} changeAction={handleChange} />
             case 1:
-                return <SelectInput type="anio_lectivo" data={state} changeAction={handleChange} />;
+                return <SelectInput type="year" data={state} changeAction={handleChange} show_school_year={false}/>;
             case 2:
-                return <SelectInput type="year" data={state} changeAction={handleChange} />;
-            case 3:
                 return <SelectInput type="curso" data={state} changeAction={handleChange} />;
-            case 4:
+            case 3:
                 return <SelectInput type="subject" data={state} changeAction={handleChange} />;
-            case 5:
+            case 4:
                 return <SelectInput type="exam" data={state} changeAction={handleChange} />;
-            case 6:
+            case 5:
                 return <StudentTable
                     type="Alumnos"
                     data={state}
@@ -162,7 +143,7 @@ const Notas = () => {
                                         Anterior
                                     </Button>
                                     <button
-                                        onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'school_year' : activeStep === 2 ? 'year' : activeStep === 3 ? 'curso' : activeStep === 4 ? 'subject' : activeStep === 5 ? 'exam' : 'send')}
+                                        onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ?  'year' : activeStep === 2 ? 'curso' : activeStep === 3 ? 'subject' : activeStep === 4 ? 'exam' : 'send')}
                                         className={`ontrack_btn csv_btn ${styles.stepper_button}`}
                                     >
                                         {activeStep === steps.length - 1 ? 'Volver al Inicio' : 'Siguiente'}

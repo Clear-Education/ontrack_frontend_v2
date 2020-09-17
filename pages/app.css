@@ -231,6 +231,12 @@ button:focus {
   color: var(--orange);
 }
 
+/* TRANFER */
+
+.MuiButton-outlinedSizeSmall{
+  margin-bottom: 20px !important;
+}
+
 /* STEPPER */
 
 .MuiStepIcon-root.MuiStepIcon-active,.MuiStepIcon-root.MuiStepIcon-completed{
