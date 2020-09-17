@@ -19,6 +19,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 // Import componentes
 import styles from "./index.module.css";
+import FirstLoginModal from '../src/components/commons/first_login/first_login';
 
 //import redux tools
 import { useDispatch, useSelector } from "react-redux";
@@ -66,6 +67,9 @@ const Login = () => {
   const [loginState, setLoginState] = useState(LOGIN_INITIAL_STATE);
   const [validation, setValidation] = useState(LOGIN_VALIDATION_STATE);
   const [isLoading,setIsLoading] = useState(false);
+  const [firstLogin, setFirstLogin] = useState();
+  const [newUser,setNewUser] = useState();
+
   const hadleValidationEmail = (value) => {
     setValidation({
       ...validation,
@@ -111,10 +115,15 @@ const Login = () => {
     } else {
       setIsLoading(true);
       dispatch(loginAction(loginState.email, loginState.password)).then(
-        (status) => {
+        (result) => {
           setIsLoading(false);
-          if (status) {
-            router.push("/dashboard");
+          if (result.success) {
+            if(result.first_login){
+              setFirstLogin(true);
+              setNewUser(result.user);
+            }else{
+              router.push("/dashboard");
+            }
           }
         }
       );
@@ -142,6 +151,7 @@ const Login = () => {
             id={styles.right_form}
           >
             <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 0 }}>
+            {firstLogin && <FirstLoginModal user={newUser}/>}
               <form id="form_login" style={{ width: "100%" }}>
                 <Col
                   style={{

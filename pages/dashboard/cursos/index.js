@@ -92,7 +92,6 @@ const Cursos = () => {
                 });
             }
         } else {
-            console.log(state.students);
         }
 
 

@@ -142,7 +142,6 @@ const AddUserForm = (props) => {
                 })
                 return
             } else {
-                console.log(value);
                 setValidation({
                     ...validation,
                     [prop]: true
@@ -157,7 +156,6 @@ const AddUserForm = (props) => {
     };
 
     const handleValidationPassword = (prop, value) => {
-        console.log(state.password, value)
         if (state.password != value) {
             setValidation({
                 ...validation,

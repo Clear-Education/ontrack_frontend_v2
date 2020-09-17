@@ -79,7 +79,6 @@ const AddEditStudentForm = (props) => {
             getStudentService(user.user.token, props.data).then((result) => {
                 setIsLoading(false)
                 if (result.success) {
-                    debugger;
                     setState(result.result);
                 } else {
                     props.handleClose();
@@ -107,7 +106,6 @@ const AddEditStudentForm = (props) => {
                 })
                 return
             } else {
-                console.log(value);
                 setValidation({
                     ...validation,
                     [prop]: true
@@ -123,7 +121,6 @@ const AddEditStudentForm = (props) => {
                 })
                 return
             } else {
-                console.log(value);
                 setValidation({
                     ...validation,
                     [prop]: true

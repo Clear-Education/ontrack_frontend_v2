@@ -142,7 +142,6 @@ const UserProfileForm = (props) => {
                 })
                 return
             } else {
-                console.log(value);
                 setValidation({
                     ...validation,
                     [prop]: true

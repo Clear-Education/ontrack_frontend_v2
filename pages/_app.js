@@ -21,7 +21,7 @@ import esLocale from "date-fns/locale/es";
 import NProgress from "nprogress";
 import Router from "next/router";
 import "./progress_bar.css";
-import FirstLoginModal from '../src/components/commons/first_login/first_login';
+
 //APLICACIÓN
 
 // Animacion de cambio de pagina
@@ -30,13 +30,9 @@ Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
 const App = ({ Component, pageProps, router }) => {
-
-  const [firstLogin, setFirstLogin] = useState();
+  const AUTH_USER = validateLoggedInUser();
 
   useEffect(() => {
-    const AUTH_USER = validateLoggedInUser();
-    setFirstLogin(validateFirstLogin());
-
     if (
       AUTH_USER !== undefined &&
       AUTH_USER.user.isLoggedIn &&
@@ -125,7 +121,6 @@ const App = ({ Component, pageProps, router }) => {
                   sm={12}
                   xs={12}
                 >
-                  {firstLogin && <FirstLoginModal />}
                   <Component {...pageProps} key={router.route} />
                 </Col>
               </Row>

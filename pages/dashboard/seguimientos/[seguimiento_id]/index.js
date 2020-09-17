@@ -34,14 +34,6 @@ const Seguimiento = () => {
         }
     }, [trackingId])
 
-    /* useEffect(()=>{
-        if(trackingData){
-            getStudentGoalsService(user.user.token,66,trackingId).then((result)=>{
-                console.log(result);
-            })
-        }
-    },[trackingData]); */
-
     const handleSelectedStudent = (student) => {
         setSelectedStudent(student);
     }

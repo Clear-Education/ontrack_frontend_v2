@@ -23,8 +23,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 
-export const FirstLoginModal = () => {
-
+export const FirstLoginModal = ({user}) => {
     const [open, setOpen] = useState(true);
     const [state, setState] = useState(INITIAL_STATE);
     const [validation, setValidation] = useState(INITIAL_VALIDATION);
@@ -38,15 +37,13 @@ export const FirstLoginModal = () => {
             new_password2: state.newPass2
         }
         setLoading(true);
-        changeUserPasswordService(DATA, user.user.token).then((result) => {
+        changeUserPasswordService(DATA, user && user.token).then((result) => {
             setLoading(false);
             if (result.success) {
                 setOpen(false);
             }
         })
     }
-
-    const user = useSelector((store) => store.user);
 
     const handleClickShowPassword = () => {
         setState({ ...state, showPassword: !state.showPassword });
@@ -56,7 +53,6 @@ export const FirstLoginModal = () => {
     };
 
     const handleValidation = (name, value) => {
-        debugger;
         if (name === 'oldPass' || name === 'newPass') {
             setValidation({ ...validation, [name]: !(value.trim().length > 0) })
         }
@@ -80,7 +76,7 @@ export const FirstLoginModal = () => {
         >
             <DialogTitle>
                 <span style={{ fontWeight: '600' }}>
-                    ¡ Bienvenido <spas className={styles.name_label}>{user.user.name}</spas> !
+                    ¡ Bienvenido <spas className={styles.name_label}>{user && user.name}</spas> !
                 </span>
             </DialogTitle>
             <form onSubmit={handleChangePassword}>

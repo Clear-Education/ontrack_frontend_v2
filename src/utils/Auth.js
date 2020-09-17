@@ -9,9 +9,6 @@ export function validateLoggedInUser() {
   return state;
 }
 
-export function validateFirstLogin(){
-  return false;
-}
 export async function login(user, password) {
   var formData = new FormData();
   formData.append("username", user);
@@ -36,7 +33,8 @@ export async function login(user, password) {
           email,
           legajo,
           institucion,
-          groups
+          groups,
+          first_login
         } = json.data;
         let userData = {
           id,
@@ -54,7 +52,8 @@ export async function login(user, password) {
           email,
           legajo,
           institucion,
-          groups
+          groups,
+          first_login
         };
         let appState = {
           isLoggedIn: true,

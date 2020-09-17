@@ -11,7 +11,12 @@ export const loginAction = (username, password) => {
     dispatch({ type: types.LOADING_USER });
     return login(username, password).then((result) => {
       if (result.isLoggedIn) {
-        return dispatch({ type: types.LOGIN, payload: result.user });
+        if(result.user.first_login){
+          return {success: true, first_login: true, user: result.user}
+        }else{
+          dispatch({ type: types.LOGIN, payload: result.user });
+          return {success:true}
+        }
       } else {
         dispatch({ type: types.NO_LOADING_USER });
         result.result.forEach((element) => {
