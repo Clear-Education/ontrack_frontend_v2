@@ -21,3 +21,9 @@
     background: var(--main-color-dark);
     box-shadow: '0 4px 10px 0 rgba(0,0,0,.25)';
 }
+
+.sub_menu_container{
+    position: absolute;
+    left: -10px;
+    top: 40px;
+}

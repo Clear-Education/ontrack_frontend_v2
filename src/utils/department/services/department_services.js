@@ -1,4 +1,4 @@
-import { getDepartmentCrud, addDepartmentCrud, editDepartmentCrud, deleteDepartmentCrud } from "../cruds/department_cruds";
+import { getDepartmentCrud, getOneDepartmentCrud, addDepartmentCrud, editDepartmentCrud, deleteDepartmentCrud } from "../cruds/department_cruds";
 import Alert from "react-s-alert";
 
 
@@ -6,6 +6,20 @@ export async function getDepartmentService(token) {
     return await getDepartmentCrud(token).then((result) => {
         if (result.success) {
 
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
+            });
+        }
+        return result;
+    })
+}
+
+export async function getOneDepartmentService(id, token) {
+    return await getOneDepartmentCrud(id, token).then((result) => {
+        if (result.success) {
         } else {
             result.result.forEach((element) => {
                 Alert.error(element.message, {
