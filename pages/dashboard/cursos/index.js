@@ -11,7 +11,6 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import SelectInput from "../../../src/components/commons/select_input/select_input"
-import StudentTable from "./studentTable";
 import { addMultipleStudentsCourseService, deleteMultipleStudentsCourseService } from "../../../src/utils/student/service/student_service";
 import { useSelector } from "react-redux";
 import { getActualSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
@@ -24,13 +23,11 @@ const INITIAL_STATE = {
     curso: '',
     studentsToAdd: [],
     studentsToDelete: [],
-    students: [],
 }
 
 const Cursos = () => {
 
     const [state, setState] = useState(INITIAL_STATE);
-    const [selectedStudentTable, setSelectedStudentTable] = useState("add");
     const user = useSelector((store) => store.user);
 
     useEffect(() => {
@@ -40,21 +37,18 @@ const Cursos = () => {
     }, [])
 
 
-    const handleChange = (prop, value, _student_course_id) => {
-        setState({ ...state, [prop]: value })
+    const handleChange = (prop, value) => {
+        if(prop === 'studentsToAdd'){
+            state.studentsToAdd = value;
+        }else if(prop === 'studentsToDelete'){
+            state.studentsToDelete = value;
+        }
+        else{
+            setState({ ...state, [prop]: value })
+        }
+
     }
 
-    const handleSelectedStudentTable = (table) => {
-        setSelectedStudentTable(table);
-        setState((prevState) => ({
-            school_year: prevState.school_year,
-            department: prevState.department,
-            year: prevState.year,
-            curso: prevState.curso,
-            studentsToAdd: [],
-            studentsToDelete: [],
-        }))
-    }
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
@@ -92,6 +86,7 @@ const Cursos = () => {
                 });
             }
         } else {
+            deleteMultipleStudentsCourseService(user.user.token)
         }
 
 

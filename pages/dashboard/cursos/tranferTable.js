@@ -22,15 +22,15 @@ function intersection(a, b) {
 const TransferList = ({ changeAction, data }) => {
 
     const user = useSelector((store) => store.user);
-    const [left, setLeft] = useState([]);
-    const [right, setRight] = useState([]);
+    const [studentsToDelete, setStudentsToDelete] = useState([]);
+    const [studentsToAdd, setStudentsToAdd] = useState([]);
     const [checked, setChecked] = useState([]);
-    const leftChecked = intersection(checked, left);
-    const rightChecked = intersection(checked, right);
+    const leftChecked = intersection(checked, studentsToDelete);
+    const rightChecked = intersection(checked, studentsToAdd);
 
     useEffect(() => {
         getStudentsService(user.user.token, data.school_year).then((result) => {
-            setLeft(result.result.results)
+            setStudentsToDelete(result.result.results)
         })
     }, []);
 
@@ -40,7 +40,7 @@ const TransferList = ({ changeAction, data }) => {
             result.result.results.forEach((element) => {
                 students.push(element.alumno);
             })
-            setRight(students);
+            setStudentsToAdd(students);
         })
     }, []);
 
@@ -55,33 +55,39 @@ const TransferList = ({ changeAction, data }) => {
         setChecked(newChecked);
     };
 
+    const setData = (studentsToAdd,studentsToDelete,_checked) =>{
+        setStudentsToAdd(studentsToAdd);
+        setStudentsToDelete(studentsToDelete);
+        changeAction('studentsToAdd',studentsToAdd);
+        changeAction('studentsToDelete',studentsToDelete);
+        if (_checked) setChecked(_checked);
+        debugger;
+    }
+
     const handleAllRight = () => {
-        const DATA = right.concat(left);
-        setRight(DATA);
-        changeAction('students',DATA);
-        setLeft([]);
+        const STUDENTS_TO_ADD = studentsToAdd.concat(studentsToDelete);
+        const STUDENTS_TO_DELETE = [];
+        setData(STUDENTS_TO_ADD,STUDENTS_TO_DELETE);
     };
 
     const handleCheckedRight = () => {
-        const DATA = right.concat(leftChecked);
-        setRight(DATA);
-        changeAction('students',DATA);
-        setLeft(not(left, leftChecked));
-        setChecked(not(checked, leftChecked));
+        const STUDENTS_TO_ADD = studentsToAdd.concat(leftChecked);
+        const STUDENTS_TO_DELETE = not(studentsToDelete, leftChecked);
+        const CHECKED = not(checked, leftChecked);
+        setData(STUDENTS_TO_ADD,STUDENTS_TO_DELETE,CHECKED);
     };
 
     const handleAllLeft = () => {
-        setLeft(left.concat(right));
-        setRight([]);
-        changeAction('students',[]);
+        const STUDENTS_TO_ADD = [];
+        const STUDENTS_TO_DELETE = studentsToDelete.concat(studentsToAdd);
+        setData(STUDENTS_TO_ADD,STUDENTS_TO_DELETE);
     };
 
     const handleCheckedLeft = () => {
-        const DATA = not(right, rightChecked);
-        setLeft(left.concat(rightChecked));
-        setRight(DATA);
-        changeAction('students',DATA);
-        setChecked(not(checked, rightChecked));
+        const STUDENTS_TO_ADD = not(studentsToAdd, rightChecked);
+        const STUDENTS_TO_DELETE = studentsToDelete.concat(rightChecked);
+        const CHECKED = not(checked, rightChecked);
+        setData(STUDENTS_TO_ADD,STUDENTS_TO_DELETE,CHECKED);
     };
 
 
@@ -111,7 +117,7 @@ const TransferList = ({ changeAction, data }) => {
 
                 <Grid item className={styles.grid_item_container}>
                 <span className={styles.grid_title}>Alumnos disponibles</span>
-                    {customList(left)}
+                    {customList(studentsToDelete)}
                 </Grid>
 
                 <Grid item>
@@ -120,7 +126,7 @@ const TransferList = ({ changeAction, data }) => {
                             variant="outlined"
                             size="small"
                             onClick={handleAllRight}
-                            disabled={left.length === 0}
+                            disabled={studentsToDelete.length === 0}
                             aria-label="move all right"
                         >
                             ≫
@@ -147,7 +153,7 @@ const TransferList = ({ changeAction, data }) => {
                             variant="outlined"
                             size="small"
                             onClick={handleAllLeft}
-                            disabled={right.length === 0}
+                            disabled={studentsToAdd.length === 0}
                             aria-label="move all left"
                         >
                             ≪
@@ -157,7 +163,7 @@ const TransferList = ({ changeAction, data }) => {
                 
                 <Grid item className={styles.grid_item_container}>
                     <span className={styles.grid_title}>Alumnos del curso</span>
-                    {customList(right)}
+                    {customList(studentsToAdd)}
                 </Grid>
             </Grid>
         </div>
