@@ -30,7 +30,9 @@ const TransferList = ({ changeAction, data }) => {
 
     useEffect(() => {
         getStudentsService(user.user.token, data.school_year).then((result) => {
-            setStudentsToDelete(result.result.results)
+            const STUDENTS = result.result.results;
+            setStudentsToDelete(STUDENTS)
+            changeAction('studentsToDelete',STUDENTS);
         })
     }, []);
 
@@ -41,6 +43,7 @@ const TransferList = ({ changeAction, data }) => {
                 students.push(element.alumno);
             })
             setStudentsToAdd(students);
+            changeAction('studentsToAdd',students);
         })
     }, []);
 
@@ -61,7 +64,6 @@ const TransferList = ({ changeAction, data }) => {
         changeAction('studentsToAdd',studentsToAdd);
         changeAction('studentsToDelete',studentsToDelete);
         if (_checked) setChecked(_checked);
-        debugger;
     }
 
     const handleAllRight = () => {

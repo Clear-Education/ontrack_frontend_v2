@@ -86,7 +86,19 @@ const Cursos = () => {
                 });
             }
         } else {
-            deleteMultipleStudentsCourseService(user.user.token)
+            const STUDENTS_DATA = {
+                curso: state.curso,
+                anio_lectivo: state.school_year,
+                studentsToDelete: state.studentsToDelete,
+                studentsToAdd: state.studentsToAdd
+            }
+            deleteMultipleStudentsCourseService(user.user.token,STUDENTS_DATA).then((result)=>{
+                if(result.success){
+                    addMultipleStudentsCourseService(user.user.token,STUDENTS_DATA).then((result)=>{
+                        if(result.success) {}
+                    })
+                }
+            })
         }
 
 
