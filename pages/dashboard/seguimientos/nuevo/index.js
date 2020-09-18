@@ -245,6 +245,7 @@ const CreateTracking = () => {
         addTrackingService(globalTrackingData, user.user.token).then((result) => {
             setIsLoading(false);
             if (result.success) {
+                dispatch({ type: types.RESET_TRACKING_DATA });
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
             }
         });
@@ -257,7 +258,6 @@ const CreateTracking = () => {
     };
 
     const handleReset = () => {
-        dispatch({ type: types.RESET_TRACKING_DATA });
         setGlobalTrackingData(INITIAL_TRACKING_DATA);
         setActiveStep(0);
     };
