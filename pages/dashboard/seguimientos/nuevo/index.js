@@ -35,7 +35,7 @@ import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
 //REDUX TYPES
 import * as types from "../../../../redux/types";
-import { addTrackingService } from '../../../../src/utils/tracking/services/tracking_services';
+import { addTrackingService, checkExistingTrackingNameServie } from '../../../../src/utils/tracking/services/tracking_services';
 
 import { getOneSchoolYearService } from "../../../../src/utils/school_year/services/school_year_services";
 
@@ -229,9 +229,22 @@ const CreateTracking = () => {
     const handleNext = () => {
         const validateData = handleValidateData();
         if (validateData) {
-            const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1 }
-            dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData })
-            activeStep === steps.length - 1 ? handleSubmitTracking() : setActiveStep((prevActiveStep) => prevActiveStep + 1);;
+
+            switch (activeStep) {
+
+                case steps.length - 1:
+                    handleSubmitTracking()
+                    break;
+
+                case 0:
+                    checkExistingTrackingName();
+                    break;
+
+                default:
+                    saveTrackingDataToStore();
+                    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                    break;
+            }
         } else {
             Alert.error("Hay campos requeridos vacíos o que presentan errores", {
                 effect: "stackslide",
@@ -240,7 +253,17 @@ const CreateTracking = () => {
 
     };
 
+    const checkExistingTrackingName = () => {
+        checkExistingTrackingNameServie(user.user.token, globalTrackingData.nombre).then((result) => {
+            if (result.success) {
+                saveTrackingDataToStore();
+                setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            }
+        })
+    }
+
     const handleSubmitTracking = () => {
+        saveTrackingDataToStore();
         setIsLoading(true);
         addTrackingService(globalTrackingData, user.user.token).then((result) => {
             setIsLoading(false);
@@ -249,6 +272,11 @@ const CreateTracking = () => {
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
             }
         });
+    }
+
+    const saveTrackingDataToStore = () => {
+        const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1 }
+        dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData });
     }
 
     const handleBack = () => {

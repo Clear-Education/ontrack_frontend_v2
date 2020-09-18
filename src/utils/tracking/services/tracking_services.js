@@ -1,6 +1,6 @@
-import { getTrackingCrud, addTrackingCrud, editTrackingCrud, deleteTrackingCrud, getTrackingRolesCrud } from "../cruds/tracking_cruds";
+import { getTrackingCrud, addTrackingCrud, editTrackingCrud, deleteTrackingCrud, getTrackingRolesCrud, checkExistingTrackingNameCrud } from "../cruds/tracking_cruds";
 import Alert from "react-s-alert";
-import { convertDate, parseParticipants, parseTrackingData } from "./tracking_functions_services";
+import { parseTrackingData } from "./tracking_functions_services";
 import { addMultipleGoalsService } from "../../goals/services/goals_services";
 
 
@@ -91,3 +91,15 @@ export async function deleteTrackingService(token, data) {
 }
 
 
+export async function checkExistingTrackingNameServie(token,trackingName) {
+    return await checkExistingTrackingNameCrud(token,trackingName).then((result) => {
+        if (result.success) {
+
+        } else {
+            Alert.error("Ya existe un seguimiento con el nombre elegido, prueba uno diferente!", {
+                effect: "stackslide",
+            });
+        }
+        return result;
+    })
+}

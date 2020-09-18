@@ -94,3 +94,24 @@ export async function deleteTrackingCrud(data, auth_token) {
             return errorHandler(error);
         });
 }
+
+
+export async function checkExistingTrackingNameCrud(token,trackingName) {
+    const DATA = {
+        nombre: trackingName
+    }
+    return axios.post(`${config.api_url}/seguimientos/unique/`, DATA, {
+        headers: {
+            Authorization: `Token ${token}`,
+        }
+    })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+            return response;
+        }).catch((error) => {
+            return errorHandler(error);
+        });
+}
