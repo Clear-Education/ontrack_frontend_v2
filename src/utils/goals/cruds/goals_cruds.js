@@ -102,8 +102,12 @@ export async function getGoalsTypeCrud(auth_token) {
 
 export async function editGoalsCrud(data, auth_token) {
 
+    const DATA = {
+        id:data.id,
+        valor_objetivo_cuantitativo: data.value,
+    }
     return axios
-        .patch(`${config.api_url}/`, data, {
+        .patch(`${config.api_url}/objetivos/${DATA.id}/`, DATA, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },

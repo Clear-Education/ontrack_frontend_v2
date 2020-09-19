@@ -2,8 +2,29 @@ import { Row, Col, FormLabel } from "react-bootstrap";
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import styles from './styles.module.scss';
+import { useEffect, useState } from "react";
 
-const DateFilter = ({ handleDate, readOnly, start, end }) => {
+const INITIAL_STATE = {
+    start: '',
+    end: '',
+}
+const DateFilter = ({ handleDate, readOnlyStart, readOnlyEnd, start, end }) => {
+
+    const [state,setState] = useState(INITIAL_STATE);
+    
+    useEffect(()=>{
+        setState({...state, start: start})
+    },[start])
+
+
+    useEffect(()=>{
+        setState({...state, end: end})
+    },[end])
+
+    const handleEndDate = (date) =>{
+        setState({...state, end: date})
+        handleDate(date);
+    }
 
     return (
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
@@ -11,13 +32,14 @@ const DateFilter = ({ handleDate, readOnly, start, end }) => {
             <Col lg={5} md={5} sm={5} xs={5}>
 
                 {
-                    readOnly ?
+                    readOnlyStart ?
                         <span className={styles.viwer_date}>{start}</span>
                         :
                         <>
                             <span className={styles.date_label}>Desde</span>
                             <KeyboardDatePicker
                                 clearable
+                                value={state.start ? state.start : null}
                                 placeholder="DD/MM/YYYY"
                                 format="dd/MM/yyyy"
                                 invalidDateMessage="Formato de fecha inválido"
@@ -34,12 +56,14 @@ const DateFilter = ({ handleDate, readOnly, start, end }) => {
             <Col lg={5} md={5} sm={5} xs={5}>
 
                 {
-                    readOnly ?
+                    readOnlyEnd ?
                         <span className={styles.viwer_date}>{end}</span> :
                         <>
                             <span className={styles.date_label}>Hasta</span>
                             <KeyboardDatePicker
                                 clearable
+                                value={state.end ? state.end : null}
+                                onChange = {(date) => handleEndDate(date)}
                                 placeholder="DD/MM/YYYY"
                                 format="dd/MM/yyyy"
                                 invalidDateMessage="Formato de fecha inválido"

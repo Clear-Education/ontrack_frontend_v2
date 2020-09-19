@@ -162,8 +162,6 @@ const CreateTracking = () => {
     const trackingSolicitud = useSelector((store) => store.trackingSolicitud);
     const [solicitudData, setSolicitudData] = useState();
 
-    console.log(trackingSolicitud)
-
     useEffect(() => {
         if (trackingSolicitud.department != "") {
             getOneDepartmentService(trackingSolicitud.department, user.user.token).then(result => {

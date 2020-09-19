@@ -3,17 +3,24 @@ import { Row, Col } from "react-bootstrap";
 import TitlePage from '../../../../../src/components/commons/title_page/title_page';
 import SubMenu from '../../../../../src/components/commons/sub_menu/sub_menu';
 import { useEffect, useState } from 'react';
-import { getTrackingService } from '../../../../../src/utils/tracking/services/tracking_services';
+import { editTrackingService, getTrackingService } from '../../../../../src/utils/tracking/services/tracking_services';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ConfigTable from '../../../../../src/components/configuration/config_table/config_table';
-import { IconButton, Collapse, Switch } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
+import { Collapse, IconButton, Switch } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DateFilter from '../../../../../src/components/tracking/view/date_filter/date_filter';
 import EighthStepGoals from '../../../../../src/components/tracking/8_step_goals/eighth_step_goals';
 import { getTrackingGoalsService } from '../../../../../src/utils/goals/services/goals_services';
+import EditIcon from '@material-ui/icons/Edit';
+import DoneIcon from '@material-ui/icons/Done';
+
+//REDUX TYPES
+import * as types from "../../../../../redux/types";
+
+
+
 const Configuracion = () => {
 
     const router = useRouter();
@@ -21,12 +28,131 @@ const Configuracion = () => {
     const [trackingId, setTrackingId] = useState();
     const [goalsData, setGoalsData] = useState();
     const [trackingData, setTrackingData] = useState();
-    const [trackingStatus,setTrackingStatus] = useState(null);
-    const [firstSection, setFirstSection] = useState(false);
-    const [secondSection, setSecondSection] = useState(false);
-    const [thirdSection, setThirdSection] = useState(false);
+    const [trackingStatus, setTrackingStatus] = useState(null);
+    const [firstSection, setFirstSection] = useState();
+    const [secondSection, setSecondSection] = useState();
+    const [thirdSection, setThirdSection] = useState();
+    const [dangerZone, setDangerZone] = useState();
+    const [loading, setLoading] = useState(true);
+    const [editDates, setEditDates] = useState(true);
+    const storedTrackingData = useSelector((store) => store.tracking);
 
-    const STUDENTS_DATA = trackingData && trackingData.alumnos.map((student) => { return student.alumno });
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (trackingId) {
+            getTrackingService(user.user.token, trackingId).then((result) => {
+                setLoading(false);
+                setTrackingData(result.result);
+                setTrackingStatus(result.result.en_progreso)
+            })
+            getTrackingGoalsService(user.user.token, trackingId).then((result) => {
+<<<<<<< Updated upstream
+=======
+                setGoalsData(result.result);
+>>>>>>> Stashed changes
+            })
+        }
+    }, [trackingId])
+
+    useEffect(() => {
+        let payload = {
+            nombre: '',
+            descripcion: '',
+            alumnos: [],
+            materias: [],
+            integrantes: [],
+            fecha_desde: '',
+            fecha_hasta: '',
+            promedio: '',
+            asistencia: '',
+            cualitativos: [],
+        }
+        if (trackingData) {
+            setLoading(false)
+            const STUDENTS = parseStudentData();
+            const SUBJECTS = parseSubjectData();
+            const PARTICIPANTS = parseParticipantsData();
+            const GOALS = parseGoalsData();
+            payload.nombre = trackingData.nombre,
+                payload.descripcion = trackingData.descripcion,
+                payload.materias = SUBJECTS,
+                payload.alumnos = STUDENTS,
+                payload.integrantes = PARTICIPANTS,
+                payload.cualitativos = GOALS.cualitativos
+            payload.promedio = GOALS.promedio,
+                payload.asistencia = GOALS.asistencia,
+                payload.fecha_desde = trackingData.fecha_inicio,
+                payload.fecha_hasta = trackingData.fecha_cierre
+        }
+        dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
+
+    }, [trackingData]);
+
+    const parseStudentData = () => {
+        return trackingData.alumnos.map((student) => { return student.alumno });
+    }
+
+    const parseSubjectData = () => {
+        const SUBJECTS_DATA = trackingData.materias;
+        let newSubjectData = []
+        SUBJECTS_DATA.map((subject) => {
+            let newData = {
+                department_name: subject.anio.carrera,
+                subject_name: subject.nombre,
+                year: subject.anio.nombre
+            }
+            newSubjectData.push(newData);
+        });
+        return newSubjectData;
+    }
+
+
+    const parseParticipantsData = () => {
+        const PARTICIPANTS_DATA = trackingData.integrantes;
+        let newParticipantsData = []
+        PARTICIPANTS_DATA.map((participant) => {
+            let newData = {
+                id: participant.id,
+                rol: participant.rol,
+                nombre: participant.usuario.name,
+                apellido: participant.usuario.last_name,
+            }
+            newParticipantsData.push(newData);
+        });
+        return newParticipantsData;
+    }
+
+    const parseGoalsData = () => {
+        let goals = {
+            promedio: {
+                id: '',
+                value: ''
+            },
+            asistencia: {
+                id: '',
+                value: ''
+            },
+            cualitativos: [],
+        }
+        goalsData && goalsData.map((goal) => {
+            const GOAL_TYPE = goal.tipo_objetivo.nombre;
+            if (GOAL_TYPE === 'promedio') {
+                goals.promedio.id = goal.id,
+                    goals.promedio.value = goal.valor_objetivo_cuantitativo
+            }
+            if (GOAL_TYPE === 'asistencia') {
+                goals.asistencia.id = goal.id,
+                    goals.asistencia.value = goal.valor_objetivo_cuantitativo
+            }
+            if (GOAL_TYPE === 'cualitativo') {
+                goals.cualitativos.push(goal.descripcion)
+            }
+        });
+
+        return goals;
+    }
 
     useEffect(() => {
         let params = Object.values(router.query);
@@ -34,28 +160,61 @@ const Configuracion = () => {
         setTrackingId(id);
     }, [router.query]);
 
-    useEffect(() => {
-        if (trackingId) {
-            getTrackingService(user.user.token, trackingId).then((result) => {
-                setTrackingData(result.result);
-                setTrackingStatus(result.result.en_progreso)
-            })
-            getTrackingGoalsService(user.user.token, trackingId).then((result) => {
-            })
-        }
-    }, [trackingId])
-
-
-    const handleChange = () =>{
-       setTrackingStatus(!trackingStatus);
+    const handleChange = () => {
+        setTrackingStatus(!trackingStatus);
     }
+
+    const convertDate = (inputFormat) => {
+        function pad(s) {
+            return s < 10 ? "0" + s : s;
+        }
+        var d = new Date(inputFormat);
+        return [pad(d.getDate() + 1), pad(d.getMonth() + 1), d.getFullYear()].join("/");
+    }
+
+
+    const handleSaveDates = () => {
+        if (!editDates) {
+            const DATA = {
+                id: trackingData.id,
+                nombre: storedTrackingData.nombre,
+                descripcion: storedTrackingData.descripcion,
+                fecha_cierre: convertDate(storedTrackingData.fecha_hasta)
+            }
+
+            editTrackingService(DATA, user.user.token).then((result) => {
+                if (result.success) {
+                    setEditDates(!editDates);
+                }
+            });
+        } else {
+            setEditDates(!editDates);
+        }
+    }
+
+    const handleDate = (date) => {
+       const DATA = {
+           ...storedTrackingData,
+           fecha_hasta: date
+        }
+        dispatch({ type: types.SAVE_TRACKING_DATA, payload: DATA });
+    }
+
+    const handleEdit = (prop, data) => {
+        const DATA = {
+            ...storedTrackingData,
+            [prop]: data
+        }
+        dispatch({ type: types.SAVE_TRACKING_DATA, payload: DATA });
+    }
+
     return (
         <Row lg={12} md={12} sm={12} xs={12} style={{ marginLeft: '5%' }}>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.header_container}>
                 <>
-                    <TitlePage title={`Configuración del seguimiento ${trackingData && trackingData.nombre}`} />
+                    <TitlePage title={`Configuración del seguimiento ${storedTrackingData && storedTrackingData.nombre}`} />
                     <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
-                        <span>{trackingData && trackingData.descripcion}</span>
+                        <span>{storedTrackingData && storedTrackingData.descripcion}</span>
                     </Col>
                 </>
             </Row>
@@ -65,35 +224,62 @@ const Configuracion = () => {
             <Col lg={10} md={10} sm={10} xs={10} >
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
 
-                    {/* SECCIÓN 1 */}
+                    {/* SECCIÓN 1 ALUMNOS Y MATERIAS*/}
 
                     {<div className={styles.collapse_container} onClick={() => setFirstSection(!firstSection)}>Alumnos y Materias {firstSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
                     <Collapse in={firstSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
                         <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                            <ConfigTable data={STUDENTS_DATA} tableName={"Alumnos"} />
+                            <ConfigTable data={storedTrackingData.alumnos} tableName={"Alumnos"} />
                         </Col>
                         <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                            <ConfigTable data={STUDENTS_DATA} tableName={"Materias"} />
+                            <ConfigTable data={storedTrackingData.materias} tableName={"Materias"} />
                         </Col>
                     </Collapse>
-                    {/* SECCIÓN DOS */}
+
+                    {/* SECCIÓN DOS PLAZOS Y PARTICIPANTES*/}
+
                     {<div className={styles.collapse_container} onClick={() => setSecondSection(!secondSection)}>Participantes y Plazos {secondSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
 
                     <Collapse in={secondSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
                         <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                            <ConfigTable data={STUDENTS_DATA} tableName={"Participantes"} />
+                            <ConfigTable data={storedTrackingData.integrantes} tableName={"Participantes"} />
                         </Col>
                         <Col lg={12} md={12} sm={12} xs={12} className={`${styles.table_container} ${styles.dates_container}`}>
-                            <span className={styles.dates_label}>Plazos</span>
-                            <DateFilter readOnly start={trackingData && trackingData.fecha_inicio} end={trackingData && trackingData.fecha_cierre} />
+                            <div>
+                                <span className={styles.dates_label}>Plazos</span>
+
+                                <div className={styles.edit_icon}>
+                                    <IconButton onClick={handleSaveDates}>
+                                        {editDates ? <EditIcon /> : <DoneIcon />}
+                                    </IconButton>
+                                </div>
+
+                            </div>
+                            <DateFilter
+                                readOnlyStart
+                                readOnlyEnd={editDates}
+                                handleDate={handleDate}
+                                start={storedTrackingData && storedTrackingData.fecha_desde}
+                                end={storedTrackingData && storedTrackingData.fecha_hasta} />
                         </Col>
                     </Collapse>
 
-                    {/* SECCIÓN TRES */}
-                    {<div className={styles.collapse_container} onClick={() => setThirdSection(!thirdSection)}>Metas, Objetivos y Estado del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
+                    {/* SECCIÓN TRES METAS Y OBJETIVOS*/}
+
+                    {<div className={styles.collapse_container} onClick={() => setThirdSection(!thirdSection)}>Metas y Objetivos del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
                     <Collapse in={thirdSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
-                        <Col lg={12} md={12} sm={12} xs={12}  className={`${styles.table_container} ${styles.dates_container}`}>
-                            <span className={styles.dates_label}>{!trackingStatus ? 'Finalizar Seguimiento': 'Seguimiento Finalizado'}</span>
+                        <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
+                            {loading ? 'Cargando...' : <EighthStepGoals editable handleEdit={handleEdit} />}
+                        </Col>
+                    </Collapse>
+                </Row>
+
+                <Row lg={12} md={12} sm={12} xs={12} className={`${styles.container} ${styles.danger_area}`}>
+                    {/* DANGER ZONE */}
+                    {<div className={styles.collapse_container} onClick={() => setDangerZone(!dangerZone)}>Zona de finalización de seguimiento {dangerZone ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
+                    <Collapse in={dangerZone} timeout="auto" unmountOnExit style={{ width: '100%' }}>
+                        <Col lg={12} md={12} sm={12} xs={12} className={`${styles.table_container} ${styles.dates_container}`} id={styles.danger_zone_area}>
+                            <span className={styles.end_label}>{!trackingStatus ? 'Finalizar Seguimiento' : 'Seguimiento Finalizado'}</span>
                             <Switch
                                 checked={trackingStatus}
                                 onChange={handleChange}
@@ -102,10 +288,6 @@ const Configuracion = () => {
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
                             />
                         </Col>
-                        <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                            <EighthStepGoals />
-                        </Col>
-
                     </Collapse>
                 </Row>
             </Col>

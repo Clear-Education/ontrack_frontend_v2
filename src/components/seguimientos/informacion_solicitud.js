@@ -59,10 +59,13 @@ const InformacionSolicitud = ({ data }) => {
                             {Object.keys(data).filter(k => k != "current_step" && k != "anio_lectivo" && k != "year" && k != "department").map((key) => {
                                 if (key == "alumnos") {
                                     const stringWithoutFirstLetter = key.slice(1)
-                                    return <div>
-                                        <p className="subtitle mb-0"><b>{key.charAt(0).toUpperCase() + stringWithoutFirstLetter}:</b></p>
-                                        <p>{data[key].join(",")}</p>
-                                    </div>
+                                    return (
+                                        <div>
+                                            <p className="subtitle mb-0"><b>{key.charAt(0).toUpperCase() + stringWithoutFirstLetter}:</b></p>
+                                            <p>{data[key].join(",")}</p>
+                                        </div>
+                                    )
+
                                 }
                                 const stringWithoutFirstLetter = key.slice(1)
                                 return <div>

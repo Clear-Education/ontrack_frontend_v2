@@ -196,7 +196,6 @@ export async function resetUserPasswordCrud(data) {
 }
 
 export async function resetUserPasswordConfirmCrud(data) {
-console.log(data);
     const DATA = {
         token: data.token,
         password: data.password
