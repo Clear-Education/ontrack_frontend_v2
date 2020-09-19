@@ -10,6 +10,10 @@ import { motion } from "framer-motion";
 import { Row, Col } from "react-bootstrap";
 import MUIDataTable from "mui-datatables";
 import MTConfig from "../../../src/utils/table_options/MT_config";
+import { useRouter } from "next/router";
+import Link from "next/link";
+import { useDispatch } from 'react-redux';
+import * as types from "./../../../redux/types";
 
 
 const SolicitudesPedagogo = () => {
@@ -18,6 +22,8 @@ const SolicitudesPedagogo = () => {
     const [selectedData, setSelectedData] = useState([])
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter();
+    const dispatch = useDispatch();
 
 
     useSWR(url, () => {
@@ -34,7 +40,10 @@ const SolicitudesPedagogo = () => {
                         alumnos: tracking.alumnos.map(alumno => alumno.alumno.nombre + " " + alumno.alumno.apellido),
                         creador: tracking.creador.name + " " + tracking.creador.last_name,
                         fecha_creacion: new Date(tracking.fecha_creacion).toLocaleDateString(),
-                        estado: tracking.estado[0].estado_solicitud
+                        estado: tracking.estado[0].estado_solicitud,
+                        curso: tracking.alumnos[0]?.curso.nombre,
+                        year: tracking.alumnos[0]?.curso.anio.nombre,
+                        department: tracking.alumnos[0]?.curso.anio.carrera,
                     }
                     parsedTrackings.push(newTrackingData);
                 })
@@ -43,6 +52,11 @@ const SolicitudesPedagogo = () => {
     }
     );
 
+    const handleEditEstadoSolicitud = (index, id, estado) => {
+        dispatch({ type: types.SAVE_TRACKING_SOLICITUD_DATA, payload: selectedData[index] })
+        router.push("/dashboard/seguimientos/nuevo")
+        editEstadoSolicitud(id, estado)
+    }
 
     async function editEstadoSolicitud(id, estado) {
         const data = {
@@ -125,7 +139,7 @@ const SolicitudesPedagogo = () => {
                                         customBodyRender: (value, tableMeta, updateValue) => {
                                             return (
                                                 <div className=" d-flex flex-lg-row flex-column">
-                                                    <button className="ontrack_btn add_btn mr-2 mb-lg-0 mb-2" variant="contained" onClick={() => editEstadoSolicitud(tableMeta.rowData[0], "Aceptada") /* aceptarSolicitud(selectedData[dataIndex]) */} >
+                                                    <button className="ontrack_btn add_btn mr-2 mb-lg-0 mb-2" variant="contained" onClick={() => handleEditEstadoSolicitud(tableMeta.rowIndex, tableMeta.rowData[0], "Aceptada") /* aceptarSolicitud(selectedData[dataIndex]) */} >
                                                         Aceptar
                                                     </button>
                                                     <button className="ontrack_btn delete_btn" variant="contained" onClick={() => editEstadoSolicitud(tableMeta.rowData[0], "Rechazada")} >

@@ -96,7 +96,7 @@ function getSteps() {
 function getStepContent(step) {
     switch (step) {
         case 0:
-            return 'Detalle el motivo de la solicitud indicando las materias sobre las cuales se quiera realizar el seguimiento.'
+            return 'Detalle el motivo de la solicitud del seguimiento'
         case 1:
             return 'Seleccione la carrera, año y curso deseado'
         case 2:

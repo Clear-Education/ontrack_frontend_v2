@@ -1,4 +1,5 @@
 import styles from '../tracking.module.scss'
+import styles_component from './styles.module.scss'
 import { FormControl, TextField, FormHelperText } from '@material-ui/core'
 import { Row, Col } from 'react-bootstrap'
 import { useState, useEffect } from 'react';
@@ -49,6 +50,9 @@ const FirstStepInfoSolicitud = ({ handleGlobalState }) => {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.3 }}
         >
+            <div className={styles_component.message_alert}>
+                Recuerde escribir las materias sobre las cuales se quiere realizar el seguimiento.
+            </div>
             <div className={styles.container}>
                 <Row>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
@@ -78,6 +82,7 @@ const FirstStepInfoSolicitud = ({ handleGlobalState }) => {
                     </Col>
 
                 </Row>
+
             </div>
         </motion.div>
     )
