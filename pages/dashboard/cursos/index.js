@@ -28,6 +28,7 @@ const INITIAL_STATE = {
 const Cursos = () => {
 
     const [state, setState] = useState(INITIAL_STATE);
+    const [isLoading, setIsLoading] = useState();
     const user = useSelector((store) => store.user);
 
     useEffect(() => {
@@ -38,12 +39,12 @@ const Cursos = () => {
 
 
     const handleChange = (prop, value) => {
-        if(prop === 'studentsToAdd'){
+        if (prop === 'studentsToAdd') {
             state.studentsToAdd = value;
-        }else if(prop === 'studentsToDelete'){
+        } else if (prop === 'studentsToDelete') {
             state.studentsToDelete = value;
         }
-        else{
+        else {
             setState({ ...state, [prop]: value })
         }
 
@@ -92,10 +93,14 @@ const Cursos = () => {
                 studentsToDelete: state.studentsToDelete,
                 studentsToAdd: state.studentsToAdd
             }
-            deleteMultipleStudentsCourseService(user.user.token,STUDENTS_DATA).then((result)=>{
-                if(result.success){
-                    addMultipleStudentsCourseService(user.user.token,STUDENTS_DATA).then((result)=>{
-                        if(result.success) {}
+            setIsLoading(true);
+            deleteMultipleStudentsCourseService(user.user.token, STUDENTS_DATA).then((result) => {
+                setIsLoading(false);
+                if (result.success) {
+                    setIsLoading(true);
+                    addMultipleStudentsCourseService(user.user.token, STUDENTS_DATA).then((result) => {
+                        setIsLoading(false);
+                        if (result.success) { setActiveStep((prevActiveStep) => prevActiveStep + 1); }
                     })
                 }
             })
@@ -136,7 +141,7 @@ const Cursos = () => {
                                         onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'year' : activeStep === 2 ? 'curso' : 'send')}
                                         className={`ontrack_btn csv_btn ${styles.stepper_button}`}
                                     >
-                                        {activeStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
+                                        {activeStep === steps.length - 1 ? (isLoading  ? 'Guardando...' : 'Finalizar') : 'Siguiente'}
                                     </button>
 
                                 </div>
