@@ -10,7 +10,7 @@ import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import SelectInput from "../../../src/components/commons/select_input/select_input"
 import StudentTable from "./studentTable";
-import { addAsistenciasService, editAsistenciasService, deleteAsistenciasService } from "../../../src/utils/asistencias/services/asistencias_services";
+import { addAsistenciasService, addMultipleAsistenciasService, editAsistenciasService, deleteAsistenciasService } from "../../../src/utils/asistencias/services/asistencias_services";
 import { useSelector } from "react-redux";
 import { getActualSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
 
@@ -27,15 +27,21 @@ const Asistencias = () => {
     const [state, setState] = useState(INITIAL_STATE);
     const user = useSelector((store) => store.user);
 
-    useEffect(()=>{
-        getActualSchoolYearService(user.user.token).then((result)=>{
-            setState({...state,school_year: result.result.id});
+    useEffect(() => {
+        getActualSchoolYearService(user.user.token).then((result) => {
+            setState({ ...state, school_year: result.result.id });
         })
-    },[])
+    }, [])
 
     async function addasistencias(e, data) {
         e.preventDefault();
         return await addAsistenciasService(data, user.user.token).then((result) => {
+            return result;
+        })
+    }
+
+    async function addMultipleAsistencias(data) {
+        return await addMultipleAsistenciasService(data, user.user.token).then((result) => {
             return result;
         })
     }
@@ -60,10 +66,10 @@ const Asistencias = () => {
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
-                'Seleccione el año deseado',
-                'Seleccione el curso deseado',
-                'Seleccione los alumnos'
-                ];
+            'Seleccione el año deseado',
+            'Seleccione el curso deseado',
+            'Seleccione los alumnos'
+        ];
     }
 
     function getStepContent(step) {
@@ -71,14 +77,14 @@ const Asistencias = () => {
             case 0:
                 return <SelectInput type="department" data={state} changeAction={handleChange} />
             case 1:
-                return <SelectInput type="year" data={state} changeAction={handleChange} show_school_year={false}/>;
+                return <SelectInput type="year" data={state} changeAction={handleChange} show_school_year={false} />;
             case 2:
                 return <SelectInput type="curso" data={state} changeAction={handleChange} />;
-            case 3: 
+            case 3:
                 return <StudentTable
                     type="Alumnos"
                     data={state}
-                    handleAdd={addasistencias}
+                    handleAdd={addMultipleAsistencias}
                     handleEdit={editasistencias}
                     handleDelete={deleteasistencias} />;
             default:

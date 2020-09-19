@@ -8,21 +8,16 @@ import { getOneSchoolYearService } from "../../../src/utils/school_year/services
 import { useSelector } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 import styles from './styles.module.scss'
-
-
 import Modal from '../../../src/components/commons/modals/modal';
 import EditIcon from '@material-ui/icons/Edit';
-import Icon from '@material-ui/core/Icon';
 import { IconButton } from '@material-ui/core';
-import AddAsistenciaForm from '../../../src/components/asistencias/add_asistencia_form';
-import { orange } from '@material-ui/core/colors';
 import FormLabel from '@material-ui/core/FormLabel';
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import EditAsistenciaForm from "../../../src/components/asistencias/edit_asistencia_form";
 import Delete from '@material-ui/icons/Delete';
 import DeleteForm from '../../../src/components/commons/delete_form/deleteForm';
-
-
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 
 const theme = createMuiTheme({
@@ -41,20 +36,25 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
     const [minDate, setMinDate] = useState("");
     const [maxDate, setMaxDate] = useState("");
+    const [selectedDate, setSelectedDate] = useState("");
+    const [selectedDateAssistance, setSelectedDateAssistance] = useState("");
+    const [fechaValida, setFechaValida] = useState(false)
+    const [dateVerAsistencia, setDateVerAsistencia] = useState(null);
+    const [dateAgregarAsistencia, setDateAgregarAsistencia] = useState(null);
+
     const [addStudentAssistance, setAddStudentAssistance] = useState([]);
     const [editStudentAssistance, setEditStudentAssistance] = useState([]);
     const [selectedData, setSelectedData] = useState();
+
     const [tableToShow, setTableToShow] = useState();
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);
-    const [date, setDate] = useState(null);
-    const [selectedDate, setSelectedDate] = useState("");
 
     async function getAsistencias() {
         getAsistenciasService(user.user.token, data.curso, selectedDate).then((result) => {
             setIsLoading(false);
             let studentsCourseAssistance = []
-            result.result.results.forEach((element) => {
+            result.result.results?.forEach((element) => {
                 const dataAssistance = {
                     id_asistencia: element.id,
                     asistio: element.asistio === 1 ? "Asistió" : "No Asistió",
@@ -93,27 +93,44 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                     legajo: element.alumno.legajo,
                     email: element.alumno.email,
                     fecha_desde: element.anio_lectivo.fecha_desde,
-                    fecha_hasta: element.anio_lectivo.fecha_hasta
+                    fecha_hasta: element.anio_lectivo.fecha_hasta,
+                    fecha: null,
+                    asistio: null
                 }
-
                 students.push(dataStudent);
             })
             setAddStudentAssistance(students);
         })
-        if (selectedDate !== "") {
-            getAsistencias()
-        }
 
         if (minDate == "") {
             getSchoolYear()
         }
+    }, [tableToShow, selectedDateAssistance]);
 
 
-    }, [tableToShow]);
+    useEffect(() => {
+        if (selectedDate != "") {
+            getAsistencias()
+        }
+    }, [selectedDate])
 
+
+    const handleChangeAssistance = (event, index) => {
+        let newArray = [...addStudentAssistance];
+        if (event.target.name == "no_asistio" && event.target.checked == true) {
+            newArray[index]["asistio"] = !(event.target.checked)
+            setAddStudentAssistance(newArray)
+        } else if (event.target.name == "asistio" && event.target.checked == true) {
+            newArray[index][event.target.name] = event.target.checked
+            setAddStudentAssistance(newArray)
+        }
+    }
 
     const handleTableToShow = (table) => {
         setTableToShow(table);
+        setFechaValida(false)
+        setDateVerAsistencia(null)
+        setDateAgregarAsistencia(null)
     }
 
     const handleAddAssistance = (e, data) => {
@@ -151,11 +168,19 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
             return s < 10 ? "0" + s : s;
         }
         var d = new Date(inputFormat);
-        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("-");
+        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("/");
+    }
+
+    const convertDate3 = (inputFormat) => {
+        function pad(s) {
+            return s < 10 ? "0" + s : s;
+        }
+        var d = new Date(inputFormat);
+        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("-")
     }
 
     const handleDateAssistance = (date) => {
-        setDate(date);
+        setDateVerAsistencia(date);
         let dateFormatted = convertDate(date);
 
         let dateSelectedFormatted = Date.parse(dateFormatted)
@@ -163,12 +188,42 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
         let maximalDate = Date.parse(maxDate)
 
         if (dateSelectedFormatted >= minimalDate && dateSelectedFormatted <= maximalDate) {
-            let dateFormatted2 = convertDate2(date)
+            let dateFormatted2 = convertDate3(date)
             setSelectedDate(dateFormatted2)
-            setTableToShow("assistance")
+            setFechaValida(true)
         } else {
-            setTableToShow("delete")
+            setFechaValida(false)
         }
+    }
+
+    const handleDateAddAssistance = (date) => {
+        setDateAgregarAsistencia(date);
+        let dateFormatted = convertDate(date);
+
+        let dateSelectedFormatted = Date.parse(dateFormatted)
+        let minimalDate = Date.parse(minDate)
+        let maximalDate = Date.parse(maxDate)
+
+        if (dateSelectedFormatted >= minimalDate && dateSelectedFormatted <= maximalDate) {
+            setFechaValida(true)
+            let dateFormatted2 = convertDate2(date)
+            setSelectedDateAssistance(dateFormatted2)
+        } else {
+            setFechaValida(false)
+        }
+    }
+
+    const handleSubmitAssistance = () => {
+        let studentsAssistance = []
+        addStudentAssistance.filter(s => s.asistio != null).map(student => {
+            let studentData = {
+                fecha: selectedDateAssistance,
+                asistio: student.asistio ? 1 : 0,
+                alumno_curso: student.alumno_curso
+            }
+            studentsAssistance.push(studentData)
+        })
+        return handleAdd(studentsAssistance);
     }
 
     return (
@@ -184,14 +239,39 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                         <button onClick={() => handleTableToShow('add')} className="ontrack_btn add_btn" style={{ padding: 10 }}>Agregar Asistencias</button>
                     </Col>
                     <Col>
-                        <button onClick={() => handleTableToShow('delete')} className="ontrack_btn cancel_btn" style={{ padding: 10 }}>Ver Asistencias</button>
+                        <button onClick={() => handleTableToShow('ver')} className="ontrack_btn add_btn" style={{ padding: 10 }}>Modificar Asistencias</button>
                     </Col>
                 </Row>
                 {
                     isLoading && tableToShow !== undefined ?
                         "Cargando..." :
-                        tableToShow === "add" ?
+                        tableToShow == "add" ?
 
+                            <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
+                                <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
+
+                                    <FormLabel className="left" component="legend">Fecha</FormLabel>
+                                    <KeyboardDatePicker
+                                        clearable
+                                        value={dateAgregarAsistencia}
+                                        placeholder="DD/MM/YYYY"
+                                        onChange={date => handleDateAddAssistance(date)}
+                                        minDate={new Date(minDate)}
+                                        maxDate={new Date(maxDate)}
+                                        format="dd/MM/yyyy"
+                                        invalidDateMessage="Formato de fecha inválido"
+                                        minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo actual"
+                                        maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo actual"
+                                        required
+                                    />
+                                </Col>
+                            </Row>
+                            :
+                            null
+                }
+                {
+                    (fechaValida && tableToShow == "add") ?
+                        <>
                             <MuiThemeProvider theme={theme}>
                                 <MUIDataTable
                                     title={"Alumnos del Curso"}
@@ -233,14 +313,14 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                                 customBodyRenderLite: (dataIndex) => {
                                                     return (
                                                         <div style={{ display: 'flex' }}>
-                                                            <Modal
-                                                                title="Agregar Asistencia"
-                                                                body={<AddAsistenciaForm data={selectedData} handleSubmitAction={handleAddAssistance} />}
-                                                                button={
-                                                                    <IconButton onClick={() => setSelectedData(addStudentAssistance[dataIndex])} >
-                                                                        <Icon style={{ color: orange[500] }}>add_circle</Icon>
-                                                                    </IconButton>
-                                                                }
+                                                            <FormControlLabel
+                                                                control={<Checkbox checked={addStudentAssistance[dataIndex].asistio} onChange={(e) => handleChangeAssistance(e, dataIndex)} name="asistio" />}
+                                                                label="Asistió"
+                                                            />
+                                                            <FormControlLabel
+                                                                control={<Checkbox
+                                                                    checked={(addStudentAssistance[dataIndex].asistio === false)} onChange={(e) => handleChangeAssistance(e, dataIndex)} name="no_asistio" />}
+                                                                label="No Asistió"
                                                             />
                                                         </div>
                                                     )
@@ -251,33 +331,42 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                     ]}
                                 />
                             </MuiThemeProvider>
-                            : tableToShow === 'delete' ?
-                                <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                                    <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
+                            <div className="d-flex">
+                                <button className="ontrack_btn add_btn ml-auto mt-3" onClick={handleSubmitAssistance}>
+                                    Registrar Asistencias
+                                </button>
+                            </div>
+                        </>
+                        : null
+                }
+                {
+                    tableToShow == 'ver' ?
+                        <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
+                            <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
 
-                                        <FormLabel className="left" component="legend">Fecha</FormLabel>
-                                        <KeyboardDatePicker
-                                            clearable
-                                            value={date}
-                                            placeholder="DD/MM/YYYY"
-                                            onChange={date => handleDateAssistance(date)}
-                                            minDate={new Date(minDate)}
-                                            maxDate={new Date(maxDate)}
-                                            format="dd/MM/yyyy"
-                                            invalidDateMessage="Formato de fecha inválido"
-                                            minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                            maxDateMessage="La fecha no debería ser mayor a la fecha de Inicio del Año Lectivo seleccionado"
-                                            required
-                                        />
+                                <FormLabel className="left" component="legend">Fecha</FormLabel>
+                                <KeyboardDatePicker
+                                    clearable
+                                    value={dateVerAsistencia}
+                                    placeholder="DD/MM/YYYY"
+                                    onChange={date => handleDateAssistance(date)}
+                                    minDate={new Date(minDate)}
+                                    maxDate={new Date(maxDate)}
+                                    format="dd/MM/yyyy"
+                                    invalidDateMessage="Formato de fecha inválido"
+                                    minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo actual"
+                                    maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo actual"
+                                    required
+                                />
 
-                                    </Col>
-                                </Row>
-                                :
-                                null
+                            </Col>
+                        </Row>
+                        :
+                        null
                 }
 
                 {
-                    (tableToShow == "assistance" && tableToShow !== "add") &&
+                    (fechaValida && tableToShow == "ver") &&
                     <Row lg={12} md={12} sm={12} xs={12} >
                         <Col lg={12} md={12} sm={12} xs={12} >
                             <MuiThemeProvider theme={theme}>
@@ -346,6 +435,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                                         </div>
                                                     </>)
                                                 },
+                                                filter: false
                                             },
                                         }
                                     ]}

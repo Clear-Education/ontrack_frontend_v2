@@ -31,6 +31,27 @@ export async function addAsistenciasCrud(data, auth_token) {
         });
 }
 
+export async function addMultipleAsistenciasCrud(data, auth_token) {
+
+    return axios.post(`${config.api_url}/asistencias/multiple/`, data, {
+        headers: {
+            Authorization: `Token ${auth_token}`,
+        },
+    })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        })
+        .catch((error) => {
+            return errorHandler(error);
+        });
+}
+
 
 //OBTENER LA LISTA DE ASISTENCIAS DE UN CURSO PARA UN FECHA DETERMINADA
 export async function getAsistenciasCrud(auth_token, curso_id, fecha_desde) {
