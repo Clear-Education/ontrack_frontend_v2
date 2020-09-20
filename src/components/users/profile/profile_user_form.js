@@ -336,7 +336,7 @@ const UserProfileForm = (props) => {
                                         </Col>
                                     </Row>
                                     <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                                        <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                        <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
                                                 <FormControl variant="outlined">
                                                     <TextField
@@ -360,7 +360,7 @@ const UserProfileForm = (props) => {
                                                 )}
                                             </motion.li>
                                         </Col>
-                                        <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                        <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
                                                 <FormControl variant="outlined">
                                                     <KeyboardDatePicker
@@ -380,11 +380,7 @@ const UserProfileForm = (props) => {
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
-                                    </Row>
-
-                                    <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-
-                                        <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
+                                        <Col lg={4} md={4} sm={12} xs={12} className={fullscreen && styles.input_container}>
                                             <motion.li variants={item}>
                                                 <FormControl variant="outlined">
                                                     <MuiThemeProvider theme={theme_input_phone}>
@@ -408,24 +404,7 @@ const UserProfileForm = (props) => {
                                                 </FormControl>
                                             </motion.li>
                                         </Col>
-
-                                        <Col lg={6} md={6} sm={12} xs={12} className={fullscreen && styles.input_container}>
-                                            <motion.li variants={item}>
-                                                <FormControl variant="outlined">
-                                                    <TextField
-                                                        id="phone"
-                                                        name="phone"
-                                                        label="Telefono"
-                                                        variant="outlined"
-                                                        value={state.phone}
-                                                        onChange={handleChange("phone")}
-                                                        type="number"
-                                                    />
-                                                </FormControl>
-                                            </motion.li>
-                                        </Col>
                                     </Row>
-
                                     <div style={{ margin: 15, marginBottom: 25 }}>
                                         <CountrySelector setState={handleChangeCountryRegion} previousValue={{ provincia: state.provincia, localidad: state.localidad }} />
                                     </div>
