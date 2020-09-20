@@ -258,7 +258,7 @@ const UserProfileForm = (props) => {
                                     <Avatar alt="Remy Sharp"
                                         src={image !== null ? image :
                                             state.picture !== null ?
-                                                `https://ontrack-education.herokuapp.com${state.picture}`
+                                                `https://ontrack-production.herokuapp.com${state.picture}`
                                                 :
                                                 "https://c8.alamy.com/comp/P9MYWR/man-avatar-profile-P9MYWR.jpg"} className={styles.profile_image} />
                                     <label htmlFor="upload_photo">

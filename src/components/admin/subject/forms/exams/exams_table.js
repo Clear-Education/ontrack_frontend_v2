@@ -8,6 +8,7 @@ import config from "../../../../../utils/config";
 import { Col } from "react-bootstrap";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import MTConfig from "../../../../../utils/table_options/MT_config";
+import TextField from '@material-ui/core/TextField';
 
 
 const ExamsTable = (props) => {
@@ -18,26 +19,99 @@ const ExamsTable = (props) => {
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false)
     const url = `${config.api_url}/materia/${selectedSubject.id}/evaluacion/list/`
-    const [columns, setColumns] = useState([
-        { title: 'Nombre', field: 'nombre' },
-        { title: 'Ponderación', field: 'ponderacion', type: 'numeric' },
-    ]);
-
     const [examsArray, setExamsArray] = useState([]);
+
+    console.log(examsArray);
+    console.log(selectedExams);
+
+    const [nameError, setNameError] = React.useState({
+        error: false,
+        label: "",
+        helperText: "",
+        validateInput: false
+    });
+
+    const [ponderacionError, setPonderacionError] = React.useState({
+        error: false,
+        label: "",
+        helperText: "",
+        validateInput: false
+    });
+
+    const columnsHeader = [
+        {
+            title: 'Nombre', field: 'nombre', editComponent: (props) => (
+                <TextField
+                    type="text"
+                    error={
+                        !props.value && nameError.validateInput && props.rowData.submitted
+                            ? nameError.error
+                            : false
+                    }
+                    helperText={
+                        !props.value && nameError.validateInput && props.rowData.submitted
+                            ? nameError.helperText
+                            : ""
+                    }
+                    value={props.value ? props.value : ""}
+                    onChange={(e) => {
+                        if (nameError.validateInput) {
+                            setNameError({
+                                ...nameError,
+                                validateInput: false
+                            });
+                        }
+
+                        props.onChange(e.target.value);
+                    }}
+                />
+            )
+        },
+        {
+            title: 'Ponderación', field: 'ponderacion', type: 'numeric', editComponent: (props) => (
+                <TextField
+                    type="number"
+                    error={
+                        !props.value && ponderacionError.validateInput && props.rowData.submitted
+                            ? ponderacionError.error
+                            : false
+                    }
+                    helperText={
+                        !props.value && ponderacionError.validateInput && props.rowData.submitted
+                            ? ponderacionError.helperText
+                            : ""
+                    }
+                    value={props.value ? props.value : ""}
+                    onChange={(e) => {
+                        if (ponderacionError.validateInput) {
+                            setPonderacionError({
+                                ...ponderacionError,
+                                validateInput: false
+                            });
+                        }
+
+                        props.onChange(e.target.value);
+                    }}
+                />
+            )
+        },
+    ];
+
+
 
     const filterData = (data) => {
         let selectedExamsCopy = [];
-        if(!!data.length){
-        selectedExamsCopy = data.filter((element) => {
-            return element.anio_lectivo === props.schoolYear;
-        });
+        if (!!data.length) {
+            selectedExamsCopy = data.filter((element) => {
+                return element.anio_lectivo === props.schoolYear;
+            });
         }
         setSelectedExams(selectedExamsCopy);
     };
 
     useEffect(() => {
         setSelectedSchoolYear(props.schoolYear)
-        getExamsService(user.user.token, selectedSubject.id,props.schoolYear).then((result) => {
+        getExamsService(user.user.token, selectedSubject.id, props.schoolYear).then((result) => {
             setIsLoading(false)
             setExamsArray(result.result)
         })
@@ -45,15 +119,15 @@ const ExamsTable = (props) => {
 
     useEffect(() => {
         setSelectedSchoolYear(props.schoolYear)
-        getExamsService(user.user.token, selectedSubject.id,props.schoolYear).then((result) => {
+        getExamsService(user.user.token, selectedSubject.id, props.schoolYear).then((result) => {
             setIsLoading(false)
             setExamsArray(result.result)
         })
-    }, [isLoading]);
+    }, [selectedSchoolYear]);
 
-    useEffect(()=>{
+    useEffect(() => {
         filterData(examsArray)
-    },[examsArray]);
+    }, [examsArray]);
 
     useEffect(() => {
         filterData(examsArray)
@@ -73,8 +147,11 @@ const ExamsTable = (props) => {
     }
 
 
-    async function editExam(data) {
-        let editedExam = examsArray.filter((exam) => { return exam.id === data.id })
+    async function editExam(data, oldData) {
+        console.log(data);
+        let editedExam = examsArray.filter((exam) => {
+            return exam.tableData.id == oldData.tableData.id
+        })
         editedExam[0].nombre = data.nombre;
         editedExam[0].ponderacion = data.ponderacion;
         examsArray.map((exam) => {
@@ -87,8 +164,8 @@ const ExamsTable = (props) => {
 
     async function deleteExam(data) {
         let newExamsArray = !!examsArray && examsArray.filter((exam) => { return exam.id !== data.id })
-        if(!newExamsArray.length){
-            newExamsArray ={
+        if (!newExamsArray.length) {
+            newExamsArray = {
                 anio_lectivo: selectedSchoolYear,
                 materia: selectedSubject.id,
             }
@@ -98,15 +175,15 @@ const ExamsTable = (props) => {
     }
 
 
-    const handleExams = () =>{
+    const handleExams = () => {
         setIsLoading(true);
-        if(!!examsArray.length){
-            editExamsService(user.user.token,examsArray).then((result)=>{
-            setIsLoading(false);
-        })   
-        }else{
-            deleteExamsService(user.user.token,examsArray).then((result)=>{
-                setIsLoading(false);  
+        if (!!examsArray.length) {
+            editExamsService(user.user.token, examsArray).then((result) => {
+                setIsLoading(false);
+            })
+        } else {
+            deleteExamsService(user.user.token, examsArray).then((result) => {
+                setIsLoading(false);
             })
         }
 
@@ -118,7 +195,7 @@ const ExamsTable = (props) => {
                 <>
                     <MaterialTable
                         title={<span style={{ position: 'absolute', top: '25px', fontWeight: 600 }}>Exámenes</span>}
-                        columns={columns}
+                        columns={columnsHeader}
                         data={selectedExams}
                         options={MTConfig("Exámenes").options}
                         components={MTConfig("Exámenes").components}
@@ -126,21 +203,78 @@ const ExamsTable = (props) => {
 
                         editable={{
                             onRowAdd: newData =>
-                                addExam(newData).then(() => {
-                                    return
-                                }),
+                                new Promise((resolve, reject) => {
+                                    setTimeout(() => {
+                                        if (!newData.nombre || !newData.ponderacion) {
+                                            if (!newData.nombre) {
+                                                newData.submitted = true;
+                                                setNameError({
+                                                    error: true,
+                                                    label: "required",
+                                                    helperText: "El nombre de la evaluacion es requerido.",
+                                                    validateInput: true
+                                                });
+                                            }
+                                            if (!newData.ponderacion) {
+                                                newData.submitted = true;
+                                                setPonderacionError({
+                                                    error: true,
+                                                    label: "required",
+                                                    helperText: "Una ponderación entre 0 y 1 es requerida.",
+                                                    validateInput: true
+                                                });
+                                            }
+                                            reject();
+                                            return
+                                        }
+                                        resolve()
+                                        return addExam(newData).then(() => {
+                                            return
+                                        })
+                                    }, 600)
+                                })
+                            ,
                             onRowUpdate: (newData, oldData) =>
-                                editExam(newData).then(() => {
-                                    return
+                                new Promise((resolve, reject) => {
+                                    setTimeout(() => {
+                                        if (!newData.nombre || !newData.ponderacion) {
+                                            if (!newData.nombre) {
+                                                newData.submitted = true;
+                                                setNameError({
+                                                    error: true,
+                                                    label: "required",
+                                                    helperText: "El nombre de la evaluacion es requerido.",
+                                                    validateInput: true
+                                                });
+                                            }
+                                            if (!newData.ponderacion) {
+                                                newData.submitted = true;
+                                                setPonderacionError({
+                                                    error: true,
+                                                    label: "required",
+                                                    helperText: "Una ponderación entre 0 y 1 es requerida.",
+                                                    validateInput: true
+                                                });
+                                            }
+
+                                            reject();
+                                            return
+                                        }
+                                        resolve()
+                                        return editExam(newData, oldData).then(() => {
+                                            return
+                                        })
+                                    }, 600)
                                 }),
+
                             onRowDelete: oldData =>
                                 deleteExam(oldData).then(() => {
                                     return
                                 }),
                         }}
                     />
-           
-                <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
+
+                    <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
                         {!isLoading ?
                             <button className="ontrack_btn_modal ontrack_btn add_btn" type="button" onClick={handleExams}>Guardar Exámenes</button>
                             :
@@ -152,9 +286,9 @@ const ExamsTable = (props) => {
                                 {" "}Guardando...
                             </button>
                         }
-                </Col>
+                    </Col>
                 </>
-        :
+                :
                 <h4 style={{ color: 'rgb(154 154 154)' }}>Seleccione un año lectivo para configurar los exámenes</h4>
             }
         </>
