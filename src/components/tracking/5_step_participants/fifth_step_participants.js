@@ -27,8 +27,6 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);
 
-    console.log(selectedUsers);
-
     useEffect(() => {
         let selectedUserList = []
         let encargado = {

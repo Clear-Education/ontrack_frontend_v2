@@ -38,6 +38,10 @@ import * as types from "../../../../redux/types";
 import { addTrackingService, checkExistingTrackingNameServie } from '../../../../src/utils/tracking/services/tracking_services';
 
 import { getOneSchoolYearService } from "../../../../src/utils/school_year/services/school_year_services";
+import { getSolicitudService } from '../../../../src/utils/solicitudes/services/solicitudes_services';
+import { getOneDepartmentService } from '../../../../src/utils/department/services/department_services';
+import { useRouter } from 'next/router';
+import InformacionSolicitud from '../../../../src/components/seguimientos/informacion_solicitud';
 
 
 const ColorlibConnector = withStyles({
@@ -154,6 +158,17 @@ const CreateTracking = () => {
     const user = useSelector((store) => store.user);
     const [globalTrackingData, setGlobalTrackingData] = useState(trackingData);
     const dispatch = useDispatch();
+
+    const trackingSolicitud = useSelector((store) => store.trackingSolicitud);
+    const [solicitudData, setSolicitudData] = useState();
+
+    useEffect(() => {
+        if (trackingSolicitud.department != "") {
+            getOneDepartmentService(trackingSolicitud.department, user.user.token).then(result => {
+                setSolicitudData({ ...trackingSolicitud, ["carrera"]: result.result.nombre, ["año"]: trackingSolicitud.year })
+            })
+        }
+    }, [])
 
     useEffect(() => {
         dispatch({ type: types.RESET_TRACKING_DATA });
@@ -292,91 +307,98 @@ const CreateTracking = () => {
 
     return (
         activeStep !== undefined ?
-            <div className={styles.stepper_container}>
-                <Row style={{ margin: '0 5% 0 5%', width: '90%' }}>
-                    <TitlePage title="Nuevo Seguimiento" />
-                    <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
-                        {steps.map((label) => (
-                            <Step key={label}>
-                                <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    <Col lg={12} md={12} sm={12} xs={12}>
-                        {activeStep === steps.length ? (
-                            <div>
-                                <Typography>¡Seguimiento creado exitosamente!</Typography>
-                                <Button onClick={handleReset}> Crear uno nuevo  </Button>
-                            </div>
-                        ) : (
+            <>
+                {   solicitudData != undefined &&
+                    <div className={styles.sub_menu_container}>
+                        <InformacionSolicitud data={solicitudData} />
+                    </div>
+                }
+                <div className={styles.stepper_container}>
+                    <Row style={{ margin: '0 5% 0 5%', width: '90%' }}>
+                        <TitlePage title="Nuevo Seguimiento" />
+                        <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        <Col lg={12} md={12} sm={12} xs={12}>
+                            {activeStep === steps.length ? (
+                                <div>
+                                    <Typography>¡Seguimiento creado exitosamente!</Typography>
+                                    <Button onClick={handleReset}> Crear uno nuevo  </Button>
+                                </div>
+                            ) : (
 
-                                <Row lg={12} md={12} sm={12} xs={12}>
-                                    <Col lg={12} md={12} sm={12} xs={12}>
-                                        <Typography style={{ float: 'left' }}>{getStepContent(activeStep)}</Typography>
-                                    </Col>
-                                    <Col lg={12} md={12} sm={12} xs={12}>
-                                        {
-                                            activeStep === 0 ?
-                                                <FirstStepInfo
-                                                    handleGlobalState={handleGlobalState}
-                                                />
-                                                :
-                                                activeStep === 1 ?
-                                                    <SecondStepDepYearCourse
+                                    <Row lg={12} md={12} sm={12} xs={12}>
+                                        <Col lg={12} md={12} sm={12} xs={12}>
+                                            <Typography style={{ float: 'left' }}>{getStepContent(activeStep)}</Typography>
+                                        </Col>
+                                        <Col lg={12} md={12} sm={12} xs={12}>
+                                            {
+                                                activeStep === 0 ?
+                                                    <FirstStepInfo
                                                         handleGlobalState={handleGlobalState}
                                                     />
                                                     :
-                                                    activeStep === 2 ?
-                                                        <ThirdStepStudents
+                                                    activeStep === 1 ?
+                                                        <SecondStepDepYearCourse
                                                             handleGlobalState={handleGlobalState}
                                                         />
                                                         :
-                                                        activeStep === 3 ?
-                                                            <FourthStepSubjects
+                                                        activeStep === 2 ?
+                                                            <ThirdStepStudents
                                                                 handleGlobalState={handleGlobalState}
                                                             />
                                                             :
-                                                            activeStep === 4 ?
-                                                                <FifthStepParticipants
+                                                            activeStep === 3 ?
+                                                                <FourthStepSubjects
                                                                     handleGlobalState={handleGlobalState}
                                                                 />
                                                                 :
-                                                                activeStep === 5 ?
-                                                                    <SixthStepRoles
+                                                                activeStep === 4 ?
+                                                                    <FifthStepParticipants
                                                                         handleGlobalState={handleGlobalState}
                                                                     />
                                                                     :
-                                                                    activeStep === 6 ?
-                                                                        <SeventhStepDates
+                                                                    activeStep === 5 ?
+                                                                        <SixthStepRoles
                                                                             handleGlobalState={handleGlobalState}
                                                                         />
                                                                         :
-                                                                        activeStep === 7 ?
-                                                                            <EighthStepGoals
+                                                                        activeStep === 6 ?
+                                                                            <SeventhStepDates
                                                                                 handleGlobalState={handleGlobalState}
                                                                             />
-                                                                            : null
-                                        }
-                                    </Col>
+                                                                            :
+                                                                            activeStep === 7 ?
+                                                                                <EighthStepGoals
+                                                                                    handleGlobalState={handleGlobalState}
+                                                                                />
+                                                                                : null
+                                            }
+                                        </Col>
 
-                                    <Col lg={12} md={12} sm={12} xs={12} style={{ marginBottom: 20 }}>
-                                        <Button disabled={activeStep === 0} onClick={handleBack}> Volver </Button>
-                                        <button
-                                            disabled={isLoading}
-                                            className={`ontrack_btn ${activeStep !== steps.length - 1 ? 'add_btn' : 'csv_btn'}`}
-                                            onClick={handleNext}
-                                            style={{ minWidth: '180px' }}
-                                        >
-                                            {activeStep === steps.length - 1 && !isLoading ? 'Crear Seguimiento' : !isLoading ? 'Siguiente' : 'Creando...'}
-                                        </button>
-                                    </Col>
+                                        <Col lg={12} md={12} sm={12} xs={12} style={{ marginBottom: 20 }}>
+                                            <Button disabled={activeStep === 0} onClick={handleBack}> Volver </Button>
+                                            <button
+                                                disabled={isLoading}
+                                                className={`ontrack_btn ${activeStep !== steps.length - 1 ? 'add_btn' : 'csv_btn'}`}
+                                                onClick={handleNext}
+                                                style={{ minWidth: '180px' }}
+                                            >
+                                                {activeStep === steps.length - 1 && !isLoading ? 'Crear Seguimiento' : !isLoading ? 'Siguiente' : 'Creando...'}
+                                            </button>
+                                        </Col>
 
-                                </Row>
+                                    </Row>
 
-                            )}
-                    </Col>
-                </Row>
-            </div>
+                                )}
+                        </Col>
+                    </Row>
+                </div>
+            </>
 
             : null
     );

@@ -1,6 +1,6 @@
 import TitlePage from "../../../src/components/commons/title_page/title_page";
 import styles from './styles.module.scss'
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import useSWR from "swr";
 import config from "../../../src/utils/config";
@@ -13,6 +13,7 @@ import MUIDataTable from "mui-datatables";
 import MTConfig from "../../../src/utils/table_options/MT_config";
 import { getTrackingService } from "../../../src/utils/tracking/services/tracking_services";
 import { useRouter } from "next/dist/client/router";
+import * as types from "./../../../redux/types";
 
 
 const Seguimientos = () => {
@@ -22,6 +23,7 @@ const Seguimientos = () => {
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false)
     const router = useRouter();
+    const dispatch = useDispatch();
 
 
 
@@ -64,8 +66,11 @@ const Seguimientos = () => {
                         <Col lg={6} md={6} sm={6} xs={6} className={styles.add_btn_container}>
                             {
                                 user.user.groups === "Pedagogía" ?
-                                    <Link href="seguimientos/nuevo">
-                                        <button className="ontrack_btn add_btn">Nuevo Seguimiento</button>
+                                    <Link href="seguimientos/nuevo"
+                                        onClick={() => dispatch({ type: types.RESET_TRACKING_SOLICITUD_DATA })}>
+                                        <button className="ontrack_btn add_btn">
+                                            Nuevo Seguimiento
+                                    </button>
                                     </Link>
                                     : null
                             }

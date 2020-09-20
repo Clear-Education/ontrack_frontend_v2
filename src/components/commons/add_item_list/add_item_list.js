@@ -4,17 +4,17 @@ import { Row, Col } from "react-bootstrap";
 import styles from './styles.module.scss';
 const { useState, useEffect } = require("react")
 
-const AddItemList = ({ labelText, handleList, previousItems }) => {
+const AddItemList = ({ labelText, handleList, previousItems, editable }) => {
 
     const [listItems, setListItems] = useState([]);
     const [newItem, setNewItem] = useState("");
     const [validateItem, setValidateItem] = useState(false);
 
-    useEffect(()=>{
-        if(previousItems.length > 0){
+    useEffect(() => {
+        if (previousItems.length > 0) {
             setListItems(previousItems);
         }
-    },[])
+    }, [previousItems])
 
     const handleChange = (event) => {
         setNewItem(event.target.value);
@@ -36,7 +36,7 @@ const AddItemList = ({ labelText, handleList, previousItems }) => {
 
     const handleDeleteItem = (index) => {
         let newList = [...listItems];
-        newList.splice(index,1);
+        newList.splice(index, 1);
         setListItems(newList);
         handleList(newList);
     }
@@ -49,46 +49,58 @@ const AddItemList = ({ labelText, handleList, previousItems }) => {
 
     return (
         <>
-            <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 'auto' }}>
+            <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 'auto', marginTop:'10px' }}>
                 {
                     listItems.map((item, index) => {
                         return (
-                            <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} key={index}>
+                            <Col lg={12} md={12} sm={12} xs={12} 
+                                className={styles.item_container} 
+                                key={index} 
+                                style={!editable ? {paddingTop:'3px', paddingBottom:'3px'} :{padding:'15px'}}
+                                >
                                 {item}
-                                <IconButton onClick={() => handleDeleteItem(index)}>
-                                    <Delete />
-                                </IconButton>
+                                {
+                                    !editable &&
+                                    <IconButton onClick={() => handleDeleteItem(index)}>
+                                        <Delete />
+                                    </IconButton>
+                                }
                             </Col>
-
                         )
                     })
                 }
             </Row>
-            <FormControl variant="outlined">
-                <FormLabel className="left" component="legend">{labelText} presionando ENTER</FormLabel>
-                <TextField
-                    id="newItem"
-                    name="newItem"
-                    variant="outlined"
-                    value={newItem}
-                    onChange={handleChange}
-                    onKeyPress={handleAddItem}
-                    required
-                    style={{
-                        padding: '0'
-                    }}
-                />
-            </FormControl >
             {
-                validateItem && (
-                    <FormHelperText
-                        className="helper-text"
-                        style={{ color: "rgb(182, 60, 47)" }}
-                    >
-                        Este campo no puede ser vacío
-                    </FormHelperText>
-                )
+                !editable &&
+                <>
+                    <FormControl variant="outlined">
+                        <FormLabel className="left" component="legend">{labelText} presionando ENTER</FormLabel>
+                        <TextField
+                            id="newItem"
+                            name="newItem"
+                            variant="outlined"
+                            value={newItem}
+                            onChange={handleChange}
+                            onKeyPress={handleAddItem}
+                            required
+                            style={{
+                                padding: '0'
+                            }}
+                        />
+                    </FormControl >
+                    {
+                        validateItem && (
+                            <FormHelperText
+                                className="helper-text"
+                                style={{ color: "rgb(182, 60, 47)" }}
+                            >
+                                Este campo no puede ser vacío
+                            </FormHelperText>
+                        )
+                    }
+                </>
             }
+
         </>
     )
 }

@@ -1,4 +1,3 @@
-import { Row, Col } from "react-bootstrap";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core";
 import MUIDataTable from "mui-datatables";
 import MTConfig from "../../../utils/table_options/MT_config";
@@ -22,7 +21,7 @@ const ConfigTable = ({tableName, data}) => {
     });
 
     useEffect(() => {
-        const ACTION_COLUM = {
+        const STUDENT_ACTION_COLUM = {
             name: "actions",
             label: "Acciones",
             options: {
@@ -36,7 +35,21 @@ const ConfigTable = ({tableName, data}) => {
             },
         }
 
-        let columsCopy = [...Colums.students,ACTION_COLUM];
+        const PARTICIPANT_ACTION_COLUM = {
+            name: "actions",
+            label: "Acciones",
+            options: {
+                customBodyRender: (value, tableMeta, updateValue) => {
+                    return (
+                        <div style={{ display: 'flex' }}>
+                            <button onClick={()=>{console.log(tableMeta.rowData)}}>alert</button>
+                        </div>
+                    )
+                },
+            },
+        }
+
+        let columsCopy = tableName === 'Alumnos' ? [...Colums.students,STUDENT_ACTION_COLUM] : tableName === 'Materias' ? [...Colums.subjects] : [...Colums.participants,PARTICIPANT_ACTION_COLUM];
         setColums(columsCopy);
     }, [])
 
