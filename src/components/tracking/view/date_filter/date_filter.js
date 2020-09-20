@@ -10,19 +10,22 @@ const INITIAL_STATE = {
 }
 const DateFilter = ({ handleDate, readOnlyStart, readOnlyEnd, start, end }) => {
 
-    const [state,setState] = useState(INITIAL_STATE);
-    
-    useEffect(()=>{
-        setState({...state, start: start})
-    },[start])
+    const [state, setState] = useState(INITIAL_STATE);
+    const endLocalDate = new Date(end);
+    const [endDate, setEndDate] = useState(end ? new Date(endLocalDate.getTime() + endLocalDate.getTimezoneOffset() * 60000) : null);
+
+    useEffect(() => {
+        setState({ ...state, start: start })
+    }, [start])
 
 
-    useEffect(()=>{
-        setState({...state, end: end})
-    },[end])
+    useEffect(() => {
+        setState({ ...state, end: end })
+    }, [end])
 
-    const handleEndDate = (date) =>{
-        setState({...state, end: date})
+    const handleEndDate = (date) => {
+        setEndDate(date);
+        setState({ ...state, end: date })
         handleDate(date);
     }
 
@@ -57,18 +60,18 @@ const DateFilter = ({ handleDate, readOnlyStart, readOnlyEnd, start, end }) => {
 
                 {
                     readOnlyEnd ?
-                        <span className={styles.viwer_date}>{end}</span> :
+                        <span className={styles.viwer_date}>{state.end}</span> :
                         <>
                             <span className={styles.date_label}>Hasta</span>
                             <KeyboardDatePicker
                                 clearable
-                                value={state.end ? state.end : null}
-                                onChange = {(date) => handleEndDate(date)}
+                                value={endDate}
+                                onChange={(date) => handleEndDate(date)}
                                 placeholder="DD/MM/YYYY"
                                 format="dd/MM/yyyy"
                                 invalidDateMessage="Formato de fecha inválido"
                                 minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                maxDateMessage="La fecha no debería ser mayor a la fecha de Inicio del Año Lectivo seleccionado"
+                                maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo seleccionado"
                                 required
                             />
                         </>

@@ -48,10 +48,7 @@ const Configuracion = () => {
                 setTrackingStatus(result.result.en_progreso)
             })
             getTrackingGoalsService(user.user.token, trackingId).then((result) => {
-<<<<<<< Updated upstream
-=======
                 setGoalsData(result.result);
->>>>>>> Stashed changes
             })
         }
     }, [trackingId])
@@ -169,9 +166,14 @@ const Configuracion = () => {
             return s < 10 ? "0" + s : s;
         }
         var d = new Date(inputFormat);
-        return [pad(d.getDate() + 1), pad(d.getMonth() + 1), d.getFullYear()].join("/");
+        return [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join("-");
     }
 
+    const convertDate2 = (date) => {
+        let datearray = date.split("-");
+        let newdate = datearray[2] + '/' + datearray[1] + '/' + datearray[0];
+        return newdate;
+    }
 
     const handleSaveDates = () => {
         if (!editDates) {
@@ -179,7 +181,7 @@ const Configuracion = () => {
                 id: trackingData.id,
                 nombre: storedTrackingData.nombre,
                 descripcion: storedTrackingData.descripcion,
-                fecha_cierre: convertDate(storedTrackingData.fecha_hasta)
+                fecha_cierre: storedTrackingData.fecha_hasta == 'NaN-NaN-NaN' ? "10/10/1900" : convertDate2(storedTrackingData.fecha_hasta)
             }
 
             editTrackingService(DATA, user.user.token).then((result) => {
@@ -193,9 +195,10 @@ const Configuracion = () => {
     }
 
     const handleDate = (date) => {
-       const DATA = {
-           ...storedTrackingData,
-           fecha_hasta: date
+        let dateFormatted = convertDate(date);
+        const DATA = {
+            ...storedTrackingData,
+            fecha_hasta: dateFormatted
         }
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: DATA });
     }
