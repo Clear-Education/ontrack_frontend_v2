@@ -57,7 +57,7 @@ export async function addTrackingService(data, token) {
 export async function editTrackingService(data, token) {
     return await editTrackingCrud(data, token).then((result) => {
         if (result.success) {
-            Alert.success("Tracking editado correctamente", {
+            Alert.success("Seguimiento editado correctamente", {
                 effect: "stackslide",
             });
         } else {
