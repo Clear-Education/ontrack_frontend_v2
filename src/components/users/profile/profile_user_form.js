@@ -191,6 +191,11 @@ const UserProfileForm = (props) => {
     };
 
     const handleChangePicture = (prop) => (event) => {
+        if (event.target.files[0] === undefined || event.target.files[0].size > 2000000) {
+            setValidation({ ...validation, [prop]: true })
+            return
+        }
+        setValidation({ ...validation, [prop]: false })
         setState({ ...state, [prop]: event.target.files[0] })
         let reader = new FileReader();
         reader.onloadend = () => {
@@ -265,6 +270,14 @@ const UserProfileForm = (props) => {
                                             accept="image/png, image/jpeg"
                                             onChange={handleChangePicture("picture")}
                                         />
+                                        {validation.picture && (
+                                            <FormHelperText
+                                                className="helper-text"
+                                                style={{ color: "rgb(182, 60, 47)" }}
+                                            >
+                                                Tamaño máximo de archivo: 2MB
+                                            </FormHelperText>
+                                        )}
                                     </label>
                                 </Col>
                                 <Col lg={8} md={8} sm={12} xs={12}>
