@@ -7,6 +7,8 @@
   --secondary-gray: #cecece33;
   --orange: #e4710fba;
   --red: #9c3838;
+  --light-red: #d6a0a0;
+  --medium-red: #c56f6f;
   --green: rgb(33, 105, 63);
 }
 
@@ -37,11 +39,11 @@ body {
 
 /* SWITCH MATERIAL UI */
 .MuiSwitch-colorPrimary.Mui-checked{
-  color: var(--main-color-dark) !important;
+  color: var(--white) !important;
 }
 
 .MuiSwitch-colorPrimary.Mui-checked + .MuiSwitch-track{
-  background-color: var(--main-color-dark) !important;
+  background-color: var(--white) !important;
 }
 
 /* CHECKBOX MUI */
@@ -73,6 +75,9 @@ body {
   padding: 5px;
 }
 
+.MuiFormLabel-root.Mui-focused{
+  color: var(--main-color-dark) !important;
+}
 .MuiInput-underline:after{
   border-bottom: 2px solid var(--main-color-dark) !important;
 }

@@ -1,4 +1,4 @@
-import { getAsistenciasCrud, addAsistenciasCrud, editAsistenciasCrud, deleteAsistenciasCrud } from "../cruds/asistencias_cruds";
+import { getAsistenciasCrud, addAsistenciasCrud, addMultipleAsistenciasCrud, editAsistenciasCrud, deleteAsistenciasCrud } from "../cruds/asistencias_cruds";
 import Alert from "react-s-alert";
 
 
@@ -21,6 +21,23 @@ export async function addAsistenciasService(data, token) {
     return await addAsistenciasCrud(data, token).then((result) => {
         if (result.success) {
             Alert.success("Asistencia creada correctamente", {
+                effect: "stackslide",
+            });
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
+            });
+        }
+        return result;
+    })
+}
+
+export async function addMultipleAsistenciasService(data, token) {
+    return await addMultipleAsistenciasCrud(data, token).then((result) => {
+        if (result.success) {
+            Alert.success("Asistencias cargadas correctamente", {
                 effect: "stackslide",
             });
         } else {

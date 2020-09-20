@@ -11,7 +11,6 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import SelectInput from "../../../src/components/commons/select_input/select_input"
-import StudentTable from "./studentTable";
 import { addMultipleStudentsCourseService, deleteMultipleStudentsCourseService } from "../../../src/utils/student/service/student_service";
 import { useSelector } from "react-redux";
 import { getActualSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
@@ -24,13 +23,12 @@ const INITIAL_STATE = {
     curso: '',
     studentsToAdd: [],
     studentsToDelete: [],
-    students: [],
 }
 
 const Cursos = () => {
 
     const [state, setState] = useState(INITIAL_STATE);
-    const [selectedStudentTable, setSelectedStudentTable] = useState("add");
+    const [isLoading, setIsLoading] = useState();
     const user = useSelector((store) => store.user);
 
     useEffect(() => {
@@ -40,21 +38,18 @@ const Cursos = () => {
     }, [])
 
 
-    const handleChange = (prop, value, _student_course_id) => {
-        setState({ ...state, [prop]: value })
+    const handleChange = (prop, value) => {
+        if (prop === 'studentsToAdd') {
+            state.studentsToAdd = value;
+        } else if (prop === 'studentsToDelete') {
+            state.studentsToDelete = value;
+        }
+        else {
+            setState({ ...state, [prop]: value })
+        }
+
     }
 
-    const handleSelectedStudentTable = (table) => {
-        setSelectedStudentTable(table);
-        setState((prevState) => ({
-            school_year: prevState.school_year,
-            department: prevState.department,
-            year: prevState.year,
-            curso: prevState.curso,
-            studentsToAdd: [],
-            studentsToDelete: [],
-        }))
-    }
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
@@ -92,6 +87,23 @@ const Cursos = () => {
                 });
             }
         } else {
+            const STUDENTS_DATA = {
+                curso: state.curso,
+                anio_lectivo: state.school_year,
+                studentsToDelete: state.studentsToDelete,
+                studentsToAdd: state.studentsToAdd
+            }
+            setIsLoading(true);
+            deleteMultipleStudentsCourseService(user.user.token, STUDENTS_DATA).then((result) => {
+                setIsLoading(false);
+                if (result.success) {
+                    setIsLoading(true);
+                    addMultipleStudentsCourseService(user.user.token, STUDENTS_DATA).then((result) => {
+                        setIsLoading(false);
+                        if (result.success) { setActiveStep((prevActiveStep) => prevActiveStep + 1); }
+                    })
+                }
+            })
         }
 
 
@@ -129,7 +141,7 @@ const Cursos = () => {
                                         onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'year' : activeStep === 2 ? 'curso' : 'send')}
                                         className={`ontrack_btn csv_btn ${styles.stepper_button}`}
                                     >
-                                        {activeStep === steps.length - 1 ? 'Finalizar' : 'Siguiente'}
+                                        {activeStep === steps.length - 1 ? (isLoading  ? 'Guardando...' : 'Finalizar') : 'Siguiente'}
                                     </button>
 
                                 </div>

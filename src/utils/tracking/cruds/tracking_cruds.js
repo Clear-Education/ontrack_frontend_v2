@@ -60,9 +60,14 @@ export async function getTrackingRolesCrud(auth_token) {
 }
 
 export async function editTrackingCrud(data, auth_token) {
-
+    const DATA = {
+        id: data.id,
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        fecha_cierre: data.fecha_cierre
+    }
     return axios
-        .patch(`${config.api_url}/`, data, {
+        .patch(`${config.api_url}/seguimientos/${DATA.id}/`, DATA, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },

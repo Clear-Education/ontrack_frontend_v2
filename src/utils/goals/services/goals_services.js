@@ -92,7 +92,7 @@ export async function addMultipleGoalsService(data, token) {
 export async function editGoalsService(data, token) {
     return await editGoalsCrud(data, token).then((result) => {
         if (result.success) {
-            Alert.success("Goals editado correctamente", {
+            Alert.success("Objetivo modificado correctamente", {
                 effect: "stackslide",
             });
         } else {

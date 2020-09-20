@@ -34,6 +34,8 @@ export const loginAction = (username, password) => {
 };
 
 export const logoutAction = (auth_token) => async (dispatch) => {
+  dispatch({ type: types.RESET_TRACKING_SOLICITUD_DATA })
+  dispatch({ type: types.RESET_TRACKING_DATA })
   dispatch({ type: types.LOADING_USER });
   return logout(auth_token).then((result) => {
     dispatch({ type: types.NO_LOADING_USER });
