@@ -3,11 +3,11 @@ import { Row, Col } from "react-bootstrap";
 import TitlePage from '../../../../../src/components/commons/title_page/title_page';
 import SubMenu from '../../../../../src/components/commons/sub_menu/sub_menu';
 import { useEffect, useState } from 'react';
-import { editTrackingService, getTrackingService } from '../../../../../src/utils/tracking/services/tracking_services';
+import { changeTrackingStatusService, editTrackingService, getTrackingService } from '../../../../../src/utils/tracking/services/tracking_services';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import ConfigTable from '../../../../../src/components/configuration/config_table/config_table';
-import { Collapse, IconButton, Switch } from '@material-ui/core';
+import { Collapse, IconButton, Switch, TextField } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import DateFilter from '../../../../../src/components/tracking/view/date_filter/date_filter';
@@ -15,10 +15,13 @@ import EighthStepGoals from '../../../../../src/components/tracking/8_step_goals
 import { getTrackingGoalsService } from '../../../../../src/utils/goals/services/goals_services';
 import EditIcon from '@material-ui/icons/Edit';
 import DoneIcon from '@material-ui/icons/Done';
+import Modal from '../../../../../src/components/commons/modals/modal'
+import Alert from "react-s-alert";
 
 //REDUX TYPES
 import * as types from "../../../../../redux/types";
-
+import DeleteForm from '../../../../../src/components/commons/delete_form/deleteForm';
+import Link from "next/link";
 
 
 const Configuracion = () => {
@@ -28,13 +31,14 @@ const Configuracion = () => {
     const [trackingId, setTrackingId] = useState();
     const [goalsData, setGoalsData] = useState();
     const [trackingData, setTrackingData] = useState();
-    const [trackingStatus, setTrackingStatus] = useState(null);
+    const [trackingStatus, setTrackingStatus] = useState(true);
     const [firstSection, setFirstSection] = useState();
     const [secondSection, setSecondSection] = useState();
     const [thirdSection, setThirdSection] = useState();
     const [dangerZone, setDangerZone] = useState();
     const [loading, setLoading] = useState(true);
     const [editDates, setEditDates] = useState(true);
+    const [editTitle, setEditTitle] = useState();
     const storedTrackingData = useSelector((store) => store.tracking);
 
 
@@ -55,6 +59,7 @@ const Configuracion = () => {
 
     useEffect(() => {
         let payload = {
+            id: '',
             nombre: '',
             descripcion: '',
             alumnos: [],
@@ -72,7 +77,8 @@ const Configuracion = () => {
             const SUBJECTS = parseSubjectData();
             const PARTICIPANTS = parseParticipantsData();
             const GOALS = parseGoalsData();
-            payload.nombre = trackingData.nombre,
+            payload.id = trackingData.id,
+                payload.nombre = trackingData.nombre,
                 payload.descripcion = trackingData.descripcion,
                 payload.materias = SUBJECTS,
                 payload.alumnos = STUDENTS,
@@ -144,7 +150,11 @@ const Configuracion = () => {
                     goals.asistencia.value = goal.valor_objetivo_cuantitativo
             }
             if (GOAL_TYPE === 'cualitativo') {
-                goals.cualitativos.push(goal.descripcion)
+                const DATA = {
+                    id: goal.id,
+                    descripcion: goal.descripcion
+                }
+                goals.cualitativos.push(DATA)
             }
         });
 
@@ -157,8 +167,18 @@ const Configuracion = () => {
         setTrackingId(id);
     }, [router.query]);
 
-    const handleChange = () => {
-        setTrackingStatus(!trackingStatus);
+    async function handleConfirmTrackingStatus() {
+        const DATA = {
+            id: trackingData.id,
+            status: !trackingStatus
+        }
+        return changeTrackingStatusService(user.user.token, DATA).then((result) => {
+            if (result.success) {
+                setTrackingStatus(!trackingStatus);
+            }
+            return result;
+        })
+
     }
 
     const convertDate = (inputFormat) => {
@@ -211,14 +231,79 @@ const Configuracion = () => {
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: DATA });
     }
 
+    const validateData = (prop) =>{
+        const value = storedTrackingData[prop];
+        const validate = (value.trim().length > 0);
+        return validate; 
+    }
+
+    const handleEditTitleSeguimiento = () => {
+        if (editTitle) {
+            const DATA = {
+                id: trackingData.id,
+                nombre: storedTrackingData.nombre,
+                descripcion: storedTrackingData.descripcion,
+                fecha_cierre: storedTrackingData.fecha_hasta == 'NaN-NaN-NaN' ? "10/10/1900" : convertDate2(storedTrackingData.fecha_hasta)
+            }
+            const validate = validateData('nombre') && validateData('descripcion');
+            if(validate){
+                editTrackingService(DATA, user.user.token).then((result) => {
+                    if (result.success) {
+                        setEditTitle(!editTitle);
+                    }
+                });
+            }else{
+                Alert.error("Debes completar todos los campos", {
+                    effect: "stackslide",
+                });
+            }
+           
+        } else {
+            setEditTitle(!editTitle);
+        }
+
+    }
+
+    const handleChange = (prop, event) => {
+        event.preventDefault();
+        const DATA = {
+            ...storedTrackingData,
+            [prop]: event.target.value
+        }
+        dispatch({ type: types.SAVE_TRACKING_DATA, payload: DATA });
+    }
     return (
         <Row lg={12} md={12} sm={12} xs={12} style={{ marginLeft: '5%' }}>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.header_container}>
                 <>
-                    <TitlePage title={`Configuración del seguimiento ${storedTrackingData && storedTrackingData.nombre}`} />
-                    <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
-                        <span>{storedTrackingData && storedTrackingData.descripcion}</span>
-                    </Col>
+                    <div className={styles.edit_title_icon}>
+                        <IconButton onClick={handleEditTitleSeguimiento}>
+                            {editTitle ? <DoneIcon /> : <EditIcon />}
+                        </IconButton>
+                    </div>
+
+                    {!editTitle ?
+                        <>
+                            < TitlePage title={`Configuración del seguimiento ${storedTrackingData && storedTrackingData.nombre}`} />
+                            <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
+                                <span>{storedTrackingData && storedTrackingData.descripcion}</span>
+                            </Col>
+                        </>
+                        :
+                        <div className={styles.edit_header_container}>
+                            <input
+                                onChange={(e) => handleChange('nombre', e)}
+                                value={storedTrackingData.nombre}
+                                className={styles.edit_header_input}
+                                autoFocus
+                            />
+                            <input
+                                onChange={(e) => handleChange('descripcion', e)}
+                                value={storedTrackingData.descripcion}
+                                className={styles.edit_header_input}
+                            />
+                        </div>
+                    }
                 </>
             </Row>
             <div className={styles.sub_menu_container}>
@@ -245,6 +330,13 @@ const Configuracion = () => {
 
                     <Collapse in={secondSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
                         <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
+                            <div className={styles.edit_participants_icon}>
+                                <Link href={`/dashboard/seguimientos/${storedTrackingData.id}/configuracion/participantes`}>
+                                    <IconButton>
+                                        <EditIcon />
+                                    </IconButton>
+                                </Link>
+                            </div>
                             <ConfigTable data={storedTrackingData.integrantes} tableName={"Participantes"} />
                         </Col>
                         <Col lg={12} md={12} sm={12} xs={12} className={`${styles.table_container} ${styles.dates_container}`}>
@@ -282,13 +374,18 @@ const Configuracion = () => {
                     {<div className={styles.collapse_container} onClick={() => setDangerZone(!dangerZone)}>Zona de finalización de seguimiento {dangerZone ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
                     <Collapse in={dangerZone} timeout="auto" unmountOnExit style={{ width: '100%' }}>
                         <Col lg={12} md={12} sm={12} xs={12} className={`${styles.table_container} ${styles.dates_container}`} id={styles.danger_zone_area}>
-                            <span className={styles.end_label}>{!trackingStatus ? 'Finalizar Seguimiento' : 'Seguimiento Finalizado'}</span>
-                            <Switch
-                                checked={trackingStatus}
-                                onChange={handleChange}
-                                color="primary"
-                                name="checkedB"
-                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                            <span className={styles.end_label}>{trackingStatus ? 'Finalizar Seguimiento' : 'Seguimiento Finalizado'}</span>
+                            <Modal
+                                title={`¿Seguro que deseas ${trackingStatus ? 'finalizar' : 'activar '} el seguimiento?`}
+                                body={<DeleteForm data={trackingData} handleSubmitAction={handleConfirmTrackingStatus} labelButton={trackingStatus ? 'Finalizando...' : 'Activando...'} />}
+                                button={
+                                    <Switch
+                                        checked={!trackingStatus}
+                                        color="primary"
+                                        name="checkedB"
+                                        inputProps={{ 'aria-label': 'primary checkbox' }}
+                                    />
+                                }
                             />
                         </Col>
                     </Collapse>

@@ -3,6 +3,7 @@ import * as types from "../types";
 
 var initialTrackingState = {
     current_step: 0,
+    id: '',
     nombre: '',
     descripcion: '',
     department: '',
@@ -26,6 +27,7 @@ const trackingReducer = (state = initialTrackingState, action) => {
             return {
                 ...state,
                 current_step: action.payload.current_step,
+                id: action.payload.id,
                 nombre: action.payload.nombre,
                 descripcion: action.payload.descripcion,
                 department: action.payload.department,

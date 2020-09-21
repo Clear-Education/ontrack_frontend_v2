@@ -39,11 +39,11 @@ body {
 
 /* SWITCH MATERIAL UI */
 .MuiSwitch-colorPrimary.Mui-checked{
-  color: var(--white) !important;
+  color: var(--red) !important;
 }
 
 .MuiSwitch-colorPrimary.Mui-checked + .MuiSwitch-track{
-  background-color: var(--white) !important;
+  background-color: var(--red) !important;
 }
 
 /* CHECKBOX MUI */
@@ -239,6 +239,10 @@ button:focus {
 
 .MuiButton-outlinedSizeSmall{
   margin-bottom: 20px !important;
+}
+.MuiPaper-elevation1{
+  max-height: 230px;
+  overflow: auto;
 }
 
 /* STEPPER */
