@@ -120,3 +120,43 @@ export async function checkExistingTrackingNameCrud(token,trackingName) {
             return errorHandler(error);
         });
 }
+
+export async function changeTrackingStatusCrud(token,data) {
+    const DATA = {
+        en_progreso: data.status
+    }
+    return axios.patch(`${config.api_url}/seguimientos/${data.id}/status/`, DATA, {
+        headers: {
+            Authorization: `Token ${token}`,
+        }
+    })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+            return response;
+        }).catch((error) => {
+            return errorHandler(error);
+        });
+}
+
+
+
+export async function editTrackingParticipantsCrud(data,token) {
+    const seguimiento_id = data[0].seguimiento;
+    return axios.patch(`${config.api_url}/seguimientos/${seguimiento_id}/integrantes/`, data, {
+        headers: {
+            Authorization: `Token ${token}`,
+        }
+    })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+            return response;
+        }).catch((error) => {
+            return errorHandler(error);
+        });
+}

@@ -163,7 +163,7 @@ const CreateTracking = () => {
     const [solicitudData, setSolicitudData] = useState();
 
     useEffect(() => {
-        if (trackingSolicitud.department != "") {
+        if (trackingSolicitud.department !== "") {
             getOneDepartmentService(trackingSolicitud.department, user.user.token).then(result => {
                 setSolicitudData({ ...trackingSolicitud, ["carrera"]: result.result.nombre, ["año"]: trackingSolicitud.year })
             })
@@ -177,7 +177,7 @@ const CreateTracking = () => {
     }, [])
 
     useEffect(() => {
-        if (trackingData.anio_lectivo != '') {
+        if (trackingData.anio_lectivo !== '') {
             getOneSchoolYearService(user.user.token, trackingData.anio_lectivo).then((result) => {
                 setGlobalTrackingData({ ...trackingData, ["fecha_desde"]: result.result.fecha_desde, ["fecha_hasta"]: result.result.fecha_hasta })
             })
@@ -308,7 +308,7 @@ const CreateTracking = () => {
     return (
         activeStep !== undefined ?
             <>
-                {   solicitudData != undefined &&
+                {   solicitudData !== undefined &&
                     <div className={styles.sub_menu_container}>
                         <InformacionSolicitud data={solicitudData} />
                     </div>

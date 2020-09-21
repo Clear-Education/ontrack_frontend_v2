@@ -5,11 +5,12 @@ import localStyles from './styles.module.scss'
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { FormControl, TextField, FormHelperText, IconButton, OutlinedInput, InputAdornment } from '@material-ui/core';
+import { FormControl, FormHelperText, IconButton, OutlinedInput, InputAdornment } from '@material-ui/core';
 import AddItemList from '../../commons/add_item_list/add_item_list';
+import OnlineAddItemList from '../../commons/online_add_item_list/online_add_item_list';
 import EditIcon from '@material-ui/icons/Edit';
 import DoneIcon from '@material-ui/icons/Done';
-import { editGoalsService } from '../../../utils/goals/services/goals_services';
+import { deleteGoalsService, editGoalsService, addGoalsService, getGoalsTypeService } from '../../../utils/goals/services/goals_services';
 
 
 const INITIAL_STATE = {
@@ -32,8 +33,20 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
     const [disabledAsistencia, setDisabledAsistencia] = useState();
     const [disabledPromedio, setDisabledPromedio] = useState();
     const [disabledCualitativos, setDisabledCualitativos] = useState();
+    const [qualitativeType, setQualitativeType] = useState();
+    const [isLoading,setIsLoading] = useState(true);
     const trackingData = useSelector((store) => store.tracking);
     const user = useSelector((store) => store.user);
+
+
+    useEffect(() => {
+        if (editable) {
+            getGoalsTypeService(user.user.token).then((result) => {
+                const QUALITATIVE_TYPE = result.result.find((type) => type.nombre === 'cualitativo')
+                setQualitativeType(QUALITATIVE_TYPE);
+            })
+        }
+    }, [editable])
 
     useEffect(() => {
         setDisabledAsistencia(editable);
@@ -48,40 +61,36 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
             asistencia: trackingData.asistencia,
             cualitativos: trackingData.cualitativos
         })
+        setTimeout(() => {
+            setIsLoading(false)
+        }, 1000);
     }, [])
 
     const handleEditAsistencia = () => {
-        if(!disabledAsistencia){
-            editGoalsService(trackingData.asistencia,user.user.token).then((result)=>{
-                if(result.success){
+        if (!disabledAsistencia) {
+            editGoalsService(trackingData.asistencia, user.user.token).then((result) => {
+                if (result.success) {
                     setDisabledAsistencia(!disabledAsistencia)
                 }
             })
-        }else{
+        } else {
             setDisabledAsistencia(!disabledAsistencia)
         }
     }
 
     const handleEditPromedio = () => {
-        if(!disabledPromedio){
-            editGoalsService(trackingData.promedio,user.user.token).then((result)=>{
-                if(result.success){
+        if (!disabledPromedio) {
+            editGoalsService(trackingData.promedio, user.user.token).then((result) => {
+                if (result.success) {
                     setDisabledPromedio(!disabledPromedio)
                 }
             })
-        }else{
+        } else {
             setDisabledPromedio(!disabledPromedio)
         }
     }
 
-    const handleEditCualitativos = (qualitativeItems) => {
-        const DATA = {
-            seguimiento: 79,
-            objetivos: trackingData.cualitativos
-        }
-        if(!disabledCualitativos){
-
-        }
+    const handleEditCualitativos = () => {
         setDisabledCualitativos(!disabledCualitativos)
     }
 
@@ -130,29 +139,58 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
     const handleChange = (prop) => (event) => {
         let value = event.target.value
         hadleValidation(prop, value);
-        if(!editable){
+        if (!editable) {
             setState({ ...state, [prop]: value })
             handleGlobalState && handleGlobalState(prop, value);
-        }else{
+        } else {
             let data = {
                 id: event.target.id,
                 value: value
             }
             setState({ ...state, [prop]: data });
-            handleEdit && handleEdit(prop,data)
+            handleEdit && handleEdit(prop, data)
         }
     }
 
-    const handleQualitativeGoals = (qualitativeItems) => {
-        if(!editable){
-            handleGlobalState && handleGlobalState("cualitativos", qualitativeItems);
-        }else{
-            handleEdit && handleEdit("cualitativos",qualitativeItems)
+    async function handleOnlineQualitativeGoals(type, data) {
+        switch (type) {
+            case 'delete':
+                const DELETE_DATA = {
+                    id: data
+                }
+                return deleteGoalsService(user.user.token, DELETE_DATA).then((result) => {
+                    return result;
+                })
+            case 'add':
+
+                const ADD_DATA = {
+                    descripcion: data,
+                    seguimiento: trackingData.id,
+                    tipo_objetivo: qualitativeType.id
+                }
+                return addGoalsService(user.user.token, ADD_DATA).then((result) => {
+                    if (result.success) {
+                        const newData =
+                        {
+                            id: result.result.id,
+                            descripcion: data
+                        }
+                        setState({ ...state, ['cualitativos']: newData });
+                        handleEdit && handleEdit('cualitativos', newData)
+                    }
+                    return result;
+                })
+
+            default:
+                break;
         }
-        
+    }
+    const handleQualitativeGoals = (qualitativeItems) => {
+        handleGlobalState && handleGlobalState("cualitativos", qualitativeItems);
     }
 
     return (
+        isLoading ? 'Cargando...' : 
         <>
             <div className={styles.container}>
                 <motion.div
@@ -251,7 +289,7 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
                         <h6 className="left" className={localStyles.goals_title}>Objetivos:</h6>
                         {editable ?
                             <IconButton onClick={disabledCualitativos ? handleEditCualitativos : () => handleSaveGoal('cualitativos')}>
-                                 {disabledCualitativos ? <EditIcon /> : <DoneIcon />}
+                                {disabledCualitativos ? <EditIcon /> : <DoneIcon />}
                             </IconButton>
 
                             : null
@@ -260,12 +298,20 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
 
                     <Row>
                         <Col lg={12} md={12} sm={12} xs={12} className={`${styles.input_container}`}>
-                            <AddItemList 
-                                labelText={"Añade un objetivo"} 
-                                handleList = {handleQualitativeGoals}
-                                previousItems = {trackingData.cualitativos}
-                                editable= {disabledCualitativos}
-                            />
+                            {editable ?
+                                <OnlineAddItemList
+                                    labelText={"Añade un objetivo"}
+                                    handleList={handleOnlineQualitativeGoals}
+                                    previousItems={trackingData.cualitativos}
+                                    editable={disabledCualitativos}
+                                /> :
+                                <AddItemList
+                                    labelText={"Añade un objetivo"}
+                                    handleList={handleQualitativeGoals}
+                                    previousItems={trackingData.cualitativos}
+                                    editable={disabledCualitativos}
+                                />
+                            }
                         </Col>
                     </Row>
                 </motion.div>
