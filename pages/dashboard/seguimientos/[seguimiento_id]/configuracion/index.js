@@ -36,7 +36,6 @@ const Configuracion = () => {
     const [secondSection, setSecondSection] = useState();
     const [thirdSection, setThirdSection] = useState();
     const [dangerZone, setDangerZone] = useState();
-    const [loading, setLoading] = useState(true);
     const [editDates, setEditDates] = useState(true);
     const [editTitle, setEditTitle] = useState();
     const storedTrackingData = useSelector((store) => store.tracking);
@@ -47,7 +46,6 @@ const Configuracion = () => {
     useEffect(() => {
         if (trackingId) {
             getTrackingService(user.user.token, trackingId).then((result) => {
-                setLoading(false);
                 setTrackingData(result.result);
                 setTrackingStatus(result.result.en_progreso)
             })
@@ -72,7 +70,6 @@ const Configuracion = () => {
             cualitativos: [],
         }
         if (trackingData) {
-            setLoading(false)
             const STUDENTS = parseStudentData();
             const SUBJECTS = parseSubjectData();
             const PARTICIPANTS = parseParticipantsData();
@@ -364,7 +361,7 @@ const Configuracion = () => {
                     {<div className={styles.collapse_container} onClick={() => setThirdSection(!thirdSection)}>Metas y Objetivos del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
                     <Collapse in={thirdSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
                         <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                            {loading ? 'Cargando...' : <EighthStepGoals editable handleEdit={handleEdit} />}
+                            {<EighthStepGoals editable handleEdit={handleEdit} />}
                         </Col>
                     </Collapse>
                 </Row>

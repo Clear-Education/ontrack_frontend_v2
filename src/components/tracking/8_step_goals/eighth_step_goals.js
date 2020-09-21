@@ -34,6 +34,7 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
     const [disabledPromedio, setDisabledPromedio] = useState();
     const [disabledCualitativos, setDisabledCualitativos] = useState();
     const [qualitativeType, setQualitativeType] = useState();
+    const [isLoading,setIsLoading] = useState(true);
     const trackingData = useSelector((store) => store.tracking);
     const user = useSelector((store) => store.user);
 
@@ -60,6 +61,9 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
             asistencia: trackingData.asistencia,
             cualitativos: trackingData.cualitativos
         })
+        setTimeout(() => {
+            setIsLoading(false)
+        }, 1000);
     }, [])
 
     const handleEditAsistencia = () => {
@@ -86,14 +90,7 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
         }
     }
 
-    const handleEditCualitativos = (qualitativeItems) => {
-        const DATA = {
-            seguimiento: 79,
-            objetivos: trackingData.cualitativos
-        }
-        if (!disabledCualitativos) {
-
-        }
+    const handleEditCualitativos = () => {
         setDisabledCualitativos(!disabledCualitativos)
     }
 
@@ -193,6 +190,7 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
     }
 
     return (
+        isLoading ? 'Cargando...' : 
         <>
             <div className={styles.container}>
                 <motion.div
