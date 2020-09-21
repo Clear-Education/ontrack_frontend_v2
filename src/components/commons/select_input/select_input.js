@@ -52,10 +52,10 @@ const SelectInput = ({ type, data, changeAction }) => {
         }
     }, [])
 
-    useEffect(() => { 
+    useEffect(() => {
         if (state.department !== '' && state.school_year !== '' && type === 'year') {
             getYearService(user.user.token, state.department).then((result) => {
-               setYearData(result.result)
+                setYearData(result.result)
             })
         }
     }, [state.school_year])
@@ -78,7 +78,7 @@ const SelectInput = ({ type, data, changeAction }) => {
 
     useEffect(() => {
         if (state.subject !== '' && type === 'exam') {
-            getExamsService(user.user.token, state.subject,state.school_year).then((result) => {
+            getExamsService(user.user.token, state.subject, state.school_year).then((result) => {
                 setExamData(result.result);
             })
         }
@@ -105,88 +105,88 @@ const SelectInput = ({ type, data, changeAction }) => {
                         })}
                     </Select>
                 </FormControl>
-                    : renderType === 'year' ?
+                : renderType === 'year' ?
+                    <FormControl variant="outlined">
+                        <InputLabel id="department">Año</InputLabel>
+                        <Select
+                            labelId="year"
+                            id="year"
+                            value={state.year}
+                            onChange={handleChange("year")}
+                            disabled={state.department === ''}
+                        >
+                            <MenuItem value="">
+                                <em>Seleccionar</em>
+                            </MenuItem>
+                            {yearData && yearData.map((year) => {
+                                return (
+                                    <MenuItem value={year.id} key={year.id}>{year.nombre}</MenuItem>
+                                )
+                            })}
+                        </Select>
+                    </FormControl>
+                    : renderType === 'curso' ?
                         <FormControl variant="outlined">
-                            <InputLabel id="department">Año</InputLabel>
+                            <InputLabel id="curso">Curso</InputLabel>
                             <Select
-                                labelId="year"
-                                id="year"
-                                value={state.year}
-                                onChange={handleChange("year")}
-                                disabled={state.department === ''}
+                                labelId="curso"
+                                id="curso"
+                                value={state.curso}
+                                disabled={state.year === ''}
+                                onChange={handleChange("curso")}
                             >
                                 <MenuItem value="">
                                     <em>Seleccionar</em>
                                 </MenuItem>
-                                {yearData && yearData.map((year) => {
+                                {courseData && courseData.map((course) => {
                                     return (
-                                        <MenuItem value={year.id} key={year.id}>{year.nombre}</MenuItem>
+                                        <MenuItem value={course.id} key={course.id}>{course.nombre}</MenuItem>
                                     )
                                 })}
+
                             </Select>
                         </FormControl>
-                        : renderType === 'curso' ?
+                        : renderType === 'subject' ?
                             <FormControl variant="outlined">
-                                <InputLabel id="curso">Curso</InputLabel>
+                                <InputLabel id="subject">Materia</InputLabel>
                                 <Select
-                                    labelId="curso"
-                                    id="curso"
-                                    value={state.curso}
-                                    disabled={state.year === ''}
-                                    onChange={handleChange("curso")}
+                                    labelId="subject"
+                                    id="subject"
+                                    value={state.subject}
+                                    onChange={handleChange("subject")}
+                                    disabled={state.curso === ''}
                                 >
                                     <MenuItem value="">
                                         <em>Seleccionar</em>
                                     </MenuItem>
-                                    {courseData && courseData.map((course) => {
+                                    {subjectData && subjectData.map((subject) => {
                                         return (
-                                            <MenuItem value={course.id} key={course.id}>{course.nombre}</MenuItem>
+                                            <MenuItem value={subject.id} key={subject.id}>{subject.nombre}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                            :
+                            <FormControl variant="outlined">
+                                <InputLabel id="exam">Exámen</InputLabel>
+                                <Select
+                                    labelId="exam"
+                                    id="exam"
+                                    value={state.exam}
+                                    disabled={state.subject === ''}
+                                    onChange={handleChange("exam")}
+                                >
+                                    <MenuItem value="">
+                                        <em>Seleccionar</em>
+                                    </MenuItem>
+                                    {examData && examData.map((exam) => {
+                                        return (
+                                            <MenuItem value={exam.id} key={exam.id}>{exam.nombre}</MenuItem>
                                         )
                                     })}
 
                                 </Select>
                             </FormControl>
-                            : renderType === 'subject' ?
-                                <FormControl variant="outlined">
-                                    <InputLabel id="subject">Materia</InputLabel>
-                                    <Select
-                                        labelId="subject"
-                                        id="subject"
-                                        value={state.subject}
-                                        onChange={handleChange("subject")}
-                                        disabled={state.curso === ''}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Seleccionar</em>
-                                        </MenuItem>
-                                        {subjectData && subjectData.map((subject) => {
-                                            return (
-                                                <MenuItem value={subject.id} key={subject.id}>{subject.nombre}</MenuItem>
-                                            )
-                                        })}
-                                    </Select>
-                                </FormControl>
-                                :
-                                <FormControl variant="outlined">
-                                    <InputLabel id="exam">Exam</InputLabel>
-                                    <Select
-                                        labelId="exam"
-                                        id="exam"
-                                        value={state.exam}
-                                        disabled={state.subject === ''}
-                                        onChange={handleChange("exam")}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Seleccionar</em>
-                                        </MenuItem>
-                                        {examData && examData.map((exam) => {
-                                            return (
-                                                <MenuItem value={exam.id} key={exam.id}>{exam.nombre}</MenuItem>
-                                            )
-                                        })}
-
-                                    </Select>
-                                </FormControl>
             }
 
         </>
