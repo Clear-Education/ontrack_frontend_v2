@@ -54,14 +54,12 @@ export async function getStudentGoalsService(token,student_id,seguimiento_id) {
 export async function addGoalsService(data, token) {
     return await addGoalsCrud(data, token).then((result) => {
         if (result.success) {
-            Alert.success("Goals creado correctamente", {
+            Alert.success("Objetivo creado correctamente", {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-                    effect: "stackslide",
-                });
+            Alert.error("Ocurrió un error al agregar el objetivo", {
+                effect: "stackslide",
             });
         }
         return result;
@@ -78,10 +76,8 @@ export async function addMultipleGoalsService(data, token) {
                     effect: "stackslide",
                 });
             } else {
-                result.result.forEach((element) => {
-                    Alert.error(element.message, {
-                        effect: "stackslide",
-                    });
+                Alert.error("Ocurrió un error al crear el seguimiento", {
+                    effect: "stackslide",
                 });
             }
             return result;
@@ -96,10 +92,8 @@ export async function editGoalsService(data, token) {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-                    effect: "stackslide",
-                });
+            Alert.error("Ocurrió un error al editar el objetivo", {
+                effect: "stackslide",
             });
         }
         return result;
@@ -110,15 +104,12 @@ export async function editGoalsService(data, token) {
 export async function deleteGoalsService(token, data) {
     return await deleteGoalsCrud(token, data).then((result) => {
         if (result.success) {
-            Alert.success("Materia eliminada correctamente", {
+            Alert.success("Objetivo eliminado correctamente", {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-
-                    effect: "stackslide",
-                });
+            Alert.error("Ocurrió un error al eliminar el objetivo", {
+                effect: "stackslide",
             });
         }
         return result;

@@ -49,7 +49,7 @@ const ConfigTable = ({tableName, data}) => {
             },
         }
 
-        let columsCopy = tableName === 'Alumnos' ? [...Colums.students,STUDENT_ACTION_COLUM] : tableName === 'Materias' ? [...Colums.subjects] : [...Colums.participants,PARTICIPANT_ACTION_COLUM];
+        let columsCopy = tableName === 'Alumnos' ? [...Colums.students] : tableName === 'Materias' ? [...Colums.subjects] : [...Colums.participants];
         setColums(columsCopy);
     }, [])
 

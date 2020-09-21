@@ -1,4 +1,4 @@
-import { getTrackingCrud, addTrackingCrud, editTrackingCrud, deleteTrackingCrud, getTrackingRolesCrud, checkExistingTrackingNameCrud } from "../cruds/tracking_cruds";
+import { getTrackingCrud, addTrackingCrud, editTrackingCrud, deleteTrackingCrud, getTrackingRolesCrud, checkExistingTrackingNameCrud, changeTrackingStatusCrud, editTrackingParticipantsCrud } from "../cruds/tracking_cruds";
 import Alert from "react-s-alert";
 import { parseTrackingData } from "./tracking_functions_services";
 import { addMultipleGoalsService } from "../../goals/services/goals_services";
@@ -99,6 +99,41 @@ export async function checkExistingTrackingNameServie(token,trackingName) {
             Alert.error("Ya existe un seguimiento con el nombre elegido, prueba uno diferente!", {
                 effect: "stackslide",
             });
+        }
+        return result;
+    })
+}
+
+
+
+export async function changeTrackingStatusService(token,data) {
+    return await changeTrackingStatusCrud(token,data).then((result) => {
+        if (result.success) {
+            let message = `Seguimiento ${!data.status ? 'finalizado' : 'activado'} correctamente`
+            Alert.success(message, {
+                effect: "stackslide",
+            });
+        } else {
+            Alert.error("Ocurrió un error al finalizar el seguimiento", {
+                effect: "stackslide",
+            });
+        }
+        return result;
+    })
+}
+
+
+export async function editTrackingParticipants(data, token) {
+    return await editTrackingParticipantsCrud(data, token).then((result) => {
+        if (result.success) {
+            Alert.success("Participantes editados correctamente", {
+                effect: "stackslide",
+            });
+        } else {
+            Alert.error("Ocurrió un error al editar los participantes", {
+                effect: "stackslide",
+            });
+           
         }
         return result;
     })
