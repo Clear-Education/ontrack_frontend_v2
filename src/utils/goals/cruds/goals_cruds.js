@@ -2,8 +2,8 @@ import config from '../../config';
 import axios from 'axios';
 import errorHandler from "../../error_handler";
 
-export async function addGoalsCrud(data, auth_token) {
-    return axios.post(`${config.api_url}/`, data, {
+export async function addGoalsCrud(auth_token,data) {
+    return axios.post(`${config.api_url}/objetivos/`, data, {
         headers: {
             Authorization: `Token ${auth_token}`,
         },
@@ -127,14 +127,19 @@ export async function editGoalsCrud(data, auth_token) {
 }
 
 
-export async function deleteGoalsCrud(data, auth_token) {
-    return axios.delete(`${config.api_url}/${data.id}/`, {
+export async function deleteGoalsCrud(auth_token,data) {
+    return axios.delete(`${config.api_url}/objetivos/${data.id}/`, {
         headers: {
             Authorization: `Token ${auth_token}`,
         },
     })
-        .then((result) => {
-            return result;
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+            return response;
+
         }).catch((error) => {
             return errorHandler(error);
         });
