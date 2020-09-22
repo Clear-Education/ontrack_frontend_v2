@@ -39,18 +39,16 @@ export async function addTrackingService(data, token) {
     const TRACKING_DATA = parseTrackingData(data);
     return await addTrackingCrud(TRACKING_DATA, token).then((result) => {
         if (result.success) {
-            const DATA = {...data,seguimiento: result.result.id}
-            return addMultipleGoalsService(DATA,token).then((result)=>{
-                return result;
+            Alert.success("Seguimiento creado correctamente, defina los objetivos!", {
+                effect: "stackslide",
             });
+            
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-                    effect: "stackslide",
-                });
+            Alert.error("Ocurrió un error al crear el seguimiento", {
+                effect: "stackslide",
             });
-            return result;
         }
+        return result;
     }) 
 }
 
@@ -61,10 +59,8 @@ export async function editTrackingService(data, token) {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-                    effect: "stackslide",
-                });
+            Alert.error("Ocurrió un error al editar el seguimiento", {
+                effect: "stackslide",
             });
         }
         return result;
@@ -79,11 +75,8 @@ export async function deleteTrackingService(token, data) {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-
-                    effect: "stackslide",
-                });
+            Alert.error("Ocurrió un error al eliminar la materia", {
+                effect: "stackslide",
             });
         }
         return result;

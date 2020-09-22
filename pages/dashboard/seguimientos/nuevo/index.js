@@ -42,6 +42,7 @@ import { getSolicitudService } from '../../../../src/utils/solicitudes/services/
 import { getOneDepartmentService } from '../../../../src/utils/department/services/department_services';
 import { useRouter } from 'next/router';
 import InformacionSolicitud from '../../../../src/components/seguimientos/informacion_solicitud';
+import { addMultipleGoalsService } from '../../../../src/utils/goals/services/goals_services';
 
 
 const ColorlibConnector = withStyles({
@@ -173,7 +174,7 @@ const CreateTracking = () => {
     useEffect(() => {
         dispatch({ type: types.RESET_TRACKING_DATA });
         setGlobalTrackingData(trackingData)
-        setActiveStep(trackingData.current_step ? trackingData.current_step : 0);
+        setActiveStep(trackingData.current_step ? 7 : 7);
     }, [])
 
     useEffect(() => {
@@ -247,8 +248,12 @@ const CreateTracking = () => {
 
             switch (activeStep) {
 
-                case steps.length - 1:
+                case steps.length - 2:
                     handleSubmitTracking()
+                    break;
+
+                case steps.length - 1:
+                    handleSubmitGoals()
                     break;
 
                 case 0:
@@ -277,20 +282,28 @@ const CreateTracking = () => {
         })
     }
 
+    const handleSubmitGoals = () =>{
+        setIsLoading(true);
+        addMultipleGoalsService(globalTrackingData,user.user.token).then((result)=>{
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
+            dispatch({ type: types.RESET_TRACKING_DATA });
+        })
+    }
+
     const handleSubmitTracking = () => {
         saveTrackingDataToStore();
         setIsLoading(true);
         addTrackingService(globalTrackingData, user.user.token).then((result) => {
             setIsLoading(false);
             if (result.success) {
-                dispatch({ type: types.RESET_TRACKING_DATA });
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                saveTrackingDataToStore(result.result.id);
             }
         });
     }
 
-    const saveTrackingDataToStore = () => {
-        const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1 }
+    const saveTrackingDataToStore = (_trackingId) => {
+        const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1, ['id']: _trackingId }
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData });
     }
 

@@ -21,9 +21,6 @@ const ExamsTable = (props) => {
     const url = `${config.api_url}/materia/${selectedSubject.id}/evaluacion/list/`
     const [examsArray, setExamsArray] = useState([]);
 
-    console.log(examsArray);
-    console.log(selectedExams);
-
     const [nameError, setNameError] = React.useState({
         error: false,
         label: "",
@@ -148,7 +145,6 @@ const ExamsTable = (props) => {
 
 
     async function editExam(data, oldData) {
-        console.log(data);
         let editedExam = examsArray.filter((exam) => {
             return exam.tableData.id == oldData.tableData.id
         })
@@ -163,7 +159,7 @@ const ExamsTable = (props) => {
     }
 
     async function deleteExam(data) {
-        let newExamsArray = !!examsArray && examsArray.filter((exam) => { return exam.id !== data.id })
+        let newExamsArray = !!examsArray && examsArray.filter((exam) => { return exam.tableData.id !== data.tableData.id })
         if (!newExamsArray.length) {
             newExamsArray = {
                 anio_lectivo: selectedSchoolYear,

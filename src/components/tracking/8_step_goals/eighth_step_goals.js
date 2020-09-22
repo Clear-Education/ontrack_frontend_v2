@@ -42,7 +42,7 @@ const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
     useEffect(() => {
         if (editable) {
             getGoalsTypeService(user.user.token).then((result) => {
-                const QUALITATIVE_TYPE = result.result.find((type) => type.nombre === 'cualitativo')
+                const QUALITATIVE_TYPE = result.result.find((type) => (type.nombre).toUpperCase() === 'CUALITATIVO')
                 setQualitativeType(QUALITATIVE_TYPE);
             })
         }
