@@ -155,7 +155,7 @@ const CreateTracking = () => {
     const steps = getSteps();
     const trackingData = useSelector((store) => store.tracking);
     const user = useSelector((store) => store.user);
-    const [globalTrackingData, setGlobalTrackingData] = useState(trackingData);
+    const [globalTrackingData, setGlobalTrackingData] = useState();
     const dispatch = useDispatch();
 
     const trackingSolicitud = useSelector((store) => store.trackingSolicitud);
@@ -171,12 +171,16 @@ const CreateTracking = () => {
 
     useEffect(() => {
         dispatch({ type: types.RESET_TRACKING_DATA });
-        setGlobalTrackingData(trackingData)
         setActiveStep(trackingData.current_step ? trackingData.current_step : 0);
     }, [])
 
+
     useEffect(() => {
-        if (trackingData.anio_lectivo !== '' && trackingData.anio_lectivo !== undefined ) {
+        setGlobalTrackingData(trackingData)
+    }, [trackingData]);
+
+    useEffect(() => {
+        if (trackingData.anio_lectivo !== '' && trackingData.anio_lectivo !== undefined) {
             getOneSchoolYearService(user.user.token, trackingData.anio_lectivo).then((result) => {
                 setGlobalTrackingData({ ...trackingData, ["fecha_desde"]: result.result.fecha_desde, ["fecha_hasta"]: result.result.fecha_hasta })
             })
@@ -280,11 +284,11 @@ const CreateTracking = () => {
         })
     }
 
-    const handleSubmitGoals = () =>{
+    const handleSubmitGoals = () => {
         setIsLoading(true);
-        addMultipleGoalsService(globalTrackingData,user.user.token).then((result)=>{
+        addMultipleGoalsService(globalTrackingData, user.user.token).then((result) => {
             setIsLoading(false);
-            if(result.success){
+            if (result.success) {
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
                 dispatch({ type: types.RESET_TRACKING_DATA });
             }
@@ -298,7 +302,7 @@ const CreateTracking = () => {
             setIsLoading(false);
             if (result.success) {
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
-                setGlobalTrackingData({...globalTrackingData,['id']:result.result.id})
+                setGlobalTrackingData({ ...globalTrackingData, ['id']: result.result.id })
                 saveTrackingDataToStore(result.result.id);
             }
         });
@@ -306,6 +310,7 @@ const CreateTracking = () => {
 
     const saveTrackingDataToStore = (_trackingId) => {
         const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1, ['id']: _trackingId }
+        console.log(newTrackingData);
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData });
     }
 
