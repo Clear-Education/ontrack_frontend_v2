@@ -55,8 +55,26 @@ const Configuracion = () => {
         }
     }, [trackingId])
 
+    useEffect(()=>{
+        if(goalsData){
+            const GOALS = parseGoalsData();
+            let payload = {
+                ...storedTrackingData,
+                promedio: '',
+                asistencia: '',
+                cualitativos: [],
+            }
+            payload.cualitativos = GOALS.cualitativos
+            payload.promedio = GOALS.promedio,
+            payload.asistencia = GOALS.asistencia
+            dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
+        }
+    
+    },[goalsData])
+
     useEffect(() => {
         let payload = {
+            ...storedTrackingData,
             id: '',
             nombre: '',
             descripcion: '',
@@ -65,26 +83,19 @@ const Configuracion = () => {
             integrantes: [],
             fecha_desde: '',
             fecha_hasta: '',
-            promedio: '',
-            asistencia: '',
-            cualitativos: [],
         }
         if (trackingData) {
             const STUDENTS = parseStudentData();
             const SUBJECTS = parseSubjectData();
             const PARTICIPANTS = parseParticipantsData();
-            const GOALS = parseGoalsData();
             payload.id = trackingData.id,
-                payload.nombre = trackingData.nombre,
-                payload.descripcion = trackingData.descripcion,
-                payload.materias = SUBJECTS,
-                payload.alumnos = STUDENTS,
-                payload.integrantes = PARTICIPANTS,
-                payload.cualitativos = GOALS.cualitativos
-            payload.promedio = GOALS.promedio,
-                payload.asistencia = GOALS.asistencia,
-                payload.fecha_desde = trackingData.fecha_inicio,
-                payload.fecha_hasta = trackingData.fecha_cierre
+            payload.nombre = trackingData.nombre,
+            payload.descripcion = trackingData.descripcion,
+            payload.fecha_desde = trackingData.fecha_inicio,
+            payload.fecha_hasta = trackingData.fecha_cierre,
+            payload.materias = SUBJECTS,
+            payload.alumnos = STUDENTS,
+            payload.integrantes = PARTICIPANTS
         }
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
 
