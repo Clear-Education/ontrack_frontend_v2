@@ -33,7 +33,6 @@ export const parseGoals = (data, goalTypes) => {
 
 
 export const parseGoalsData = (data, goalTypes) => {
-
     return {
         seguimiento: data.id,
         objetivos: parseGoals(data, goalTypes)
