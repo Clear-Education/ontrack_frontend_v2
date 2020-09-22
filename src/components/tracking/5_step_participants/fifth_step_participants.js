@@ -5,6 +5,7 @@ import MTConfig from "../../../utils/table_options/MT_config";
 import { useSelector } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
 import { getUserService } from "../../../utils/user/service/user_services";
+import { getTrackingRolesService } from '../../../utils/tracking/services/tracking_services';
 import styles from './styles.module.scss';
 
 const theme = createMuiTheme({
@@ -28,15 +29,18 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        let selectedUserList = []
-        let encargado = {
-            name: user.user.name,
-            last_name: user.user.last_name,
-            id: user.user.id,
-            role: 3
-        }
-        selectedUserList.push(encargado);
-        setSelectedUsers(selectedUserList)
+        getTrackingRolesService(user.user.token).then((result) => {
+            let rolEncargado = result.result.results.filter(rol => rol.nombre == "Encargado");
+            let selectedUserList = []
+            let encargado = {
+                name: user.user.name,
+                last_name: user.user.last_name,
+                id: user.user.id,
+                role: rolEncargado[0].id
+            }
+            selectedUserList.push(encargado);
+            setSelectedUsers(selectedUserList);
+        })
     }, [])
 
 
