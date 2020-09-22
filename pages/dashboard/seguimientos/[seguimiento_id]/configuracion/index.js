@@ -75,16 +75,16 @@ const Configuracion = () => {
             const PARTICIPANTS = parseParticipantsData();
             const GOALS = parseGoalsData();
             payload.id = trackingData.id,
-                payload.nombre = trackingData.nombre,
-                payload.descripcion = trackingData.descripcion,
-                payload.materias = SUBJECTS,
-                payload.alumnos = STUDENTS,
-                payload.integrantes = PARTICIPANTS,
-                payload.cualitativos = GOALS.cualitativos
+            payload.nombre = trackingData.nombre,
+            payload.descripcion = trackingData.descripcion,
+            payload.fecha_desde = trackingData.fecha_inicio,
+            payload.fecha_hasta = trackingData.fecha_cierre,
+            payload.materias = SUBJECTS,
+            payload.alumnos = STUDENTS,
+            payload.integrantes = PARTICIPANTS,
+            payload.cualitativos = GOALS.cualitativos
             payload.promedio = GOALS.promedio,
-                payload.asistencia = GOALS.asistencia,
-                payload.fecha_desde = trackingData.fecha_inicio,
-                payload.fecha_hasta = trackingData.fecha_cierre
+            payload.asistencia = GOALS.asistencia
         }
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
 
