@@ -26,7 +26,7 @@ const VALIDATE_INITIAL_STATE = {
 
 
 
-const EighthStepGoals = ({ handleGlobalState, editable, handleEdit }) => {
+const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit }) => {
 
     const [state, setState] = useState(INITIAL_STATE);
     const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE);

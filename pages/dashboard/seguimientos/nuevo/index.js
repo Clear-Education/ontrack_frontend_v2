@@ -38,9 +38,7 @@ import * as types from "../../../../redux/types";
 import { addTrackingService, checkExistingTrackingNameServie } from '../../../../src/utils/tracking/services/tracking_services';
 
 import { getOneSchoolYearService } from "../../../../src/utils/school_year/services/school_year_services";
-import { getSolicitudService } from '../../../../src/utils/solicitudes/services/solicitudes_services';
 import { getOneDepartmentService } from '../../../../src/utils/department/services/department_services';
-import { useRouter } from 'next/router';
 import InformacionSolicitud from '../../../../src/components/seguimientos/informacion_solicitud';
 import { addMultipleGoalsService } from '../../../../src/utils/goals/services/goals_services';
 
@@ -178,7 +176,7 @@ const CreateTracking = () => {
     }, [])
 
     useEffect(() => {
-        if (trackingData.anio_lectivo !== '') {
+        if (trackingData.anio_lectivo !== '' && trackingData.anio_lectivo !== undefined ) {
             getOneSchoolYearService(user.user.token, trackingData.anio_lectivo).then((result) => {
                 setGlobalTrackingData({ ...trackingData, ["fecha_desde"]: result.result.fecha_desde, ["fecha_hasta"]: result.result.fecha_hasta })
             })
@@ -285,8 +283,11 @@ const CreateTracking = () => {
     const handleSubmitGoals = () =>{
         setIsLoading(true);
         addMultipleGoalsService(globalTrackingData,user.user.token).then((result)=>{
-            setActiveStep((prevActiveStep) => prevActiveStep + 1);
-            dispatch({ type: types.RESET_TRACKING_DATA });
+            setIsLoading(false);
+            if(result.success){
+                setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                dispatch({ type: types.RESET_TRACKING_DATA });
+            }
         })
     }
 
@@ -297,6 +298,7 @@ const CreateTracking = () => {
             setIsLoading(false);
             if (result.success) {
                 setActiveStep((prevActiveStep) => prevActiveStep + 1);
+                setGlobalTrackingData({...globalTrackingData,['id']:result.result.id})
                 saveTrackingDataToStore(result.result.id);
             }
         });
