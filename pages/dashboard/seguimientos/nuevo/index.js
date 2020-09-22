@@ -174,7 +174,7 @@ const CreateTracking = () => {
     useEffect(() => {
         dispatch({ type: types.RESET_TRACKING_DATA });
         setGlobalTrackingData(trackingData)
-        setActiveStep(trackingData.current_step ? 7 : 7);
+        setActiveStep(trackingData.current_step ? trackingData.current_step : 0);
     }, [])
 
     useEffect(() => {
