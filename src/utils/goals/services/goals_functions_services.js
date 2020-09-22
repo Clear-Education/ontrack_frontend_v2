@@ -1,8 +1,9 @@
 
 export const parseGoals = (data, goalTypes) => {
-    const PROMEDIO_TYPE = goalTypes.find((type) => type.nombre === 'promedio')
-    const ASISTENCIA_TYPE = goalTypes.find((type) => type.nombre === 'asistencia')
-    const CUALITATIVO_TYPE = goalTypes.find((type) => type.nombre === 'cualitativo')
+    const PROMEDIO_TYPE = goalTypes.find((type) => type.nombre.toUpperCase() === 'PROMEDIO')
+    const ASISTENCIA_TYPE = goalTypes.find((type) => type.nombre.toUpperCase()  === 'ASISTENCIA')
+    const CUALITATIVO_TYPE = goalTypes.find((type) => type.nombre.toUpperCase()  === 'CUALITATIVO')
+    debugger;
     let goals = [];
     if (data.promedio) {
         let promedioGoal = {
@@ -35,7 +36,7 @@ export const parseGoals = (data, goalTypes) => {
 export const parseGoalsData = (data, goalTypes) => {
 
     return {
-        seguimiento: data.seguimiento,
+        seguimiento: 9,
         objetivos: parseGoals(data, goalTypes)
     }
 
