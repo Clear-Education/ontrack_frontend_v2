@@ -6,12 +6,14 @@ import { Row, Col } from "react-bootstrap";
 import DateFilter from "../../../../src/components/tracking/view/date_filter/date_filter";
 import NewPost from "../../../../src/components/tracking/view/new_post/new_post";
 import Post from "../../../../src/components/tracking/view/post/post";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getTrackingService } from "../../../../src/utils/tracking/services/tracking_services";
-import { getStudentGoalsService } from "../../../../src/utils/goals/services/goals_services";
+import { getTrackingGoalsService } from "../../../../src/utils/goals/services/goals_services";
 import GoalsViewer from "../../../../src/components/tracking/view/goals_viewer/goals_viewer";
 import StudentViewer from "../../../../src/components/tracking/view/student_viewer/student_viewer";
 import SubMenu from "../../../../src/components/commons/sub_menu/sub_menu";
+import * as types from "../../../../redux/types";
+import Link from "next/link";
 
 const Seguimiento = () => {
     const router = useRouter();
@@ -19,6 +21,10 @@ const Seguimiento = () => {
     const [trackingId, setTrackingId] = useState();
     const [trackingData, setTrackingData] = useState();
     const [selectedStudent, setSelectedStudent] = useState();
+    const [goalsData, setGoalsData] = useState();
+    const dispatch = useDispatch();
+    const storedTrackingData = useSelector((store) => store.tracking);
+
 
     useEffect(() => {
         let params = Object.values(router.query);
@@ -30,12 +36,133 @@ const Seguimiento = () => {
         if (trackingId) {
             getTrackingService(user.user.token, trackingId).then((result) => {
                 setTrackingData(result.result);
+                console.log(result.result)
+            })
+            getTrackingGoalsService(user.user.token, trackingId).then((result) => {
+                setGoalsData(result.result);
             })
         }
+
     }, [trackingId])
+
+    useEffect(() => {
+        let payload = {
+            ...storedTrackingData,
+            id: '',
+            nombre: '',
+            descripcion: '',
+            alumnos: [],
+            materias: [],
+            integrantes: [],
+            fecha_desde: '',
+            fecha_hasta: '',
+        }
+        if (trackingData) {
+            const STUDENTS = parseStudentData();
+            const SUBJECTS = parseSubjectData();
+            const PARTICIPANTS = parseParticipantsData();
+            payload.id = trackingData.id,
+                payload.nombre = trackingData.nombre,
+                payload.descripcion = trackingData.descripcion,
+                payload.fecha_desde = trackingData.fecha_inicio,
+                payload.fecha_hasta = trackingData.fecha_cierre,
+                payload.materias = SUBJECTS,
+                payload.alumnos = STUDENTS,
+                payload.integrantes = PARTICIPANTS
+        }
+        dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
+
+    }, [trackingData]);
+
+    const parseStudentData = () => {
+        return trackingData.alumnos.map((student) => { return student.alumno });
+    }
+
+    const parseSubjectData = () => {
+        const SUBJECTS_DATA = trackingData.materias;
+        let newSubjectData = []
+        SUBJECTS_DATA.map((subject) => {
+            let newData = {
+                department_name: subject.anio.carrera,
+                subject_name: subject.nombre,
+                year: subject.anio.nombre
+            }
+            newSubjectData.push(newData);
+        });
+        return newSubjectData;
+    }
+
+
+    const parseParticipantsData = () => {
+        const PARTICIPANTS_DATA = trackingData.integrantes;
+        let newParticipantsData = []
+        PARTICIPANTS_DATA.map((participant) => {
+            let newData = {
+                id: participant.id,
+                rol: participant.rol,
+                nombre: participant.usuario.name,
+                apellido: participant.usuario.last_name,
+            }
+            newParticipantsData.push(newData);
+        });
+        return newParticipantsData;
+    }
+
+    useEffect(() => {
+        if (goalsData) {
+            const GOALS = parseGoalsData();
+            let payload = {
+                ...storedTrackingData,
+                promedio: '',
+                asistencia: '',
+                cualitativos: [],
+            }
+            payload.cualitativos = GOALS.cualitativos
+            payload.promedio = GOALS.promedio,
+                payload.asistencia = GOALS.asistencia
+            dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
+        }
+
+    }, [goalsData])
+
+
 
     const handleSelectedStudent = (student) => {
         setSelectedStudent(student);
+    }
+
+    const parseGoalsData = () => {
+        let goals = {
+            promedio: {
+                id: '',
+                value: ''
+            },
+            asistencia: {
+                id: '',
+                value: ''
+            },
+            cualitativos: [],
+        }
+        goalsData && goalsData.map((goal) => {
+            const GOAL_TYPE = (goal.tipo_objetivo.nombre).toUpperCase();
+            if (GOAL_TYPE === 'PROMEDIO') {
+                goals.promedio.id = goal.id,
+                    goals.promedio.value = goal.valor_objetivo_cuantitativo
+            }
+            if (GOAL_TYPE === 'ASISTENCIA') {
+                goals.asistencia.id = goal.id,
+                    goals.asistencia.value = goal.valor_objetivo_cuantitativo
+            }
+            if (GOAL_TYPE === 'CUALITATIVO') {
+                const DATA = {
+                    id: goal.id,
+                    descripcion: goal.descripcion
+                }
+                goals.cualitativos.push(DATA)
+            }
+        });
+
+        return goals;
     }
 
     return (
@@ -44,12 +171,12 @@ const Seguimiento = () => {
                 <SubMenu />
             </div>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.header_container}>
-                        <>
-                            <TitlePage title={trackingData && trackingData.nombre} />
-                            <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
-                                <span>{trackingData && trackingData.descripcion}</span>
-                            </Col>
-                        </>
+                <>
+                    <TitlePage title={trackingData && trackingData.nombre} />
+                    <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
+                        <span>{trackingData && trackingData.descripcion}</span>
+                    </Col>
+                </>
             </Row>
             {/* LADO IZQ */}
             <Col lg={8} md={8} sm={8} xs={8} >
@@ -104,6 +231,7 @@ const Seguimiento = () => {
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
                         <span className={styles.section_title}>Métricas</span>
+                        <Link href={`/dashboard/seguimientos/${storedTrackingData.id}/estadisticas`}><a>Ver Estadisticas</a></Link>
                     </Col>
                 </Row>
             </Col>

@@ -55,8 +55,8 @@ const Configuracion = () => {
         }
     }, [trackingId])
 
-    useEffect(()=>{
-        if(goalsData){
+    useEffect(() => {
+        if (goalsData) {
             const GOALS = parseGoalsData();
             let payload = {
                 ...storedTrackingData,
@@ -66,11 +66,11 @@ const Configuracion = () => {
             }
             payload.cualitativos = GOALS.cualitativos
             payload.promedio = GOALS.promedio,
-            payload.asistencia = GOALS.asistencia
+                payload.asistencia = GOALS.asistencia
             dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
         }
-    
-    },[goalsData])
+
+    }, [goalsData])
 
     useEffect(() => {
         let payload = {
@@ -89,13 +89,13 @@ const Configuracion = () => {
             const SUBJECTS = parseSubjectData();
             const PARTICIPANTS = parseParticipantsData();
             payload.id = trackingData.id,
-            payload.nombre = trackingData.nombre,
-            payload.descripcion = trackingData.descripcion,
-            payload.fecha_desde = trackingData.fecha_inicio,
-            payload.fecha_hasta = trackingData.fecha_cierre,
-            payload.materias = SUBJECTS,
-            payload.alumnos = STUDENTS,
-            payload.integrantes = PARTICIPANTS
+                payload.nombre = trackingData.nombre,
+                payload.descripcion = trackingData.descripcion,
+                payload.fecha_desde = trackingData.fecha_inicio,
+                payload.fecha_hasta = trackingData.fecha_cierre,
+                payload.materias = SUBJECTS,
+                payload.alumnos = STUDENTS,
+                payload.integrantes = PARTICIPANTS
         }
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: payload });
 
@@ -239,10 +239,10 @@ const Configuracion = () => {
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: DATA });
     }
 
-    const validateData = (prop) =>{
+    const validateData = (prop) => {
         const value = storedTrackingData[prop];
         const validate = (value.trim().length > 0);
-        return validate; 
+        return validate;
     }
 
     const handleEditTitleSeguimiento = () => {
@@ -254,18 +254,18 @@ const Configuracion = () => {
                 fecha_cierre: storedTrackingData.fecha_hasta == 'NaN-NaN-NaN' ? "10/10/1900" : convertDate2(storedTrackingData.fecha_hasta)
             }
             const validate = validateData('nombre') && validateData('descripcion');
-            if(validate){
+            if (validate) {
                 editTrackingService(DATA, user.user.token).then((result) => {
                     if (result.success) {
                         setEditTitle(!editTitle);
                     }
                 });
-            }else{
+            } else {
                 Alert.error("Debes completar todos los campos", {
                     effect: "stackslide",
                 });
             }
-           
+
         } else {
             setEditTitle(!editTitle);
         }
