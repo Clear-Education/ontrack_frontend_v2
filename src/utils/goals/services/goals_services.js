@@ -57,7 +57,7 @@ export async function addGoalsService(data, token) {
             Alert.success("Objetivo creado correctamente", {
                 effect: "stackslide",
             });
-        } else {
+        } else { 
             Alert.error("Ocurrió un error al agregar el objetivo", {
                 effect: "stackslide",
             });
@@ -67,16 +67,18 @@ export async function addGoalsService(data, token) {
 }
 
 
-export async function addMultipleGoalsService(data, token) {
+export async function addMultipleGoalsService(data, token,editing) {
     return await getGoalsTypeService(token).then((result)=>{
         const GOALS_DATA = parseGoalsData(data,result.result);
           return addMultipleGoalsCrud(GOALS_DATA, token).then((result) => {
             if (result.success) {
-                Alert.success("Seguimiento creado correctamente", {
+                let msg = editing ? "Objetivo creado correctamente" : "Seguimiento creado correctamente";
+                Alert.success(msg, {
                     effect: "stackslide",
                 });
             } else {
-                Alert.error("Ocurrió un error al crear el seguimiento", {
+                let msg = editing ? "Ocurrió un error al crear el objetivo" : "Ocurrió un error al crear el seguimiento";
+                Alert.error(msg, {
                     effect: "stackslide",
                 });
             }

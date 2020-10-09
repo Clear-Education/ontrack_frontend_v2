@@ -10,7 +10,7 @@ import AddItemList from '../../commons/add_item_list/add_item_list';
 import OnlineAddItemList from '../../commons/online_add_item_list/online_add_item_list';
 import EditIcon from '@material-ui/icons/Edit';
 import DoneIcon from '@material-ui/icons/Done';
-import { deleteGoalsService, editGoalsService, addGoalsService, getGoalsTypeService } from '../../../utils/goals/services/goals_services';
+import { deleteGoalsService, editGoalsService, addGoalsService, getGoalsTypeService, addMultipleGoalsService } from '../../../utils/goals/services/goals_services';
 
 
 const INITIAL_STATE = {
@@ -26,7 +26,7 @@ const VALIDATE_INITIAL_STATE = {
 
 
 
-const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit }) => {
+const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit, adminView }) => {
 
     const [state, setState] = useState(INITIAL_STATE);
     const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE);
@@ -55,24 +55,34 @@ const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit }) =>
     }, [])
 
     useEffect(() => {
+        setIsLoading(false)
         setState({
             ...state,
             promedio: trackingData.promedio,
             asistencia: trackingData.asistencia,
             cualitativos: trackingData.cualitativos
         })
-        setTimeout(() => {
-            setIsLoading(false)
-        }, 1000);
     }, [])
 
     const handleEditAsistencia = () => {
         if (!disabledAsistencia) {
+            if(trackingData.asistencia.id !== 'asistencia'){
             editGoalsService(trackingData.asistencia, user.user.token).then((result) => {
                 if (result.success) {
                     setDisabledAsistencia(!disabledAsistencia)
                 }
             })
+        }else{
+            const trackingGoal = {
+                id: trackingData.id,
+                asistencia: trackingData.asistencia.value
+            }
+            addMultipleGoalsService(trackingGoal, user.user.token,true).then((result)=>{
+                if (result.success) {
+                    setDisabledAsistencia(!disabledAsistencia)
+                }
+            });
+        }
         } else {
             setDisabledAsistencia(!disabledAsistencia)
         }
@@ -80,11 +90,24 @@ const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit }) =>
 
     const handleEditPromedio = () => {
         if (!disabledPromedio) {
-            editGoalsService(trackingData.promedio, user.user.token).then((result) => {
-                if (result.success) {
-                    setDisabledPromedio(!disabledPromedio)
+            if(trackingData.promedio.id !== 'promedio'){
+                editGoalsService(trackingData.promedio, user.user.token).then((result) => {
+                    if (result.success) {
+                        setDisabledPromedio(!disabledPromedio)
+                    }
+                }) 
+            }else{
+                const trackingGoal = {
+                    id: trackingData.id,
+                    promedio: trackingData.promedio.value
                 }
-            })
+                addMultipleGoalsService(trackingGoal, user.user.token,true).then((result)=>{
+                    if (result.success) {
+                        setDisabledPromedio(!disabledPromedio)
+                    }
+                });
+            }
+
         } else {
             setDisabledPromedio(!disabledPromedio)
         }
@@ -220,7 +243,7 @@ const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit }) =>
                                                 padding: '5px'
                                             }}
                                             endAdornment={
-                                                editable &&
+                                                editable && adminView &&
                                                 <InputAdornment position="end">
                                                     <IconButton onClick={disabledPromedio ? handleEditPromedio : () => handleSaveGoal('promedio')}>
                                                         {disabledPromedio ? <EditIcon /> : <DoneIcon />}
@@ -255,7 +278,7 @@ const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit }) =>
                                                 padding: '5px'
                                             }}
                                             endAdornment={
-                                                editable &&
+                                                editable && adminView &&
                                                 <InputAdornment position="end">
                                                     <IconButton onClick={disabledAsistencia ? handleEditAsistencia : () => handleSaveGoal('asistencia')}>
                                                         {disabledAsistencia ? <EditIcon /> : <DoneIcon />}
@@ -287,12 +310,10 @@ const EighthStepGoals = ({ handleGlobalState, editable = false, handleEdit }) =>
                 >
                     <div className={localStyles.goals_header}>
                         <h6 className="left" className={localStyles.goals_title}>Objetivos:</h6>
-                        {editable ?
+                        {editable && adminView &&
                             <IconButton onClick={disabledCualitativos ? handleEditCualitativos : () => handleSaveGoal('cualitativos')}>
                                 {disabledCualitativos ? <EditIcon /> : <DoneIcon />}
                             </IconButton>
-
-                            : null
                         }
                     </div>
 
