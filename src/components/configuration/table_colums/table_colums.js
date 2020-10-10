@@ -25,11 +25,11 @@ export const Colums = {
 
     subjects:[
         {
-            name: "department_name",
+            name: "carrera",
             label: "Carrera",
         },
         {
-            name: "subject_name",
+            name: "nombre",
             label: "Materia",
         },
         {

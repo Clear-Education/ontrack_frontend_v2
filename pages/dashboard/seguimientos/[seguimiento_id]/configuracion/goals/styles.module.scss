@@ -1,0 +1,23 @@
+.container{
+    margin: 10px 0px 20px;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+}
+.goals_header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.goals_title{
+    color: var(--main-color-dark);
+    font-weight: 700;
+    text-align: left;
+    margin: 0px;
+}
+
+.input_container{
+    padding: 10px;
+ }
+ 

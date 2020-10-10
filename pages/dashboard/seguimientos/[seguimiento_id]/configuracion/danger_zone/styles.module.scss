@@ -1,0 +1,25 @@
+.collapse_container {
+    width: 100%;
+    display: flex;
+    padding: 20px 40px;
+    cursor: pointer;
+  }
+.zone_container {
+    margin-bottom: 20px;
+    background-color: var(--white);
+    border-radius: 10px;
+    padding: 10px 20px;
+    margin-left: 15px;
+    width: 96.5%;
+  }
+
+.end_label{
+    display: block;
+    text-align: left;
+    margin-left: 2.5%;
+    color: black;
+    font-weight: 500;
+    color: var(--red);
+    font-weight: 600;
+    margin-bottom: 15px;
+}

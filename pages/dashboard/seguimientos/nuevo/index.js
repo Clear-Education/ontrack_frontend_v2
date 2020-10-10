@@ -170,7 +170,6 @@ const CreateTracking = () => {
     }, [])
 
     useEffect(() => {
-        dispatch({ type: types.RESET_TRACKING_DATA });
         setActiveStep(trackingData.current_step ? trackingData.current_step : 0);
     }, [])
 

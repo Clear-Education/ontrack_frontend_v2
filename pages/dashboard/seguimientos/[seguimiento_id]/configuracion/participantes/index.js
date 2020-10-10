@@ -180,9 +180,13 @@ const EditParticipants = () => {
     }
 
     const handleBack = () => {
-        const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep - 1 }
-        dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData })
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+        if(activeStep === 0 ){
+            router.push(`/dashboard/seguimientos/${tracking.id}/configuracion/`)
+        }else{
+            const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep - 1 }
+            dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData })
+            setActiveStep((prevActiveStep) => prevActiveStep - 1);
+        }
     };
 
 
@@ -226,7 +230,7 @@ const EditParticipants = () => {
                                         </Col>
 
                                         <Col lg={12} md={12} sm={12} xs={12} style={{ marginBottom: 20 }}>
-                                            <Button disabled={activeStep === 0} onClick={handleBack}> Volver </Button>
+                                            <Button onClick={handleBack}> Volver </Button>
                                             <button
                                                 disabled={isLoading}
                                                 className={`ontrack_btn ${activeStep !== steps.length - 1 ? 'add_btn' : 'csv_btn'}`}

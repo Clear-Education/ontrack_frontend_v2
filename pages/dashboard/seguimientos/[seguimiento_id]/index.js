@@ -6,19 +6,23 @@ import { Row, Col } from "react-bootstrap";
 import DateFilter from "../../../../src/components/tracking/view/date_filter/date_filter";
 import NewPost from "../../../../src/components/tracking/view/new_post/new_post";
 import Post from "../../../../src/components/tracking/view/post/post";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getTrackingService } from "../../../../src/utils/tracking/services/tracking_services";
-import { getStudentGoalsService } from "../../../../src/utils/goals/services/goals_services";
+import { getStudentGoalsService, getTrackingGoalsService } from "../../../../src/utils/goals/services/goals_services";
 import GoalsViewer from "../../../../src/components/tracking/view/goals_viewer/goals_viewer";
 import StudentViewer from "../../../../src/components/tracking/view/student_viewer/student_viewer";
 import SubMenu from "../../../../src/components/commons/sub_menu/sub_menu";
+import * as types from "../../../../redux/types";
+import { parseGoalsData } from "./services/services";
+import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
 
 const Seguimiento = () => {
     const router = useRouter();
     const user = useSelector((store) => store.user);
+    const currentTracking = useSelector((store)=>store.currentTracking);
     const [trackingId, setTrackingId] = useState();
-    const [trackingData, setTrackingData] = useState();
-    const [selectedStudent, setSelectedStudent] = useState();
+    const [loading, setLoading] = useState(true)
+    const dispatch = useDispatch();
 
     useEffect(() => {
         let params = Object.values(router.query);
@@ -29,25 +33,31 @@ const Seguimiento = () => {
     useEffect(() => {
         if (trackingId) {
             getTrackingService(user.user.token, trackingId).then((result) => {
-                setTrackingData(result.result);
+                const TRACKING_DATA = result.result;
+                dispatch({type:types.SAVE_CURRENT_TRACKING_DATA, payload: TRACKING_DATA});
+                setLoading(false);
             })
         }
-    }, [trackingId])
+    }, [trackingId]);
 
-    const handleSelectedStudent = (student) => {
-        setSelectedStudent(student);
-    }
+    useEffect(()=>{
+        return () =>{
+            dispatch({type:types.RESET_CURRENT_TRACKING_DATA});
+        }
+    },[])
+
 
     return (
+        loading ? <BackgroundLoader show={loading}/> : 
         <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 'auto' }}>
             <div className={styles.sub_menu_container}>
                 <SubMenu />
-            </div>
+            </div> 
             <Row lg={12} md={12} sm={12} xs={12} className={styles.header_container}>
                         <>
-                            <TitlePage title={trackingData && trackingData.nombre} />
+                            <TitlePage title={currentTracking.nombre} />
                             <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
-                                <span>{trackingData && trackingData.descripcion}</span>
+                                <span>{currentTracking.descripcion}</span>
                             </Col>
                         </>
             </Row>
@@ -60,7 +70,7 @@ const Seguimiento = () => {
                                 <TitlePage title={"Novedades del Seguimiento"} fontSize={16} />
                             </Col>
                             <Col lg={6} md={6} sm={6} xs={6}>
-                                <DateFilter />
+                    
                             </Col>
 
                         </Row>
@@ -86,13 +96,12 @@ const Seguimiento = () => {
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                         <span className={styles.section_title}>Alumnos</span>
-                        <StudentViewer students={trackingData && trackingData.alumnos} />
+                        <StudentViewer students={currentTracking.alumnos} />
                     </Col>
                 </Row>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                         <span className={styles.section_title}>Plazos</span>
-                        <DateFilter readOnly start={trackingData && trackingData.fecha_inicio} end={trackingData && trackingData.fecha_cierre} />
                     </Col>
                 </Row>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>

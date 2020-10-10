@@ -46,24 +46,11 @@
 .dates_container {
   background-color: var(--white);
   border-radius: 10px;
-  padding: 20px;
+  padding: 10px 20px;
   margin-left: 15px;
   width: 96.5%;
 }
 
-.dates_label,
-.end_label {
-  display: block;
-  text-align: left;
-  margin-left: 2.5%;
-  color: black;
-  font-weight: 500;
-  margin-bottom: 15px;
-}
-.end_label {
-  color: var(--red);
-  font-weight: 600;
-}
 
 
 .danger_area {
@@ -86,30 +73,4 @@
   top: 17px;
   left: 20%;
   z-index: 9998;
-}
-
-.edit_title_icon {
-  position: absolute;
-  right: 15%;
-  top: 13px;
-}
-
-.edit_header_container {
-  margin-left: 2%;
-  width: 80%;
-}
-
-.edit_header_input {
-  display: block;
-  width: 70%;
-  margin-bottom: 15px;
-  padding: 15px;
-  border: none;
-  background: var(--gray);
-  border-radius: 5px;
-}
-
-.edit_header_input:focus {
-  outline: none;
-  border: 2px solid var(--main-color-dark);
 }
