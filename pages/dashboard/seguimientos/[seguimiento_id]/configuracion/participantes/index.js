@@ -16,10 +16,6 @@ import { Row, Col } from 'react-bootstrap';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
-//REDUX TYPES
-import * as types from '../../../../../../redux/types'
-
-import FifthStepParticipants from '../../../../../../src/components/tracking/5_step_participants/fifth_step_participants';
 import SixthStepRoles from '../../../../../../src/components/tracking/6_step_roles/sixth_step_roles';
 import TitlePage from '../../../../../../src/components/commons/title_page/title_page';
 import { editTrackingParticipants } from '../../../../../../src/utils/tracking/services/tracking_services';
@@ -97,17 +93,18 @@ const EditParticipants = () => {
     const [isLoading, setIsLoading] = useState(false);
     const steps = getSteps();
     const user = useSelector((store) => store.user);
-    const [globalData,setGlobalData] = useState(INITIAL_DATA);
+    const [globalData, setGlobalData] = useState(INITIAL_DATA);
     const currentTracking = useSelector((store) => store.currentTracking);
     const [activeStep, setActiveStep] = useState(0);
     const router = useRouter();
     const dispatch = useDispatch();
 
-    useEffect(()=>{
-        return () =>{
-            dispatch({type:types.RESET_TRACKING_DATA});
+ /*    useEffect(() => {
+        return () => {
+            dispatch({ type: types.RESET_TRACKING_DATA });
         }
-    },[]);
+    }, []); */
+
 
     const validateEmptyData = (name) => {
         if (name === 'role') {
@@ -160,20 +157,22 @@ const EditParticipants = () => {
                 rol: integrante.role,
                 usuario: integrante.id
             }
-            if(integrante.id === user.user.id) newData.id = user.user.id;
+            if (integrante.role_name === 'ENCARGADO') newData.id = integrante.integrante_id;
             dataToSend.push(newData);
         });
         editTrackingParticipants(dataToSend, user.user.token).then((result) => {
             setIsLoading(false);
             if (result.success) {
-                router.push(`/dashboard/seguimientos/${currentTracking.id}/configuracion/`)
+                setTimeout(() => {
+                    router.push(`/dashboard/seguimientos/${currentTracking.id}/configuracion/`)
+                }, 1000);
             }
         })
     }
 
     const handleGlobalState = (name, value) => {
-        if(name ==='integrantes'){
-            setGlobalData({...globalData,integrantes:value})
+        if (name === 'integrantes') {
+            setGlobalData({ ...globalData, integrantes: value })
         }
     }
 
@@ -216,12 +215,12 @@ const EditParticipants = () => {
 
                                                     <ParticipantsTable
                                                         handleGlobalState={handleGlobalState}
-                                                        currentParticipants={globalData.integrantes}
+                                                        currentParticipants={currentTracking.integrantes}
                                                     />
                                                     :
                                                     <SixthStepRoles
                                                         handleGlobalState={handleGlobalState}
-                                                        participants = {globalData.integrantes}
+                                                        participants={globalData.integrantes}
                                                     />
 
                                             }

@@ -31,14 +31,20 @@ const ParticipantsTable = ({ handleGlobalState, currentParticipants }) => {
     useEffect(() => {
         getTrackingRolesService(user.user.token).then((result) => {
             let rolEncargado = result.result.results.filter(rol => rol.nombre == "Encargado");
-            let selectedUserList = []
-            let encargado = {
-                name: user.user.name,
-                last_name: user.user.last_name,
-                id: user.user.id,
-                role: rolEncargado[0].id
-            }
-            selectedUserList.push(encargado);
+            let selectedUserList = [];
+            currentParticipants.map((participant) => {
+                if (participant.rol?.toUpperCase() === 'ENCARGADO') {
+                    let encargado = {
+                        name: participant.usuario.name,
+                        last_name: participant.usuario.last_name,
+                        id: participant.usuario.id,
+                        role: rolEncargado[0].id,
+                        role_name: 'ENCARGADO',
+                        integrante_id: participant.id,
+                    }
+                    selectedUserList.push(encargado);
+                }
+            })
             setSelectedUsers(selectedUserList);
         })
     }, [])
@@ -106,7 +112,9 @@ const ParticipantsTable = ({ handleGlobalState, currentParticipants }) => {
                     <span style={{ display: 'block', width: '100%', margin: '20px 0px 20px 0px' }}>Cargando...</span> :
                     <>
                         <div className={styles.message_alert}>
-                            Recuerde que usted ya forma parte del seguimiento con el rol de Encargado
+                            <p>Recuerde que no se pueden eliminar encargados del seguimiento,
+                            por lo que usted y los demás encargados ya se encuentran seleccionados
+                            y no es necesario que se seleccionen nuevamente en la lista que se muestra a continuación</p>
                         </div>
                         <Col
                             md={11}
