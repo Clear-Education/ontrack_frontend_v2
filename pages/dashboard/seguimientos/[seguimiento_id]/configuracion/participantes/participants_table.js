@@ -1,12 +1,13 @@
 import { Col, Row } from "react-bootstrap"
 import MUIDataTable from "mui-datatables"
 import { useState, useEffect } from "react";
-import MTConfig from "../../../utils/table_options/MT_config";
 import { useSelector } from "react-redux";
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
-import { getUserService } from "../../../utils/user/service/user_services";
-import { getTrackingRolesService } from '../../../utils/tracking/services/tracking_services';
 import styles from './styles.module.scss';
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
+import MTConfig from "../../../../../../src/utils/table_options/MT_config";
+import { getTrackingRolesService } from "../../../../../../src/utils/tracking/services/tracking_services";
+import { getUserService } from "../../../../../../src/utils/user/service/user_services";
+
 
 const theme = createMuiTheme({
     palette: {
@@ -20,7 +21,7 @@ const theme = createMuiTheme({
 
 });
 
-const FifthStepParticipants = ({ handleGlobalState }) => {
+const ParticipantsTable = ({ handleGlobalState, currentParticipants }) => {
 
     const [userData, setUserData] = useState();
     const [selectedUsers, setSelectedUsers] = useState([])
@@ -186,4 +187,4 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
     )
 }
 
-export default FifthStepParticipants
+export default ParticipantsTable

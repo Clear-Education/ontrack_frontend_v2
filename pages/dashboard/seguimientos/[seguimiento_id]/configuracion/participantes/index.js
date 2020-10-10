@@ -24,6 +24,7 @@ import SixthStepRoles from '../../../../../../src/components/tracking/6_step_rol
 import TitlePage from '../../../../../../src/components/commons/title_page/title_page';
 import { editTrackingParticipants } from '../../../../../../src/utils/tracking/services/tracking_services';
 import { useRouter } from 'next/router';
+import ParticipantsTable from './participants_table';
 
 
 const ColorlibConnector = withStyles({
@@ -89,31 +90,30 @@ function getStepContent(step) {
 }
 
 
-const INITIAL_TRACKING_DATA = {
-    current_step: 0,
-    integrantes: [],
+const INITIAL_DATA = {
+    integrantes: []
 }
-
 const EditParticipants = () => {
     const [isLoading, setIsLoading] = useState(false);
     const steps = getSteps();
     const user = useSelector((store) => store.user);
-    const tracking = useSelector((store) => store.tracking);
-    const [globalTrackingData, setGlobalTrackingData] = useState(tracking);
+    const [globalData,setGlobalData] = useState(INITIAL_DATA);
+    const currentTracking = useSelector((store) => store.currentTracking);
     const [activeStep, setActiveStep] = useState(0);
     const router = useRouter();
     const dispatch = useDispatch();
 
-
-    const handleGlobalState = (name, value) => {
-        setGlobalTrackingData({ ...globalTrackingData, [name]: value })
-    }
+    useEffect(()=>{
+        return () =>{
+            dispatch({type:types.RESET_TRACKING_DATA});
+        }
+    },[]);
 
     const validateEmptyData = (name) => {
         if (name === 'role') {
             let roles;
-            for (let index = 0; index < tracking.integrantes.length; index++) {
-                roles = tracking.integrantes[index].role;
+            for (let index = 0; index < globalData.integrantes.length; index++) {
+                roles = globalData.integrantes[index].role;
                 if (roles === undefined || roles === '') {
                     break
                 };
@@ -124,7 +124,7 @@ const EditParticipants = () => {
     const handleValidateData = () => {
         switch (activeStep) {
             case 0:
-                return globalTrackingData.integrantes.length > 1
+                return globalData.integrantes.length > 1
             case 1:
                 return validateEmptyData('role');
             default:
@@ -135,14 +135,11 @@ const EditParticipants = () => {
     const handleNext = () => {
         const validateData = handleValidateData();
         if (validateData) {
-
             switch (activeStep) {
-
                 case steps.length - 1:
                     handleEditParticipants()
                     break;
                 default:
-                    saveTrackingDataToStore();
                     setActiveStep((prevActiveStep) => prevActiveStep + 1);
                     break;
             }
@@ -155,36 +152,35 @@ const EditParticipants = () => {
     };
 
     const handleEditParticipants = () => {
-        saveTrackingDataToStore();
         setIsLoading(true);
         let dataToSend = [];
-        tracking.integrantes.map((integrante)=>{
+        globalData.integrantes.map((integrante) => {
             let newData = {
-                seguimiento: tracking.id,
+                seguimiento: currentTracking.id,
                 rol: integrante.role,
                 usuario: integrante.id
             }
+            if(integrante.id === user.user.id) newData.id = user.user.id;
             dataToSend.push(newData);
         });
-        editTrackingParticipants(dataToSend,user.user.token).then((result)=>{
+        editTrackingParticipants(dataToSend, user.user.token).then((result) => {
             setIsLoading(false);
-            if(result.success){
-                router.push(`/dashboard/seguimientos/${tracking.id}/configuracion/`)
+            if (result.success) {
+                router.push(`/dashboard/seguimientos/${currentTracking.id}/configuracion/`)
             }
         })
     }
 
-    const saveTrackingDataToStore = () => {
-        const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1 }
-        dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData });
+    const handleGlobalState = (name, value) => {
+        if(name ==='integrantes'){
+            setGlobalData({...globalData,integrantes:value})
+        }
     }
 
     const handleBack = () => {
-        if(activeStep === 0 ){
-            router.push(`/dashboard/seguimientos/${tracking.id}/configuracion/`)
-        }else{
-            const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep - 1 }
-            dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData })
+        if (activeStep === 0) {
+            router.push(`/dashboard/seguimientos/${currentTracking.id}/configuracion/`)
+        } else {
             setActiveStep((prevActiveStep) => prevActiveStep - 1);
         }
     };
@@ -218,12 +214,14 @@ const EditParticipants = () => {
                                             {
                                                 activeStep === 0 ?
 
-                                                    <FifthStepParticipants
+                                                    <ParticipantsTable
                                                         handleGlobalState={handleGlobalState}
+                                                        currentParticipants={globalData.integrantes}
                                                     />
                                                     :
                                                     <SixthStepRoles
                                                         handleGlobalState={handleGlobalState}
+                                                        participants = {globalData.integrantes}
                                                     />
 
                                             }
