@@ -23,6 +23,8 @@ const Seguimiento = () => {
     const [trackingId, setTrackingId] = useState();
     const [loading, setLoading] = useState(true)
     const dispatch = useDispatch();
+    const [goalsData, setGoalsData] = useState();
+
 
     useEffect(() => {
         let params = Object.values(router.query);
@@ -36,6 +38,9 @@ const Seguimiento = () => {
                 const TRACKING_DATA = result.result;
                 dispatch({type:types.SAVE_CURRENT_TRACKING_DATA, payload: TRACKING_DATA});
                 setLoading(false);
+            })
+            getTrackingGoalsService(user.user.token, trackingId).then((result) => {
+                setGoalsData(result.result);
             })
         }
     }, [trackingId]);
@@ -113,6 +118,7 @@ const Seguimiento = () => {
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
                         <span className={styles.section_title}>Métricas</span>
+                        <Link href={`/dashboard/seguimientos/${storedTrackingData.id}/estadisticas`}><a>Ver Estadisticas</a></Link>
                     </Col>
                 </Row>
             </Col>

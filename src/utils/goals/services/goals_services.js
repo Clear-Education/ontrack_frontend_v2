@@ -1,10 +1,10 @@
-import { getGoalsCrud, addGoalsCrud, editGoalsCrud, deleteGoalsCrud, getGoalsTypeCrud, addMultipleGoalsCrud, getStudentGoalsCrud, getTrackingGoalsCrud } from "../cruds/goals_cruds";
+import { getGoalsCrud, addGoalsCrud, editGoalsCrud, deleteGoalsCrud, getGoalsTypeCrud, addMultipleGoalsCrud, getStudentGoalsCrud, getTrackingGoalsCrud, getGoalsProgressionStudent } from "../cruds/goals_cruds";
 import Alert from "react-s-alert";
 import { parseGoalsData } from "./goals_functions_services";
 
 
-export async function getTrackingGoalsService(token,tracking_id) {
-    return await getTrackingGoalsCrud(token,tracking_id).then((result) => {
+export async function getTrackingGoalsService(token, tracking_id) {
+    return await getTrackingGoalsCrud(token, tracking_id).then((result) => {
         if (result.success) {
 
         } else {
@@ -35,8 +35,8 @@ export async function getGoalsTypeService(token) {
 }
 
 
-export async function getStudentGoalsService(token,student_id,seguimiento_id) {
-    return await getStudentGoalsCrud(token,student_id,seguimiento_id).then((result) => {
+export async function getStudentGoalsService(token, student_id, seguimiento_id) {
+    return await getStudentGoalsCrud(token, student_id, seguimiento_id).then((result) => {
         if (result.success) {
 
         } else {
@@ -84,7 +84,7 @@ export async function addMultipleGoalsService(data, token,editing) {
             }
             return result;
         })
-     });
+    });
 }
 
 export async function editGoalsService(data, token) {
@@ -112,6 +112,21 @@ export async function deleteGoalsService(token, data) {
         } else {
             Alert.error("Ocurrió un error al eliminar el objetivo", {
                 effect: "stackslide",
+            });
+        }
+        return result;
+    })
+}
+
+export async function getGoalsProgressionStudentService(token, data) {
+    return await getGoalsProgressionStudent(token, data).then((result) => {
+        if (result.success) {
+
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
             });
         }
         return result;

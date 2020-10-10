@@ -448,7 +448,7 @@ const EditUserForm = (props) => {
                                             name="direccion"
                                             label="Dirección, Localidad, Calle, Número"
                                             variant="outlined"
-                                            value={state.direccion}
+                                            value={state.direccion ? state.direccion : ""}
                                             onChange={handleChange("direccion")}
                                             disabled={initialStateUserAccount == false ? true : false}
                                         />
