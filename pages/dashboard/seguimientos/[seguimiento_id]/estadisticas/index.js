@@ -22,7 +22,7 @@ const Estadisticas = () => {
     const [calificacionesData, setCalificacionesData] = useState([]);
     const [asistenciasData, setAsistenciasData] = useState([]);
 
-    const tracking = useSelector((store) => store.tracking);
+    const tracking = useSelector((store) => store.currentTracking);
     const user = useSelector((store) => store.user);
 
     useEffect(() => {

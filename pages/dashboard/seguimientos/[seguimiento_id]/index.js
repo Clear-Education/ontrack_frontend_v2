@@ -15,6 +15,7 @@ import SubMenu from "../../../../src/components/commons/sub_menu/sub_menu";
 import * as types from "../../../../redux/types";
 import { parseGoalsData } from "./services/services";
 import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
+import Link from "next/link";
 
 const Seguimiento = () => {
     const router = useRouter();
@@ -118,7 +119,7 @@ const Seguimiento = () => {
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
                         <span className={styles.section_title}>Métricas</span>
-                        <Link href={`/dashboard/seguimientos/${storedTrackingData.id}/estadisticas`}><a>Ver Estadisticas</a></Link>
+                        <Link href={`/dashboard/seguimientos/${currentTracking.id}/estadisticas`}><a>Ver Estadisticas</a></Link>
                     </Col>
                 </Row>
             </Col>
