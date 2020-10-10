@@ -14,14 +14,15 @@ import StudentViewer from "../../../../src/components/tracking/view/student_view
 import SubMenu from "../../../../src/components/commons/sub_menu/sub_menu";
 import * as types from "../../../../redux/types";
 import { parseGoalsData } from "./services/services";
+import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
 
 const Seguimiento = () => {
     const router = useRouter();
-    const dispatch = useDispatch();
     const user = useSelector((store) => store.user);
     const currentTracking = useSelector((store)=>store.currentTracking);
     const [trackingId, setTrackingId] = useState();
-    const [selectedStudent, setSelectedStudent] = useState();
+    const [loading, setLoading] = useState(true)
+    const dispatch = useDispatch();
 
     useEffect(() => {
         let params = Object.values(router.query);
@@ -33,7 +34,8 @@ const Seguimiento = () => {
         if (trackingId) {
             getTrackingService(user.user.token, trackingId).then((result) => {
                 const TRACKING_DATA = result.result;
-                dispatch({type:types.SAVE_CURRENT_TRACKING_DATA, payload: TRACKING_DATA})
+                dispatch({type:types.SAVE_CURRENT_TRACKING_DATA, payload: TRACKING_DATA});
+                setLoading(false);
             })
         }
     }, [trackingId]);
@@ -44,12 +46,9 @@ const Seguimiento = () => {
         }
     },[])
 
-    const handleSelectedStudent = (student) => {
-        setSelectedStudent(student);
-    }
 
     return (
-        currentTracking && 
+        loading ? <BackgroundLoader show={loading}/> : 
         <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 'auto' }}>
             <div className={styles.sub_menu_container}>
                 <SubMenu />
@@ -71,7 +70,7 @@ const Seguimiento = () => {
                                 <TitlePage title={"Novedades del Seguimiento"} fontSize={16} />
                             </Col>
                             <Col lg={6} md={6} sm={6} xs={6}>
-                                <DateFilter />
+                    
                             </Col>
 
                         </Row>
@@ -103,7 +102,6 @@ const Seguimiento = () => {
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                         <span className={styles.section_title}>Plazos</span>
-                        <DateFilter readOnly start={currentTracking.fecha_inicio} end={currentTracking.fecha_cierre} />
                     </Col>
                 </Row>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>

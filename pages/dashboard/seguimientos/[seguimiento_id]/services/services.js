@@ -31,3 +31,47 @@ export const parseGoalsData = (goalsData) => {
 
     return goals;
 }
+
+
+export const parseParticipantsToShowOnTable = (participants) =>{
+    let newData = [];
+    participants.map((participant)=>{
+        let NewParticipantsData = {
+            nombre: participant.usuario.name,
+            apellido:  participant.usuario.last_name,
+            rol: participant.rol
+        }
+        newData.push(NewParticipantsData);
+    })
+
+    return newData;
+}
+
+
+export const parseStudentsToShowOnTable = (students) =>{
+    let newData = [];
+    students.map((student)=>{
+        let NewStudentData = {
+            nombre: student.alumno.nombre,
+            apellido:  student.alumno.apellido,
+            legajo: student.alumno.legajo
+        }
+        newData.push(NewStudentData);
+    })
+
+    return newData;
+}
+
+export const parseSubjectsToShowOnTable = (subjects) =>{
+    let newData = [];
+    subjects.map((subject)=>{
+        let NewSubjectsData = {
+            nombre: subject.nombre,
+            carrera: subject.anio.carrera,
+            year:  subject.anio.nombre
+        }
+        newData.push(NewSubjectsData);
+    })
+
+    return newData;
+}
