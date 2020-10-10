@@ -52,10 +52,17 @@ const ParticipantsTable = ({ handleGlobalState, currentParticipants }) => {
 
     useEffect(() => {
         setIsLoading(true);
+        let currentParticipantsIds = currentParticipants.filter((participant)=>{
+            return participant.rol.toUpperCase() === 'ENCARGADO';
+        }).map((participant)=>{
+            return participant.usuario.id
+        });
         getUserService(user.user.token).then((result) => {
             let userFilter = result.result.results.filter(usuario => {
-                return (usuario.id != user.user.id) && (usuario.groups.name == "Pedagogía" || usuario.groups.name == "Docente")
-            })
+                return  (currentParticipantsIds.indexOf(usuario.id) < 0)
+                        && (usuario.groups.name == "Pedagogía" 
+                        || usuario.groups.name == "Docente")
+            });
             setIsLoading(false);
             setUserData(userFilter);
         })

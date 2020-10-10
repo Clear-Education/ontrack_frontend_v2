@@ -3,17 +3,15 @@ import { useRouter } from "next/dist/client/router";
 import styles from './styles.module.scss';
 import { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
-import DateFilter from "../../../../src/components/tracking/view/date_filter/date_filter";
 import NewPost from "../../../../src/components/tracking/view/new_post/new_post";
 import Post from "../../../../src/components/tracking/view/post/post";
 import { useDispatch, useSelector } from "react-redux";
 import { getTrackingService } from "../../../../src/utils/tracking/services/tracking_services";
-import { getStudentGoalsService, getTrackingGoalsService } from "../../../../src/utils/goals/services/goals_services";
+import { getTrackingGoalsService } from "../../../../src/utils/goals/services/goals_services";
 import GoalsViewer from "../../../../src/components/tracking/view/goals_viewer/goals_viewer";
 import StudentViewer from "../../../../src/components/tracking/view/student_viewer/student_viewer";
 import SubMenu from "../../../../src/components/commons/sub_menu/sub_menu";
 import * as types from "../../../../redux/types";
-import { parseGoalsData } from "./services/services";
 import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
 import Link from "next/link";
 

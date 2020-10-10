@@ -21,7 +21,7 @@ import TitlePage from '../../../../../../src/components/commons/title_page/title
 import { editTrackingParticipants } from '../../../../../../src/utils/tracking/services/tracking_services';
 import { useRouter } from 'next/router';
 import ParticipantsTable from './participants_table';
-
+import * as types from "../../../../../../redux/types";
 
 const ColorlibConnector = withStyles({
     alternativeLabel: {
@@ -163,6 +163,12 @@ const EditParticipants = () => {
         editTrackingParticipants(dataToSend, user.user.token).then((result) => {
             setIsLoading(false);
             if (result.success) {
+                const newParticipants = [...result.result.integrantes]
+                const PAYLOAD = {
+                    ...currentTracking,
+                    ['integrantes']: newParticipants
+                }
+                dispatch({type:types.SAVE_CURRENT_TRACKING_DATA, payload: PAYLOAD})
                 setTimeout(() => {
                     router.push(`/dashboard/seguimientos/${currentTracking.id}/configuracion/`)
                 }, 1000);
