@@ -14,7 +14,6 @@ import {
 
 const Estadisticas = () => {
 
-    const [metricas, setMetricas] = useState([]);
     const [metricaPromedio, setMetricaPromedio] = useState(null);
     const [metricaAsistencia, setMetricaAsistencia] = useState(null);
     const [alumnoSeleccionado, setAlumnoSeleccionado] = useState("");
@@ -37,7 +36,7 @@ const Estadisticas = () => {
 
     useEffect(() => {
         if (alumnoSeleccionado != "") {
-            if (metricaAsistencia) {
+            if (metricaAsistencia.id != "") {
                 const dataAsistencia = {
                     id_objetivo: metricaAsistencia.id,
                     id_alumno: alumnoSeleccionado
@@ -47,31 +46,32 @@ const Estadisticas = () => {
                 })
             }
 
-            /*    if (metricaPromedio) {
-                   const dataCalificaciones = {
-                       id_objetivo: metricaPromedio.id,
-                       id_alumno: alumnoSeleccionado
-                   }
-                   getGoalsProgressionStudentService(user.user.token, dataCalificaciones).then((result) => {
-                       setProgresoCalificaciones(result.result.results);
-                   })
-               } */
+            if (metricaPromedio.id != "") {
+                const dataCalificaciones = {
+                    id_objetivo: metricaPromedio.id,
+                    id_alumno: alumnoSeleccionado
+                }
+                getGoalsProgressionStudentService(user.user.token, dataCalificaciones).then((result) => {
+                    setProgresoCalificaciones(result.result.results);
+                })
+            }
         }
     }, [alumnoSeleccionado])
 
     useEffect(() => {
-        let progresoAsistenciasAlumno = []
-        progresoAsistencias.map((progreso) => {
-            const data = {
-                porcentaje_asistencias: Number.parseFloat(progreso.valor * 100).toFixed(2)
-            }
+        if (progresoAsistencias) {
+            let progresoAsistenciasAlumno = []
+            progresoAsistencias.map((progreso) => {
+                const data = {
+                    porcentaje_asistencias: Number.parseFloat(progreso.valor * 100).toFixed(2)
+                }
 
-            progresoAsistenciasAlumno.push(data);
-        })
+                progresoAsistenciasAlumno.push(data);
+            })
 
 
-        setAsistenciasData(progresoAsistenciasAlumno);
-
+            setAsistenciasData(progresoAsistenciasAlumno);
+        }
     }, [progresoAsistencias])
 
     useEffect(() => {
@@ -95,25 +95,29 @@ const Estadisticas = () => {
     }
 
     return (
-        <div>
+        <div className="mb-4">
             <h1>Estadísticas</h1>
             <p>En esta sección puede observar como es el progreso de los alumnos en las métricas definidas para el seguimiento.</p>
-            <div className="mx-auto w-50 ">
+            <div className="mx-auto w-50 mb-5">
                 <b>Información General del Seguimiento</b>
                 <ul className="border rounded text-left pt-2 pb-2">
                     <li>Nombre: {tracking.nombre}</li>
-                    <li>Descripción:{tracking.descripcion}</li>
+                    <li>Descripción: {tracking.descripcion}</li>
                     <li>Alumnos:</li>
                     <ul>
                         {tracking.alumnos.map(alumno => {
-                            return <li>{alumno.nombre} {alumno.apellido}</li>
+                            return <li key={alumno.id}>
+                                {alumno.nombre} {alumno.apellido}
+                            </li>
                         })
                         }
                     </ul>
                     <li>Participantes:</li>
                     <ul>
                         {tracking.integrantes.map(integrante => {
-                            return <li>{integrante.nombre} {integrante.apellido} ({integrante.rol})</li>
+                            return <li key={integrante.id}>
+                                {integrante.nombre} {integrante.apellido} ({integrante.rol})
+                                </li>
                         })
                         }
                     </ul>
@@ -122,26 +126,28 @@ const Estadisticas = () => {
                     <li>Materias:</li>
                     <ul>
                         {tracking.materias.map(materia => {
-                            return <li>{materia.subject_name}</li>
+                            return <li key={`${materia.subject_name}`}>
+                                {materia.subject_name}
+                            </li>
                         })}
                     </ul>
                     <li>Objetivos:</li>
                     <ul>
                         {tracking.cualitativos.map(obj => {
-                            return <li>{obj.descripcion}</li>
+                            return <li key={`${obj.id}`}>{obj.descripcion}</li>
                         })
                         }
                     </ul>
                     <li>Métricas:</li>
                     <ul>
-                        {tracking.promedio && <li>Promedio Calificaciones: {tracking.promedio.value}</li>}
-                        {tracking.asistencia && <li>Porcentaje Asistencias: {tracking.asistencia.value} %</li>}
+                        {tracking.promedio.id != "" && <li>Promedio Calificaciones: {tracking.promedio.value}</li>}
+                        {tracking.asistencia.id != "" && <li>Porcentaje Asistencias: {tracking.asistencia.value} %</li>}
                     </ul>
                 </ul>
 
             </div>
             <p>A continuación seleccione un alumno para verificar su progreso.</p>
-            <div className="w-50 mx-auto mb-5">
+            <div className="w-50 mx-auto">
                 <FormControl>
                     <InputLabel id="alumno">Alumno</InputLabel>
                     <Select
@@ -163,31 +169,49 @@ const Estadisticas = () => {
                 </FormControl>
             </div>
 
-            {metricaPromedio && <h3 className="subtitle mb-2">Calificaciones</h3>}
-            {metricaAsistencia && <h3 className="subtitle mb-2">Asistencias</h3>}
+            {calificacionesData.length != 0 &&
+                <div>
+                    <h3 className="subtitle mb-2 mt-5">Progreso Calificaciones</h3>
+                    <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                        <LineChart
+                            data={calificacionesData}
+                            className="mb-3"
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name">
+                                <Label value="Porcentaje de Calificaciones en el Año Lectivo" offset={0} position="insideBottom" />
+                            </XAxis>
+                            <YAxis />
+                            <Tooltip />
+                            <Legend verticalAlign="top" height={36} />
+                            <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
+                            <Line type="monotone" dataKey="promedio_calificaciones" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            }
 
 
-            {
-                asistenciasData.length != 0 &&
-                <ResponsiveContainer width="65%" height={300} className="mx-auto">
-                    <LineChart
-                        data={asistenciasData}
-                        className="mb-3"
-                    /*                         margin={{
-                                                top: 5, right: 30, left: 20, bottom: 5,
-                                            }} */
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name">
-                            <Label value="Porcentaje de Asistencias en el Año Lectivo" offset={0} position="insideBottom" />
-                        </XAxis>
-                        <YAxis />
-                        <Tooltip />
-                        <Legend verticalAlign="top" height={36} />
-                        <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" />
-                        <Line type="monotone" dataKey="porcentaje_asistencias" stroke="#8884d8" activeDot={{ r: 8 }} />
-                    </LineChart>
-                </ResponsiveContainer>
+            {asistenciasData.length != 0 &&
+                <div>
+                    <h3 className="subtitle mb-2 mt-5">Progreso Asistencias</h3>
+                    <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                        <LineChart
+                            data={asistenciasData}
+                            className="mb-3"
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name">
+                                <Label value="Porcentaje de Asistencias en el Año Lectivo" offset={0} position="insideBottom" />
+                            </XAxis>
+                            <YAxis />
+                            <Tooltip />
+                            <Legend verticalAlign="top" height={36} />
+                            <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
+                            <Line type="monotone" dataKey="porcentaje_asistencias" stroke="#8884d8" activeDot={{ r: 8 }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
 
             }
         </div >
