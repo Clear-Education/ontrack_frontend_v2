@@ -6,7 +6,6 @@ export async function addNovedadesCrud(data, auth_token) {
     debugger;
     let parsedData = {
         cuerpo: data.cuerpo,
-        seguimiento: data.seguimiento
     }
     if(data.seguimiento_padre) parsedData.padre = data.seguimiento_padre;
     return axios.post(`${config.api_url}/actualizaciones/${data.seguimiento}/`, parsedData, {

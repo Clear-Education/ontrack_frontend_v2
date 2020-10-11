@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import styles from './styles.module.css';
+import styles from './styles.module.scss';
 
 //MATERIAL UI
 import Select from '@material-ui/core/Select';
@@ -10,6 +10,7 @@ import { getGoalsProgressionStudentService } from '../../../../../src/utils/goal
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer, Label
 } from 'recharts';
+import SubMenu from '../../../../../src/components/commons/sub_menu/sub_menu';
 
 
 const Estadisticas = () => {
@@ -96,6 +97,9 @@ const Estadisticas = () => {
 
     return (
         <div className="mb-4">
+            <div className={styles.sub_menu_container}>
+                <SubMenu />
+            </div>
             <h1>Estadísticas</h1>
             <p>En esta sección puede observar como es el progreso de los alumnos en las métricas definidas para el seguimiento.</p>
             <div className="mx-auto w-50 mb-5">
@@ -105,7 +109,7 @@ const Estadisticas = () => {
                     <li>Descripción: {tracking.descripcion}</li>
                     <li>Alumnos:</li>
                     <ul>
-                        {tracking.alumnos.map((alumno,i) => {
+                        {tracking.alumnos.map((alumno, i) => {
                             return <li key={i}>
                                 {alumno.alumno.nombre} {alumno.alumno.apellido}
                             </li>
@@ -114,7 +118,7 @@ const Estadisticas = () => {
                     </ul>
                     <li>Participantes:</li>
                     <ul>
-                        {tracking.integrantes.map((integrante,i) => {
+                        {tracking.integrantes.map((integrante, i) => {
                             return <li key={i}>
                                 {integrante.usuario.name} {integrante.usuario.last_name} ({integrante.rol})
                                 </li>
@@ -125,7 +129,7 @@ const Estadisticas = () => {
                     <li>Fecha de cierre: {tracking.fecha_hasta}</li>
                     <li>Materias:</li>
                     <ul>
-                        {tracking.materias.map((materia,i) => {
+                        {tracking.materias.map((materia, i) => {
                             return <li key={i}>
                                 {materia.nombre}
                             </li>
@@ -133,7 +137,7 @@ const Estadisticas = () => {
                     </ul>
                     <li>Objetivos:</li>
                     <ul>
-                        {tracking.cualitativos.map((obj,i) => {
+                        {tracking.cualitativos.map((obj, i) => {
                             return <li key={i}>{obj.descripcion}</li>
                         })
                         }
@@ -157,7 +161,7 @@ const Estadisticas = () => {
                         onChange={(e) => handleChangeAlumno(e.target.value)}
                     >
                         {
-                            tracking.alumnos.map((alumno,i) => {
+                            tracking.alumnos.map((alumno, i) => {
                                 return (
                                     <MenuItem value={alumno.alumno.id} key={i}>
                                         {alumno.alumno.nombre} {alumno.alumno.apellido}

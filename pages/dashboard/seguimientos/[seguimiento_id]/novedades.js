@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import useSWR, { mutate } from "swr";
 import TitlePage from "../../../../src/components/commons/title_page/title_page";
 import NewPost from "../../../../src/components/tracking/view/new_post/new_post";
 import Post from "../../../../src/components/tracking/view/post/post";
+import config from "../../../../src/utils/config";
 import { addNovedadesFileService, addNovedadesService, getNovedadesService } from "../../../../src/utils/novedades/services/novedades_services";
 import styles from './styles.module.scss';
 
 
 const Novedades = ({trackingId}) =>{
+
+    const url = `${config.api_url}/actualizaciones/${trackingId}/list/`;
     const user = useSelector((store) => store.user);
     const[newsData, setNewsData] = useState();
 
@@ -18,18 +22,22 @@ const Novedades = ({trackingId}) =>{
         })
     },[]);
 
+
+    useSWR(url, () => {
+        getNovedadesService(user.user.token,trackingId).then((result)=>{
+            setNewsData(result.result.results);
+         })
+    }); 
+
     const handleSubmitPost = ({cuerpo,files}) =>{
-        const DATA = {
-            cuerpo: cuerpo,
-            seguimiento: trackingId,
-            files: files,
-        }
         const token = user.user.token;
+        const DATA = {
+            cuerpo:cuerpo
+        }
         addNovedadesService(DATA, token).then((result)=>{
-            debugger;
             if(result.success){
-                addNovedadesFileService(DATA.files,token).then((result)=>{
-                    console.log(result);
+                addNovedadesFileService(files,token).then((result)=>{
+                    mutate(url);
                 });
             }
         })
