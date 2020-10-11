@@ -1,10 +1,16 @@
+import { useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
 import TitlePage from "../../../../src/components/commons/title_page/title_page";
 import NewPost from "../../../../src/components/tracking/view/new_post/new_post";
 import Post from "../../../../src/components/tracking/view/post/post";
+import { getNovedadesService } from "../../../../src/utils/novedades/services/novedades_services";
 import styles from './styles.module.scss';
 
-const Novedades = () =>{
+const Novedades = ({trackingId}) =>{
+
+/*     useEffect(()=>{
+        getNovedadesService()
+    },[]) */
     return(
         <Col lg={8} md={8} sm={8} xs={8} >
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>

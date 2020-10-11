@@ -18,7 +18,8 @@ const Seguimiento = () => {
     const user = useSelector((store) => store.user);
     const currentTracking = useSelector((store) => store.currentTracking);
     const [trackingId, setTrackingId] = useState();
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+    const [flag,setFlag] = useState();
     const dispatch = useDispatch();
 
 
@@ -39,7 +40,7 @@ const Seguimiento = () => {
     }, [trackingId]);
 
     useEffect(()=>{
-        if(currentTracking.id){
+        if(currentTracking.id && !flag){
             getTrackingGoalsService(user.user.token, currentTracking.id).then((result) => {
                 const GOALS = parseGoalsData(result.result);
                 const GOALS_PAYLOAD = {
@@ -48,9 +49,10 @@ const Seguimiento = () => {
                 }
                 dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: GOALS_PAYLOAD });
                 setLoading(false);
+                setFlag(true);
             })
         }
-    },[currentTracking.id])
+    },[currentTracking])
 
     useEffect(() => {
         return () => {
