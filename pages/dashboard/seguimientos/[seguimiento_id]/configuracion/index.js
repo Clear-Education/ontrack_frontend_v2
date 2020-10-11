@@ -13,7 +13,7 @@ import BackgroundLoader from '../../../../../src/components/commons/background_l
 //REDUX TYPES
 import * as types from "../../../../../redux/types";
 import Link from "next/link";
-import { parseParticipantsToShowOnTable, parseStudentsToShowOnTable, parseSubjectsToShowOnTable } from '../services/services';
+import { parseParticipantsToShowOnTable, parseStudentsToShowOnTable, parseSubjectsToShowOnTable } from '../../../../../src/utils/general_services/services';
 import GeneralInfo from './general_info/general_info';
 import DangerZone from './danger_zone/danger_zone';
 import GoalsConfig from './goals/goals_config';

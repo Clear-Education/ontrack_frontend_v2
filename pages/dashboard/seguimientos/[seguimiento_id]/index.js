@@ -11,7 +11,7 @@ import * as types from "../../../../redux/types";
 import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
 import RightSideBar from "./rigth_side_bar";
 import Novedades from "./novedades";
-import { parseGoalsData } from "./services/services";
+import { parseGoalsData } from "../../../../src/utils/general_services/services";
 
 const Seguimiento = () => {
     const router = useRouter();
