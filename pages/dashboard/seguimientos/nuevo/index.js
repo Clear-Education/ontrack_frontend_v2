@@ -169,8 +169,13 @@ const CreateTracking = () => {
         }
     }, [])
 
+    useEffect(()=>{
+        return () =>{
+            dispatch({type:types.RESET_TRACKING_DATA});
+        }
+    },[]);
+
     useEffect(() => {
-        dispatch({ type: types.RESET_TRACKING_DATA });
         setActiveStep(trackingData.current_step ? trackingData.current_step : 0);
     }, [])
 
@@ -385,6 +390,7 @@ const CreateTracking = () => {
                                                                     activeStep === 5 ?
                                                                         <SixthStepRoles
                                                                             handleGlobalState={handleGlobalState}
+                                                                            participants = {trackingData.integrantes}
                                                                         />
                                                                         :
                                                                         activeStep === 6 ?

@@ -11,17 +11,16 @@ const INITIAL_STATE = {
     participants: []
 }
 
-const SixthStepRoles = ({ handleGlobalState }) => {
+const SixthStepRoles = ({ handleGlobalState, participants }) => {
 
     const [state, setState] = useState(INITIAL_STATE);
     const [roleData, setRoleData] = useState();
-    const trackingData = useSelector((store) => store.tracking);
     const user = useSelector((store) => store.user);
 
     useEffect(() => {
         setState({
             ...state,
-            participants: trackingData.integrantes
+            participants: participants
         })
     }, [])
 
@@ -66,7 +65,7 @@ const SixthStepRoles = ({ handleGlobalState }) => {
                                 </Col>
                             </Row>
                             <Row lg={12} md={12} sm={12} xs={12} style={{ width: '100%', margin: 'auto' }}>
-                                {trackingData.integrantes
+                                {state.participants
                                     .filter(integrante => integrante.id != user.user.id)
                                     .map((participant) => {
                                         return (

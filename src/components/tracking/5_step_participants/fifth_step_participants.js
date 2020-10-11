@@ -22,8 +22,7 @@ const theme = createMuiTheme({
 
 const FifthStepParticipants = ({ handleGlobalState }) => {
 
-    const trackingData = useSelector((store) => store.tracking);
-    const [userData, setUserData] = useState(trackingData.materias);
+    const [userData, setUserData] = useState();
     const [selectedUsers, setSelectedUsers] = useState([])
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);

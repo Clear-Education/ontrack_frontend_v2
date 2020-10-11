@@ -1,0 +1,29 @@
+.edit_title_icon {
+    position: absolute;
+    right: 15%;
+    top: 13px;
+  }
+  .display_none{
+    display: none;
+  }
+
+.edit_header_input {
+    display: block;
+    width: 70%;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: none;
+    background: var(--gray);
+    border-radius: 5px;
+  }
+  
+  .edit_header_input:focus {
+    outline: none;
+    border: 2px solid var(--main-color-dark);
+  }
+  
+  .edit_header_container {
+    margin-left: 2%;
+    width: 80%;
+  }
+  

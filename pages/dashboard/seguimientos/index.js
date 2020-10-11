@@ -1,7 +1,7 @@
 import TitlePage from "../../../src/components/commons/title_page/title_page";
 import styles from './styles.module.scss'
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import config from "../../../src/utils/config";
 import BackgroundLoader from "../../../src/components/commons/background_loader/background_loader";
@@ -25,6 +25,9 @@ const Seguimientos = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
+    useEffect(()=>{
+    dispatch({type:types.RESET_CURRENT_TRACKING_DATA});
+    },[])
 
 
     useSWR(url, () => {

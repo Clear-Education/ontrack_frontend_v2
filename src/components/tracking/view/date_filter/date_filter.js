@@ -1,83 +1,94 @@
-import { Row, Col, FormLabel } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { KeyboardDatePicker } from "@material-ui/pickers";
 import styles from './styles.module.scss';
 import { useEffect, useState } from "react";
+import { IconButton } from "@material-ui/core";
+import EditIcon from '@material-ui/icons/Edit';
+import { convertDateToSend } from "../../../../utils/commons/common_services";
+import { useDispatch, useSelector } from "react-redux";
+import { editTrackingService } from "../../../../utils/tracking/services/tracking_services";
+import DoneIcon from '@material-ui/icons/Done';
+import * as types from "../../../../../redux/types";
 
-const INITIAL_STATE = {
-    start: '',
-    end: '',
-}
-const DateFilter = ({ handleDate, readOnlyStart, readOnlyEnd, start, end }) => {
+const DateFilter = ({adminView}) => {
+    const user = useSelector((store) => store.user);
+    const currentTracking = useSelector((store) => store.currentTracking);
+    const [editDates, setEditDates] = useState(true);
+    const [endDate,setEndDate] = useState();
+    const dispatch = useDispatch();
 
-    const [state, setState] = useState(INITIAL_STATE);
-    const endLocalDate = new Date(end);
-    const [endDate, setEndDate] = useState(end ? new Date(endLocalDate.getTime() + endLocalDate.getTimezoneOffset() * 60000) : null);
-
-    useEffect(() => {
-        setState({ ...state, start: start })
-    }, [start])
-
-
-    useEffect(() => {
-        setState({ ...state, end: end })
-    }, [end])
-
-    const handleEndDate = (date) => {
-        setEndDate(date);
-        setState({ ...state, end: date })
-        handleDate(date);
+    const handleDate = (date) => {
+        setEndDate(date);      
     }
 
+    const handleSaveDates = () => {
+        if (!editDates) {
+            const DATA = {
+                id: currentTracking.id,
+                nombre: currentTracking.nombre,
+                descripcion: currentTracking.descripcion,
+                fecha_cierre: currentTracking.fecha_cierre == 'NaN-NaN-NaN' ? "10/10/1900" : convertDateToSend(currentTracking.fecha_cierre)
+            }
+
+            editTrackingService(DATA, user.user.token).then((result) => {
+                if (result.success) {
+                   let dateFormatted = result.result.fecha_cierre;
+                    const DATA = {
+                        ...currentTracking,
+                        fecha_cierre: dateFormatted
+                    }
+                    dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: DATA });
+                    setEditDates(!editDates);
+                }
+            });
+        } else {
+            setEditDates(!editDates);
+        }
+    } 
+
     return (
-        <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
+        <>
+            <div className={styles.title_container}>
+                <span className={styles.dates_title}>Plazos</span>
+                <span className={adminView ? styles.edit_icon : styles.display_none}>
+                    <IconButton onClick={handleSaveDates}>
+                        {editDates ? <EditIcon /> : <DoneIcon />}
+                    </IconButton>
+                </span>
 
-            <Col lg={5} md={5} sm={5} xs={5}>
+            </div>
+            <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
 
-                {
-                    readOnlyStart ?
-                        <span className={styles.viwer_date}>{start}</span>
-                        :
-                        <>
-                            <span className={styles.date_label}>Desde</span>
-                            <KeyboardDatePicker
-                                clearable
-                                value={state.start ? state.start : null}
-                                placeholder="DD/MM/YYYY"
-                                format="dd/MM/yyyy"
-                                invalidDateMessage="Formato de fecha inválido"
-                                minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                maxDateMessage="La fecha no debería ser mayor a la fecha de Inicio del Año Lectivo seleccionado"
-                                required
-                            />
-                        </>
-                }
-            </Col>
+                <Col lg={5} md={5} sm={5} xs={5}>
+                    <span className={styles.viwer_date}>{currentTracking.fecha_inicio}</span>
+                </Col>
 
-            <Col lg={2} md={2} sm={2} xs={2}><ArrowForwardIcon style={{ color: 'var(--orange)' }} /></Col>
+                <Col lg={2} md={2} sm={2} xs={2}><ArrowForwardIcon style={{ color: 'var(--orange)' }} /></Col>
 
-            <Col lg={5} md={5} sm={5} xs={5}>
+                <Col lg={5} md={5} sm={5} xs={5}>
 
-                {
-                    readOnlyEnd ?
-                        <span className={styles.viwer_date}>{state.end}</span> :
-                        <>
-                            <span className={styles.date_label}>Hasta</span>
-                            <KeyboardDatePicker
-                                clearable
-                                value={endDate}
-                                onChange={(date) => handleEndDate(date)}
-                                placeholder="DD/MM/YYYY"
-                                format="dd/MM/yyyy"
-                                invalidDateMessage="Formato de fecha inválido"
-                                minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo seleccionado"
-                                required
-                            />
-                        </>
-                }
-            </Col>
-        </Row>
+                    {
+                        editDates ?
+                            <span className={styles.viwer_date}>{currentTracking.fecha_cierre}</span> :
+                            <>
+                                <span className={styles.date_label}>Hasta</span>
+                                <KeyboardDatePicker
+                                    clearable
+                                    value={endDate}
+                                    onChange={(date) => handleDate(date)}
+                                    placeholder="DD/MM/YYYY"
+                                    format="dd/MM/yyyy"
+                                    invalidDateMessage="Formato de fecha inválido"
+                                    minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
+                                    maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo seleccionado"
+                                    required
+                                />
+                            </>
+                    }
+                </Col>
+            </Row>
+        </>
     )
 }
 

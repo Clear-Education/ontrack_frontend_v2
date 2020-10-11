@@ -123,7 +123,9 @@ export async function editTrackingParticipants(data, token) {
                 effect: "stackslide",
             });
         } else {
-            Alert.error("Ocurrió un error al editar los participantes", {
+            let errorMsg = result.result[0]?.message[0];
+            let msg = errorMsg ? errorMsg : "Ocurrió un error al editar los participantes";
+            Alert.error(msg, {
                 effect: "stackslide",
             });
            

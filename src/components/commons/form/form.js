@@ -9,7 +9,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import {
   convertDate,
   toFormData,
-} from "../../../utils/services/general_services";
+} from "./general_services";
 import styles from "./styles.module.scss";
 import TextFieldInput from "./inputs/textfield/textfield";
 import DateInput from "./inputs/date/date";
@@ -154,7 +154,7 @@ const Form = ({
   };
 
   return (
-    <Row lg={12} md={12} sm={12} xs={12}>
+    <Row lg={12} md={12} sm={12} xs={12} style={{width:'100%'}}>
       <Col lg={11} md={11} sm={11} xs={11} className="margin-center">
         <Row lg={12} md={12} sm={12} xs={12}>
           {inputs.map(
@@ -206,7 +206,7 @@ const Form = ({
                         <FileInput onFilesAdded={fileAccept} input={input} />
                         <FilesSelected state={state} input={input} />
                       </>
-                    ) : (
+                    ) : ( 
                       <div></div>
                     )}
                     {/* Helpers Space */}

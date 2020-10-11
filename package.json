@@ -33,6 +33,7 @@
     "react-redux": "^7.2.0",
     "react-s-alert": "^1.4.1",
     "react-text-mask": "^5.4.3",
+    "recharts": "^1.8.5",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",

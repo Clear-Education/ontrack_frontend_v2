@@ -16,15 +16,12 @@ import { Row, Col } from 'react-bootstrap';
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
-//REDUX TYPES
-import * as types from '../../../../../../redux/types'
-
-import FifthStepParticipants from '../../../../../../src/components/tracking/5_step_participants/fifth_step_participants';
 import SixthStepRoles from '../../../../../../src/components/tracking/6_step_roles/sixth_step_roles';
 import TitlePage from '../../../../../../src/components/commons/title_page/title_page';
 import { editTrackingParticipants } from '../../../../../../src/utils/tracking/services/tracking_services';
 import { useRouter } from 'next/router';
-
+import ParticipantsTable from './participants_table';
+import * as types from "../../../../../../redux/types";
 
 const ColorlibConnector = withStyles({
     alternativeLabel: {
@@ -89,31 +86,31 @@ function getStepContent(step) {
 }
 
 
-const INITIAL_TRACKING_DATA = {
-    current_step: 0,
-    integrantes: [],
+const INITIAL_DATA = {
+    integrantes: []
 }
-
 const EditParticipants = () => {
     const [isLoading, setIsLoading] = useState(false);
     const steps = getSteps();
     const user = useSelector((store) => store.user);
-    const tracking = useSelector((store) => store.tracking);
-    const [globalTrackingData, setGlobalTrackingData] = useState(tracking);
+    const [globalData, setGlobalData] = useState(INITIAL_DATA);
+    const currentTracking = useSelector((store) => store.currentTracking);
     const [activeStep, setActiveStep] = useState(0);
     const router = useRouter();
     const dispatch = useDispatch();
 
+ /*    useEffect(() => {
+        return () => {
+            dispatch({ type: types.RESET_TRACKING_DATA });
+        }
+    }, []); */
 
-    const handleGlobalState = (name, value) => {
-        setGlobalTrackingData({ ...globalTrackingData, [name]: value })
-    }
 
     const validateEmptyData = (name) => {
         if (name === 'role') {
             let roles;
-            for (let index = 0; index < tracking.integrantes.length; index++) {
-                roles = tracking.integrantes[index].role;
+            for (let index = 0; index < globalData.integrantes.length; index++) {
+                roles = globalData.integrantes[index].role;
                 if (roles === undefined || roles === '') {
                     break
                 };
@@ -124,7 +121,7 @@ const EditParticipants = () => {
     const handleValidateData = () => {
         switch (activeStep) {
             case 0:
-                return globalTrackingData.integrantes.length > 1
+                return globalData.integrantes.length > 1
             case 1:
                 return validateEmptyData('role');
             default:
@@ -135,14 +132,11 @@ const EditParticipants = () => {
     const handleNext = () => {
         const validateData = handleValidateData();
         if (validateData) {
-
             switch (activeStep) {
-
                 case steps.length - 1:
                     handleEditParticipants()
                     break;
                 default:
-                    saveTrackingDataToStore();
                     setActiveStep((prevActiveStep) => prevActiveStep + 1);
                     break;
             }
@@ -155,34 +149,45 @@ const EditParticipants = () => {
     };
 
     const handleEditParticipants = () => {
-        saveTrackingDataToStore();
         setIsLoading(true);
         let dataToSend = [];
-        tracking.integrantes.map((integrante)=>{
+        globalData.integrantes.map((integrante) => {
             let newData = {
-                seguimiento: tracking.id,
+                seguimiento: currentTracking.id,
                 rol: integrante.role,
                 usuario: integrante.id
             }
+            if (integrante.role_name === 'ENCARGADO') newData.id = integrante.integrante_id;
             dataToSend.push(newData);
         });
-        editTrackingParticipants(dataToSend,user.user.token).then((result)=>{
+        editTrackingParticipants(dataToSend, user.user.token).then((result) => {
             setIsLoading(false);
-            if(result.success){
-                router.push(`/dashboard/seguimientos/${tracking.id}/configuracion/`)
+            if (result.success) {
+                const newParticipants = [...result.result.integrantes]
+                const PAYLOAD = {
+                    ...currentTracking,
+                    ['integrantes']: newParticipants
+                }
+                dispatch({type:types.SAVE_CURRENT_TRACKING_DATA, payload: PAYLOAD})
+                setTimeout(() => {
+                    router.push(`/dashboard/seguimientos/${currentTracking.id}/configuracion/`)
+                }, 1000);
             }
         })
     }
 
-    const saveTrackingDataToStore = () => {
-        const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1 }
-        dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData });
+    const handleGlobalState = (name, value) => {
+        if (name === 'integrantes') {
+            setGlobalData({ ...globalData, integrantes: value })
+        }
     }
 
     const handleBack = () => {
-        const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep - 1 }
-        dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData })
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
+        if (activeStep === 0) {
+            router.push(`/dashboard/seguimientos/${currentTracking.id}/configuracion/`)
+        } else {
+            setActiveStep((prevActiveStep) => prevActiveStep - 1);
+        }
     };
 
 
@@ -214,19 +219,21 @@ const EditParticipants = () => {
                                             {
                                                 activeStep === 0 ?
 
-                                                    <FifthStepParticipants
+                                                    <ParticipantsTable
                                                         handleGlobalState={handleGlobalState}
+                                                        currentParticipants={currentTracking.integrantes}
                                                     />
                                                     :
                                                     <SixthStepRoles
                                                         handleGlobalState={handleGlobalState}
+                                                        participants={globalData.integrantes}
                                                     />
 
                                             }
                                         </Col>
 
                                         <Col lg={12} md={12} sm={12} xs={12} style={{ marginBottom: 20 }}>
-                                            <Button disabled={activeStep === 0} onClick={handleBack}> Volver </Button>
+                                            <Button onClick={handleBack}> Volver </Button>
                                             <button
                                                 disabled={isLoading}
                                                 className={`ontrack_btn ${activeStep !== steps.length - 1 ? 'add_btn' : 'csv_btn'}`}
