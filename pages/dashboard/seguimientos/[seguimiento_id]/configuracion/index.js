@@ -13,7 +13,7 @@ import BackgroundLoader from '../../../../../src/components/commons/background_l
 //REDUX TYPES
 import * as types from "../../../../../redux/types";
 import Link from "next/link";
-import { parseParticipantsToShowOnTable, parseStudentsToShowOnTable,parseSubjectsToShowOnTable } from '../services/services';
+import { parseParticipantsToShowOnTable, parseStudentsToShowOnTable, parseSubjectsToShowOnTable } from '../services/services';
 import GeneralInfo from './general_info/general_info';
 import DangerZone from './danger_zone/danger_zone';
 import GoalsConfig from './goals/goals_config';
@@ -36,11 +36,11 @@ const Configuracion = () => {
         })
     }, []);
 
-    useEffect(()=>{
-        return () =>{
-            dispatch({type:types.RESET_CURRENT_TRACKING_DATA});
+    useEffect(() => {
+        return () => {
+            dispatch({ type: types.RESET_CURRENT_TRACKING_DATA });
         }
-    },[]);
+    }, []);
 
     return (
         <Row lg={12} md={12} sm={12} xs={12} style={{ marginLeft: '5%' }}>
@@ -89,15 +89,16 @@ const Configuracion = () => {
                     {<div className={styles.collapse_container} onClick={() => setThirdSection(!thirdSection)}>Metas y Objetivos del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
                     <Collapse in={thirdSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
                         <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                            <GoalsConfig adminView={adminView}/>
+                            <GoalsConfig adminView={adminView} />
                         </Col>
                     </Collapse>
                 </Row>
-
-                <Row lg={12} md={12} sm={12} xs={12} className={`${styles.container} ${styles.danger_area}`}>
-                    {/* DANGER ZONE */}
-                    {adminView && <DangerZone />}
-                </Row>
+                {adminView &&
+                    <Row lg={12} md={12} sm={12} xs={12} className={`${styles.container} ${styles.danger_area}`}>
+                        {/* DANGER ZONE */}
+                        <DangerZone />
+                    </Row>
+                }
             </Col>
 
         </Row>

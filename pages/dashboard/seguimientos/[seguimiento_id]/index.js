@@ -76,7 +76,7 @@ const Seguimiento = () => {
                     </>
                 </Row>
                 {/* LADO IZQ */}
-                <Novedades />
+                <Novedades trackingId={trackingId}/>
                 {/* LADO DER */}
                 <RightSideBar currentTracking={currentTracking} />
             </Row>

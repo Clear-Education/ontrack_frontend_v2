@@ -22,9 +22,9 @@ export async function addNovedadesCrud(data, auth_token) {
         });
 }
 
-export async function getNovedadesCrud(auth_token) {
+export async function getNovedadesCrud(auth_token,seguimiento_id) {
     return axios
-        .get(`${config.api_url}/`, {
+        .get(`${config.api_url}/actualizaciones/${seguimiento_id}/list/`, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },

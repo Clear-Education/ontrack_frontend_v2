@@ -19,6 +19,7 @@ const StudentViewer = ({ handleSelectStudent,  students }) => {
                         return (
                             <>
                                 <div 
+                                key={index}
                                 onClick={()=>{selectStudent(index)}}
                                 className={`${styles.student_container} ${index === selected ? styles.selected: ''}`}>
                                    {student.nombre}   {student.apellido}
