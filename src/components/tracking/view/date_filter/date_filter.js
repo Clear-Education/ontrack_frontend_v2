@@ -5,7 +5,7 @@ import styles from './styles.module.scss';
 import { useEffect, useState } from "react";
 import { IconButton } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
-import { convertDateToSend } from "../../../../utils/commons/common_services";
+import { convertDateToSend, fromStoreToDateInputFormatDate, fromStoreToViewFormatDate } from "../../../../utils/commons/common_services";
 import { useDispatch, useSelector } from "react-redux";
 import { editTrackingService } from "../../../../utils/tracking/services/tracking_services";
 import DoneIcon from '@material-ui/icons/Done';
@@ -16,7 +16,15 @@ const DateFilter = ({adminView}) => {
     const currentTracking = useSelector((store) => store.currentTracking);
     const [editDates, setEditDates] = useState(true);
     const [endDate,setEndDate] = useState();
+    const [startDate,setStartDate] = useState();
     const dispatch = useDispatch();
+
+    useEffect(()=>{
+        const formatedEndDate = fromStoreToDateInputFormatDate(currentTracking.fecha_cierre);
+        const formatedStartDate = fromStoreToViewFormatDate(currentTracking.fecha_cierre);
+        setEndDate(formatedEndDate);
+        setStartDate(formatedStartDate);
+    },[currentTracking]);
 
     const handleDate = (date) => {
         setEndDate(date);      
@@ -28,7 +36,7 @@ const DateFilter = ({adminView}) => {
                 id: currentTracking.id,
                 nombre: currentTracking.nombre,
                 descripcion: currentTracking.descripcion,
-                fecha_cierre: currentTracking.fecha_cierre == 'NaN-NaN-NaN' ? "10/10/1900" : convertDateToSend(currentTracking.fecha_cierre)
+                fecha_cierre: convertDateToSend(endDate)
             }
 
             editTrackingService(DATA, user.user.token).then((result) => {
@@ -61,7 +69,7 @@ const DateFilter = ({adminView}) => {
             <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
 
                 <Col lg={5} md={5} sm={5} xs={5}>
-                    <span className={styles.viwer_date}>{currentTracking.fecha_inicio}</span>
+                    <span className={styles.viwer_date}>{startDate}</span>
                 </Col>
 
                 <Col lg={2} md={2} sm={2} xs={2}><ArrowForwardIcon style={{ color: 'var(--orange)' }} /></Col>
@@ -70,7 +78,7 @@ const DateFilter = ({adminView}) => {
 
                     {
                         editDates ?
-                            <span className={styles.viwer_date}>{currentTracking.fecha_cierre}</span> :
+                            <span className={styles.viwer_date}>{fromStoreToViewFormatDate(currentTracking.fecha_cierre)}</span> :
                             <>
                                 <span className={styles.date_label}>Hasta</span>
                                 <KeyboardDatePicker

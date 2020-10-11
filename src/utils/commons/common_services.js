@@ -2,7 +2,7 @@ export const convertDate = (inputFormat) => {
     function pad(s) {
         return s < 10 ? "0" + s : s;
     }
-    var d = new Date(inputFormat);
+    var d = new Date(inputFormat); 
     return [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join("-");
 }
 
@@ -20,8 +20,32 @@ export const convertDate3 = (inputFormat) => {
     return [pad(d.getDate()), pad(d.getMonth() + 1),d.getFullYear()].join("-");
 }
 
-export const convertDateToSend = (date) => {
+
+
+export const fromStoreToDateInputFormatDate = (date) =>{
     let datearray = date.split("-");
-    let newdate = +datearray[2] + 1 + '/' + datearray[1] + '/' + datearray[0];
-    return newdate;
+    const year = +datearray[0];
+    const month = datearray[1]-1;
+    const day = +datearray[2]
+    let newDate = new Date(year,month,day);
+    return newDate;
+}
+
+export const fromStoreToViewFormatDate = (date) =>{
+    let datearray = date.split("-");
+    const year = +datearray[0];
+    const month = datearray[1];
+    const day = +datearray[2]
+    let newDate = `${day}/${month}/${year}`
+    return newDate;
+}
+
+
+export const convertDateToSend = (date) =>{
+    let formatDate = new Date(date);
+    const year = formatDate.getFullYear();
+    const month = formatDate.getMonth()+1;
+    const day = formatDate.getDate();
+    let newDate = `${day}/${month}/${year}`;
+    return newDate;
 }
