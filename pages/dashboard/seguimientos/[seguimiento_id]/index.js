@@ -11,6 +11,7 @@ import * as types from "../../../../redux/types";
 import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
 import RightSideBar from "./rigth_side_bar";
 import Novedades from "./novedades";
+import { parseGoalsData } from "./services/services";
 
 const Seguimiento = () => {
     const router = useRouter();
@@ -19,7 +20,6 @@ const Seguimiento = () => {
     const [trackingId, setTrackingId] = useState();
     const [loading, setLoading] = useState(true)
     const dispatch = useDispatch();
-    const [goalsData, setGoalsData] = useState();
 
 
     useEffect(() => {
@@ -30,16 +30,27 @@ const Seguimiento = () => {
 
     useEffect(() => {
         if (trackingId) {
-            getTrackingService(user.user.token, trackingId).then((result) => {
+            getTrackingService(user.user.token, trackingId)
+            .then((result) => {
                 const TRACKING_DATA = result.result;
                 dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: TRACKING_DATA });
-                setLoading(false);
-            })
-            getTrackingGoalsService(user.user.token, trackingId).then((result) => {
-                setGoalsData(result.result);
             })
         }
     }, [trackingId]);
+
+    useEffect(()=>{
+        if(currentTracking.id){
+            getTrackingGoalsService(user.user.token, currentTracking.id).then((result) => {
+                const GOALS = parseGoalsData(result.result);
+                const GOALS_PAYLOAD = {
+                    ...currentTracking,
+                    ...GOALS
+                }
+                dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: GOALS_PAYLOAD });
+                setLoading(false);
+            })
+        }
+    },[currentTracking.id])
 
     useEffect(() => {
         return () => {
