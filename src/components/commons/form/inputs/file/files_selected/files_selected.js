@@ -25,7 +25,7 @@ const FilesSelected = ({ state, input }) => {
                 <div className={styles.preview_photo}>
                   <div className={styles.photo_container}>
                     <img
-                      src="/icons/multiples_files.svg"
+                      src="/icons/multiple_default.svg"
                       alt="img-preview"
                       className={styles.defaul_img}
                     />

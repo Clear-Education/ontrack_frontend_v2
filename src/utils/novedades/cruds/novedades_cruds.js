@@ -3,6 +3,32 @@ import axios from 'axios';
 import errorHandler from "../../error_handler";
 
 export async function addNovedadesCrud(data, auth_token) {
+    debugger;
+    let parsedData = {
+        cuerpo: data.cuerpo,
+        seguimiento: data.seguimiento
+    }
+    if(data.seguimiento_padre) parsedData.padre = data.seguimiento_padre;
+    return axios.post(`${config.api_url}/actualizaciones/${data.seguimiento}/`, parsedData, {
+        headers: {
+            Authorization: `Token ${auth_token}`,
+        },
+    })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        })
+        .catch((error) => {
+            return errorHandler(error);
+        });
+}
+
+export async function addNovedadesFileCrud(data, auth_token) {
     return axios.post(`${config.api_url}/`, data, {
         headers: {
             Authorization: `Token ${auth_token}`,

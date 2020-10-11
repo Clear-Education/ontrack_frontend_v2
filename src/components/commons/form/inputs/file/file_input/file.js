@@ -4,7 +4,7 @@ import React, { createRef } from "react";
 import styles from "./styles.module.scss";
 
 /**
- * Recieves the input and de handler on file selection
+ * Recieves the input and the handler on file selection
  * Change select area and input style in ./styles.module.scss file
  */
 const InputFile = ({ onFilesAdded, input }) => {
