@@ -30,7 +30,7 @@ const QualitativeGoals = ({ adminView, currentTracking }) => {
     }
 
     const deleteQualitativeGoalFromStore = (goal_id) => {
-        let newGoals = currentTracking.cualitativos.filter((goal) =>  goal.id !== goal_id );
+        let newGoals = currentTracking?.cualitativos.filter((goal) =>  goal.id !== goal_id );
         const PAYLOAD = {
             ...currentTracking,
             cualitativos: newGoals
@@ -39,7 +39,7 @@ const QualitativeGoals = ({ adminView, currentTracking }) => {
     }
 
     const saveQualitativeGoalToStore = (newGoal) => {
-        let newGoals = [...currentTracking.cualitativos];
+        let newGoals = [...currentTracking?.cualitativos];
         newGoals.push(newGoal);
         const PAYLOAD = {
             ...currentTracking,
@@ -97,7 +97,7 @@ const QualitativeGoals = ({ adminView, currentTracking }) => {
                         <OnlineAddItemList
                             labelText={"Añade un objetivo"}
                             handleList={handleOnlineQualitativeGoals}
-                            previousItems={currentTracking.cualitativos}
+                            previousItems={currentTracking?.cualitativos}
                             editable={!disabledCualitativos}
                         />
                     </Col>
