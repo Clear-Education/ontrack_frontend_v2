@@ -6,11 +6,31 @@ import styles from './styles.module.css';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { FormControl, InputLabel } from "@material-ui/core";
-import { getGoalsProgressionStudentService } from '../../../../../src/utils/goals/services/goals_services';
+import { getGoalsProgressionStudentService, getStudentGoalsService } from '../../../../../src/utils/goals/services/goals_services';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer, Label
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer, Label, PieChart, Pie, Sector, Cell, LabelList
 } from 'recharts';
 
+
+const getIntroOfPage = () => {
+    return
+}
+
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active) {
+        return (
+            <div className={`bg-white w-75 ${styles.contenedor}`}>
+                <p className="text-dark mb-0"><b>Objetivo:</b> {payload[0].name}</p>
+                <p className={payload[0].payload.alcanzada ? "text-success" : "text-danger"}>
+                    <b>Estado: </b> {`${payload[0].payload.alcanzada ? "Alcanzado" : "No Alcanzado"}`}
+                </p>
+                {/* <p className="intro">{getIntroOfPage(label)}</p> */}
+            </div>
+        );
+    }
+
+    return null;
+};
 
 const Estadisticas = () => {
 
@@ -22,9 +42,16 @@ const Estadisticas = () => {
     const [calificacionesData, setCalificacionesData] = useState([]);
     const [asistenciasData, setAsistenciasData] = useState([]);
 
+    const [estadoObjetivosCualitativos, setEstadoObjetivosCualitativos] = useState([]);
+    const [objetivosCualitativosData, setObjetivosCualitativosData] = useState([]);
+
     const tracking = useSelector((store) => store.currentTracking);
     const user = useSelector((store) => store.user);
 
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', "#8884d8", "#82ca9d", "#B04A75", "#64C9B8", "#EAF08C", "#593EEE"];
+
+
+    // VERIFICA QUE METRICAS TIENE EL SEGUIMIENTO
     useEffect(() => {
         if (tracking.asistencia) {
             setMetricaAsistencia(tracking.asistencia);
@@ -34,8 +61,15 @@ const Estadisticas = () => {
         }
     }, [])
 
+    //BUSQUEDAS DE PROGRESOS DE OBJETIVOS
     useEffect(() => {
         if (alumnoSeleccionado != "") {
+
+            getStudentGoalsService(user.user.token, alumnoSeleccionado, tracking.id).then((result) => {
+                let estado_objetivos = result.result.filter((objetivo) => !objetivo.objetivo.valor_objetivo_cuantitativo);
+                setEstadoObjetivosCualitativos(estado_objetivos);
+            })
+
             if (metricaAsistencia.id != "") {
                 const dataAsistencia = {
                     id_objetivo: metricaAsistencia.id,
@@ -58,6 +92,25 @@ const Estadisticas = () => {
         }
     }, [alumnoSeleccionado])
 
+
+    //OBJETIVOS CUALITATIVOS PARA GRAFICO
+    useEffect(() => {
+        const estadoObjetivosAlumno = [];
+        estadoObjetivosCualitativos.map(estado_objetivo => {
+            const data = {
+                name: estado_objetivo.objetivo.descripcion,
+                value: 1 / estadoObjetivosCualitativos.length,
+                alcanzada: estado_objetivo.alcanzada
+            }
+            estadoObjetivosAlumno.push(data);
+        })
+
+        setObjetivosCualitativosData(estadoObjetivosAlumno);
+
+    }, [estadoObjetivosCualitativos])
+
+
+    //PROGRESO ASISTENCIAS Y CALIFICACIONES PARA GRAFICO
     useEffect(() => {
         if (progresoAsistencias) {
             let progresoAsistenciasAlumno = []
@@ -68,7 +121,6 @@ const Estadisticas = () => {
 
                 progresoAsistenciasAlumno.push(data);
             })
-
 
             setAsistenciasData(progresoAsistenciasAlumno);
         }
@@ -84,7 +136,6 @@ const Estadisticas = () => {
             progresoCalificacionesAlumno.push(data);
         })
 
-
         setCalificacionesData(progresoCalificacionesAlumno);
 
     }, [progresoCalificaciones])
@@ -92,6 +143,10 @@ const Estadisticas = () => {
 
     const handleChangeAlumno = (data) => {
         setAlumnoSeleccionado(data);
+    }
+
+    const formatterdata = (value, entry, index) => {
+        return <span className={`${styles.pie_chart_references}`}>{value}</span>
     }
 
     return (
@@ -105,7 +160,7 @@ const Estadisticas = () => {
                     <li>Descripción: {tracking.descripcion}</li>
                     <li>Alumnos:</li>
                     <ul>
-                        {tracking.alumnos.map((alumno,i) => {
+                        {tracking.alumnos.map((alumno, i) => {
                             return <li key={i}>
                                 {alumno.alumno.nombre} {alumno.alumno.apellido}
                             </li>
@@ -114,7 +169,7 @@ const Estadisticas = () => {
                     </ul>
                     <li>Participantes:</li>
                     <ul>
-                        {tracking.integrantes.map((integrante,i) => {
+                        {tracking.integrantes.map((integrante, i) => {
                             return <li key={i}>
                                 {integrante.usuario.name} {integrante.usuario.last_name} ({integrante.rol})
                                 </li>
@@ -125,7 +180,7 @@ const Estadisticas = () => {
                     <li>Fecha de cierre: {tracking.fecha_hasta}</li>
                     <li>Materias:</li>
                     <ul>
-                        {tracking.materias.map((materia,i) => {
+                        {tracking.materias.map((materia, i) => {
                             return <li key={i}>
                                 {materia.nombre}
                             </li>
@@ -133,7 +188,7 @@ const Estadisticas = () => {
                     </ul>
                     <li>Objetivos:</li>
                     <ul>
-                        {tracking.cualitativos.map((obj,i) => {
+                        {tracking.cualitativos.map((obj, i) => {
                             return <li key={i}>{obj.descripcion}</li>
                         })
                         }
@@ -157,7 +212,7 @@ const Estadisticas = () => {
                         onChange={(e) => handleChangeAlumno(e.target.value)}
                     >
                         {
-                            tracking.alumnos.map((alumno,i) => {
+                            tracking.alumnos.map((alumno, i) => {
                                 return (
                                     <MenuItem value={alumno.alumno.id} key={i}>
                                         {alumno.alumno.nombre} {alumno.alumno.apellido}
@@ -169,9 +224,34 @@ const Estadisticas = () => {
                 </FormControl>
             </div>
 
+
+            {objetivosCualitativosData.length != 0 &&
+                <div>
+                    <h3 className="subtitle mb-2 mt-5">Objetivos Cualitativos</h3>
+                    <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                        <PieChart>
+                            <Tooltip content={<CustomTooltip />} />
+                            <Legend verticalAlign="top" formatter={formatterdata} />
+                            <Pie
+                                data={objetivosCualitativosData}
+                                labelLine={false}
+                                outerRadius={80}
+                                fill="#8884d8"
+                                dataKey="value"
+                            >
+                                {
+                                    objetivosCualitativosData.map((objeto, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+
+                                }
+                            </Pie>
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+            }
+
             {calificacionesData.length != 0 &&
                 <div>
-                    <h3 className="subtitle mb-2 mt-5">Progreso Calificaciones</h3>
+                    <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
                     <ResponsiveContainer width="60%" height={300} className="mx-auto">
                         <LineChart
                             data={calificacionesData}
@@ -194,7 +274,7 @@ const Estadisticas = () => {
 
             {asistenciasData.length != 0 &&
                 <div>
-                    <h3 className="subtitle mb-2 mt-5">Progreso Asistencias</h3>
+                    <h3 className="subtitle mb-2 mt-3">Progreso Asistencias</h3>
                     <ResponsiveContainer width="60%" height={300} className="mx-auto">
                         <LineChart
                             data={asistenciasData}
