@@ -21,10 +21,10 @@ const GoalsConfig = ({ adminView }) => {
                         <Col lg={12} md={12} sm={12} xs={12} className={`${styles.input_container}`}>
                             <Row lg={12} md={12} sm={12} xs={12} style={{ marginLeft: '-10px' }}>
                                 <Col lg={6} md={6} sm={6} xs={6}>
-                                    <QuantitativeGoals adminView={adminView} goalType={'promedio'} currentTracking={currentTracking} />
+                                    <QuantitativeGoals adminView={adminView} goalType={'promedio'} />
                                 </Col>
                                 <Col lg={6} md={6} sm={6} xs={6}>
-                                    <QuantitativeGoals adminView={adminView} goalType={'asistencia'} currentTracking={currentTracking} />
+                                    <QuantitativeGoals adminView={adminView} goalType={'asistencia'}/>
                                 </Col>
                             </Row>
                         </Col>

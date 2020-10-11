@@ -10,7 +10,7 @@ const RightSideBar = ({currentTracking}) =>{
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                         <span className={styles.section_title}>Alumnos</span>
-                        <StudentViewer students={currentTracking.alumnos} />
+                        <StudentViewer students={currentTracking?.alumnos} />
                     </Col>
                 </Row>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
@@ -27,7 +27,7 @@ const RightSideBar = ({currentTracking}) =>{
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
                         <span className={styles.section_title}>Métricas</span>
-                        <Link href={`/dashboard/seguimientos/${currentTracking.id}/estadisticas`}><a>Ver Estadisticas</a></Link>
+                        <Link href={`/dashboard/seguimientos/${currentTracking?.id}/estadisticas`}><a>Ver Estadisticas</a></Link>
                     </Col>
                 </Row>
             </Col>

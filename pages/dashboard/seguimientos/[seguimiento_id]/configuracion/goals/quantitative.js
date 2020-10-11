@@ -12,11 +12,12 @@ const VALIDATE_INITIAL_STATE = {
     asistencia: false,
 };
 
-const QuantitativeGoals = ({ adminView, goalType, currentTracking }) => {
+const QuantitativeGoals = ({ adminView, goalType }) => {
     const user = useSelector((store) => store.user);
     const [disabled, setDisabled] = useState(true);
     const [errorMsg, setErrorMsg] = useState();
     const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE);
+    const currentTracking = useSelector((store) => store.currentTracking);
     const dispatch = useDispatch();
 
     useEffect(() => {
