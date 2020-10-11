@@ -105,18 +105,18 @@ const Estadisticas = () => {
                     <li>Descripción: {tracking.descripcion}</li>
                     <li>Alumnos:</li>
                     <ul>
-                        {tracking.alumnos.map(alumno => {
-                            return <li key={alumno.id}>
-                                {alumno.nombre} {alumno.apellido}
+                        {tracking.alumnos.map((alumno,i) => {
+                            return <li key={i}>
+                                {alumno.alumno.nombre} {alumno.alumno.apellido}
                             </li>
                         })
                         }
                     </ul>
                     <li>Participantes:</li>
                     <ul>
-                        {tracking.integrantes.map(integrante => {
-                            return <li key={integrante.id}>
-                                {integrante.nombre} {integrante.apellido} ({integrante.rol})
+                        {tracking.integrantes.map((integrante,i) => {
+                            return <li key={i}>
+                                {integrante.usuario.name} {integrante.usuario.last_name} ({integrante.rol})
                                 </li>
                         })
                         }
@@ -125,16 +125,16 @@ const Estadisticas = () => {
                     <li>Fecha de cierre: {tracking.fecha_hasta}</li>
                     <li>Materias:</li>
                     <ul>
-                        {tracking.materias.map(materia => {
-                            return <li key={`${materia.subject_name}`}>
-                                {materia.subject_name}
+                        {tracking.materias.map((materia,i) => {
+                            return <li key={i}>
+                                {materia.nombre}
                             </li>
                         })}
                     </ul>
                     <li>Objetivos:</li>
                     <ul>
-                        {tracking.cualitativos.map(obj => {
-                            return <li key={`${obj.id}`}>{obj.descripcion}</li>
+                        {tracking.cualitativos.map((obj,i) => {
+                            return <li key={i}>{obj.descripcion}</li>
                         })
                         }
                     </ul>
@@ -157,10 +157,10 @@ const Estadisticas = () => {
                         onChange={(e) => handleChangeAlumno(e.target.value)}
                     >
                         {
-                            tracking.alumnos.map((alumno) => {
+                            tracking.alumnos.map((alumno,i) => {
                                 return (
-                                    <MenuItem value={alumno.id} key={alumno.id}>
-                                        {alumno.nombre} {alumno.apellido}
+                                    <MenuItem value={alumno.alumno.id} key={i}>
+                                        {alumno.alumno.nombre} {alumno.alumno.apellido}
                                     </MenuItem>
                                 )
                             })
