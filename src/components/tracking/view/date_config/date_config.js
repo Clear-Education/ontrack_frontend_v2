@@ -10,24 +10,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { editTrackingService } from "../../../../utils/tracking/services/tracking_services";
 import DoneIcon from '@material-ui/icons/Done';
 import * as types from "../../../../../redux/types";
+import { getActualSchoolYearService } from "../../../../utils/school_year/services/school_year_services";
 
-const DateConfig = ({adminView}) => {
+const DateConfig = ({ adminView }) => {
     const user = useSelector((store) => store.user);
     const currentTracking = useSelector((store) => store.currentTracking);
     const [editDates, setEditDates] = useState(true);
-    const [endDate,setEndDate] = useState();
-    const [startDate,setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState();
+    const [actualSchoolYear, setActualSchoolYear] = useState();
+    const [validationDate, setValidationDate] = useState(false);
     const dispatch = useDispatch();
 
-    useEffect(()=>{
+    useEffect(() => {
+        getActualSchoolYearService(user.user.token).then((result) => {
+            setActualSchoolYear(result.result);
+        })
+    }, [])
+
+    useEffect(() => {
         const formatedEndDate = fromStoreToDateInputFormatDate(currentTracking.fecha_cierre);
-        const formatedStartDate = fromStoreToViewFormatDate(currentTracking.fecha_cierre);
+        const formatedStartDate = fromStoreToViewFormatDate(currentTracking.fecha_inicio);
         setEndDate(formatedEndDate);
         setStartDate(formatedStartDate);
-    },[currentTracking]);
+    }, [currentTracking]);
 
     const handleDate = (date) => {
-        setEndDate(date);      
+        setEndDate(date);
+    }
+
+    const handleError = (error) => {
+        setValidationDate(error ? true : false)
     }
 
     const handleSaveDates = () => {
@@ -41,7 +54,7 @@ const DateConfig = ({adminView}) => {
 
             editTrackingService(DATA, user.user.token).then((result) => {
                 if (result.success) {
-                   let dateFormatted = result.result.fecha_cierre;
+                    let dateFormatted = result.result.fecha_cierre;
                     const DATA = {
                         ...currentTracking,
                         fecha_cierre: dateFormatted
@@ -53,14 +66,14 @@ const DateConfig = ({adminView}) => {
         } else {
             setEditDates(!editDates);
         }
-    } 
+    }
 
     return (
         <>
             <div className={styles.title_container}>
                 <span className={styles.dates_title}>Plazos</span>
                 <span className={adminView ? styles.edit_icon : styles.display_none}>
-                    <IconButton onClick={handleSaveDates}>
+                    <IconButton disabled={validationDate || !currentTracking.en_progreso} onClick={handleSaveDates}>
                         {editDates ? <EditIcon /> : <DoneIcon />}
                     </IconButton>
                 </span>
@@ -87,10 +100,14 @@ const DateConfig = ({adminView}) => {
                                     onChange={(date) => handleDate(date)}
                                     placeholder="DD/MM/YYYY"
                                     format="dd/MM/yyyy"
+                                    minDate={startDate}
+                                    maxDate={new Date(actualSchoolYear.fecha_hasta)}
                                     invalidDateMessage="Formato de fecha inválido"
-                                    minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                    maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo seleccionado"
+                                    minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Seguimiento"
+                                    maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo Actual"
                                     required
+                                    onError={(error) => handleError(error)}
+
                                 />
                             </>
                     }

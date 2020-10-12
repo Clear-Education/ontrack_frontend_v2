@@ -30,7 +30,7 @@ const QualitativeGoals = ({ adminView, currentTracking }) => {
     }
 
     const deleteQualitativeGoalFromStore = (goal_id) => {
-        let newGoals = currentTracking?.cualitativos.filter((goal) =>  goal.id !== goal_id );
+        let newGoals = currentTracking?.cualitativos.filter((goal) => goal.id !== goal_id);
         const PAYLOAD = {
             ...currentTracking,
             cualitativos: newGoals
@@ -86,7 +86,7 @@ const QualitativeGoals = ({ adminView, currentTracking }) => {
                 <div className={styles.goals_header}>
                     <h6 className="left" className={styles.goals_title}>Objetivos:</h6>
                     {adminView &&
-                        <IconButton onClick={disabledCualitativos ? handleEditCualitativos : () => setDisabledCualitativos(!disabledCualitativos)}>
+                        <IconButton disabled={!currentTracking.en_progreso} onClick={disabledCualitativos ? handleEditCualitativos : () => setDisabledCualitativos(!disabledCualitativos)}>
                             {!disabledCualitativos ? <EditIcon /> : <DoneIcon />}
                         </IconButton>
                     }

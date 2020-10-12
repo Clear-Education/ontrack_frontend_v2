@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { Row, Col } from "react-bootstrap";
 import MUIDataTable from "mui-datatables";
 import MTConfig from "../../../src/utils/table_options/MT_config";
-import { getTrackingService } from "../../../src/utils/tracking/services/tracking_services";
+import { getAllTrackingService } from "../../../src/utils/tracking/services/tracking_services";
 import { useRouter } from "next/dist/client/router";
 import * as types from "./../../../redux/types";
 
@@ -31,7 +31,7 @@ const Seguimientos = () => {
 
     useSWR(url, () => {
         setIsLoading(true);
-        return getTrackingService(user.user.token).then((result) => {
+        return getAllTrackingService(user.user.token).then((result) => {
             setIsLoading(false)
             let trackings = [...result.result.results];
             let parsedTrackings = [];
