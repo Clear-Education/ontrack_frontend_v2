@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import useSWR, { mutate } from "swr";
-import ShowMore from "../../../../src/components/commons/show_more.js/show_more";
 import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
 import TitlePage from "../../../../src/components/commons/title_page/title_page";
 import DateFilter from "../../../../src/components/tracking/view/date_filter/date_filter";
