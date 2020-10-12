@@ -32,14 +32,14 @@ const EighthStepGoals = ({ handleGlobalState }) => {
     const handleChange = (prop) => (event) => {
         let value = event.target.value
         hadleValidation(prop, value);
-            setState({ ...state, [prop]: value });
-            handleGlobalState(prop, value)
+        setState({ ...state, [prop]: value });
+        handleGlobalState(prop, value)
     }
 
     const hadleValidation = (prop, value) => {
         if (prop === "promedio") {
             let puntaje = parseInt(value, 10)
-            if (puntaje >= 0 && puntaje <= 10) {
+            if ((puntaje >= 0 && puntaje <= 10) || value === "") {
                 setValidation({
                     ...validation,
                     [prop]: false
@@ -53,7 +53,7 @@ const EighthStepGoals = ({ handleGlobalState }) => {
         } else {
             setValidation({
                 ...validation,
-                [prop]: !(value > 0 && value <= 100),
+                [prop]: !((value > 0 && value <= 100) || value === ""),
             });
         }
     };
@@ -97,7 +97,7 @@ const EighthStepGoals = ({ handleGlobalState }) => {
                                             className="helper-text"
                                             style={{ color: "rgb(182, 60, 47)" }}
                                         >
-                                            La calificación del alumno debe ser un número comprendido entre 0 y 10.
+                                            El promedio debe ser un número comprendido entre 0 y 10.
                                         </FormHelperText>
                                     )}
                                 </Col>
@@ -145,11 +145,11 @@ const EighthStepGoals = ({ handleGlobalState }) => {
 
                     <Row>
                         <Col lg={12} md={12} sm={12} xs={12} className={`${styles.input_container}`}>
-                                <AddItemList
-                                    labelText={"Añade un objetivo"}
-                                    handleList={handleQualitativeGoals}
-                                    previousItems={trackingData.cualitativos}
-                                />
+                            <AddItemList
+                                labelText={"Añade un objetivo"}
+                                handleList={handleQualitativeGoals}
+                                previousItems={trackingData.cualitativos}
+                            />
                         </Col>
                     </Row>
                 </motion.div>

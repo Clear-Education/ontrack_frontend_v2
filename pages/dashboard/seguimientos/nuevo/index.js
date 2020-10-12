@@ -169,11 +169,11 @@ const CreateTracking = () => {
         }
     }, [])
 
-    useEffect(()=>{
-        return () =>{
-            dispatch({type:types.RESET_TRACKING_DATA});
+    useEffect(() => {
+        return () => {
+            dispatch({ type: types.RESET_TRACKING_DATA });
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
         setActiveStep(trackingData.current_step ? trackingData.current_step : 0);
@@ -315,7 +315,6 @@ const CreateTracking = () => {
 
     const saveTrackingDataToStore = (_trackingId) => {
         const newTrackingData = { ...globalTrackingData, ['current_step']: activeStep + 1, ['id']: _trackingId }
-        console.log(newTrackingData);
         dispatch({ type: types.SAVE_TRACKING_DATA, payload: newTrackingData });
     }
 
@@ -390,7 +389,7 @@ const CreateTracking = () => {
                                                                     activeStep === 5 ?
                                                                         <SixthStepRoles
                                                                             handleGlobalState={handleGlobalState}
-                                                                            participants = {trackingData.integrantes}
+                                                                            participants={trackingData.integrantes}
                                                                         />
                                                                         :
                                                                         activeStep === 6 ?
@@ -407,7 +406,7 @@ const CreateTracking = () => {
                                         </Col>
 
                                         <Col lg={12} md={12} sm={12} xs={12} style={{ marginBottom: 20 }}>
-                                            <Button disabled={activeStep === 0} onClick={handleBack}> Volver </Button>
+                                            <Button disabled={activeStep === 0 || activeStep === 7} onClick={handleBack}> Volver </Button>
                                             <button
                                                 disabled={isLoading}
                                                 className={`ontrack_btn ${activeStep !== steps.length - 1 ? 'add_btn' : 'csv_btn'}`}

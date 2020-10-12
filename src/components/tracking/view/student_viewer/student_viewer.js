@@ -1,14 +1,15 @@
 import styles from './styles.module.scss';
 import { useState } from 'react';
 
-const StudentViewer = ({ students }) => {
+const StudentViewer = ({ handleSelectStudent, students }) => {
 
-    const [selected, setSelected] = useState(0);
+    const [selected, setSelected] = useState();
 
     const STUDENTS_DATA = students && students.map((student) => { return student.alumno });
 
-    const selectStudent = (index) => {
+    const selectStudent = (index, student) => {
         setSelected(index);
+        handleSelectStudent(student);
     }
 
     return (
@@ -17,12 +18,14 @@ const StudentViewer = ({ students }) => {
                 {
                     STUDENTS_DATA && STUDENTS_DATA.map((student, index) => {
                         return (
-                            <div
-                                key={index}
-                                onClick={() => { selectStudent(index) }}
-                                className={`${styles.student_container} ${index === selected ? styles.selected : ''}`}>
-                                {student.nombre}   {student.apellido}
-                            </div>
+                            <>
+                                <div
+                                    key={student.id}
+                                    onClick={() => { selectStudent(index, student) }}
+                                    className={`${styles.student_container} ${index === selected ? styles.selected : ''}`}>
+                                    {student.nombre}   {student.apellido}
+                                </div>
+                            </>
                         )
                     })
                 }
