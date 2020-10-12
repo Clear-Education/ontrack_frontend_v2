@@ -156,6 +156,7 @@ export async function getGoalsProgressionStudent(auth_token, data) {
             let response = {
                 success: true,
                 result: json.data,
+                status: json.status
             };
 
             return response;
