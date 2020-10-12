@@ -94,7 +94,7 @@ const SecondStepDepYearCourse = ({ handleGlobalState }) => {
                                         activeStep !== steps.length - 1 ?
 
                                             <button
-                                                onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'anio_lectivo' : activeStep === 2 ? 'year' : activeStep === 3 ? 'curso' : null)}
+                                                onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'year' : activeStep === 2 ? 'curso' : null)}
                                                 className={`ontrack_btn csv_btn ${styles.stepper_button}`}
                                             >
                                                 Siguiente

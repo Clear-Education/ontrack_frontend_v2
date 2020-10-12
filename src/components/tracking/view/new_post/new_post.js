@@ -3,7 +3,7 @@ import SendIcon from '@material-ui/icons/Send';
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import styles from './styles.module.scss';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FileInput from "../../../commons/file_uploader";
 import { IconButton } from "@material-ui/core";
 
@@ -29,7 +29,11 @@ const NewPost = ({ handleSubmitPost }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleSubmitPost(state);
+        handleSubmitPost(state).then((result)=>{
+            if(result.success){
+                setState(INITIAL_STATE);
+            }
+        });
     }
     return (
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>

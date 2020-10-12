@@ -30,7 +30,7 @@ const Students = () => {
       setIsLoading(false);
       setAllData(result.result.results)
     })
-  });
+  }); 
 
 
   async function addStudent(e, data) {

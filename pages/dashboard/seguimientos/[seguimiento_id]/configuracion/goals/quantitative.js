@@ -40,7 +40,7 @@ const QuantitativeGoals = ({ adminView, goalType }) => {
             }
         }
         dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: PAYLOAD });
-        hadleValidation(type,VALUE);
+        hadleValidation(type, VALUE);
     }
 
     const hadleValidation = (prop, value) => {
@@ -65,42 +65,42 @@ const QuantitativeGoals = ({ adminView, goalType }) => {
         }
     };
 
-    const updateStore = (goalId) =>{
-        const newGoal = {...currentTracking[goalType],id:goalId}
+    const updateStore = (goalId) => {
+        const newGoal = { ...currentTracking[goalType], id: goalId }
         const PAYLOAD = {
             ...currentTracking,
             [goalType]: newGoal
         }
-        dispatch({type: types.SAVE_CURRENT_TRACKING_DATA, payload: PAYLOAD})
+        dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: PAYLOAD })
     }
 
     const handleSaveGoal = (type) => {
-            if(currentTracking[type].id !== type){
-                editGoalsService(currentTracking[type], user.user.token).then((result) => {
-                    if (result.success) {
-                        setDisabled(!disabled);
-                    }
-                }) 
-            }else{
-                const trackingGoal = {
-                    id: currentTracking.id,
-                    [type]: currentTracking[type].value
+        if (currentTracking[type].id !== type) {
+            editGoalsService(currentTracking[type], user.user.token).then((result) => {
+                if (result.success) {
+                    setDisabled(!disabled);
                 }
-                addMultipleGoalsService(trackingGoal, user.user.token, true).then((result)=>{
-                    if (result.success) {
-                        setDisabled(!disabled);
-                        const GOAL_ID = result.result[0].id;
-                        updateStore(GOAL_ID);
-                    }
-                });
+            })
+        } else {
+            const trackingGoal = {
+                id: currentTracking.id,
+                [type]: currentTracking[type].value
             }
+            addMultipleGoalsService(trackingGoal, user.user.token, true).then((result) => {
+                if (result.success) {
+                    setDisabled(!disabled);
+                    const GOAL_ID = result.result[0].id;
+                    updateStore(GOAL_ID);
+                }
+            });
+        }
     }
 
     return (
         <>
             <FormControl variant="outlined">
                 <FormLabel className="left" component="legend">
-                    <span style={{textTransform:'capitalize'}}>{goalType}</span>: (No requerido)
+                    <span style={{ textTransform: 'capitalize' }}>{goalType}</span>: (No requerido)
                 </FormLabel>
                 <OutlinedInput
                     disabled={disabled}
@@ -118,7 +118,7 @@ const QuantitativeGoals = ({ adminView, goalType }) => {
                     endAdornment={
                         adminView &&
                         <InputAdornment position="end">
-                            <IconButton onClick={!disabled ? () => handleSaveGoal(goalType) : () => setDisabled(!disabled)}>
+                            <IconButton disabled={validation[goalType]} onClick={!disabled ? () => handleSaveGoal(goalType) : () => setDisabled(!disabled)}>
                                 {disabled ? <EditIcon /> : <DoneIcon />}
                             </IconButton>
                         </InputAdornment>

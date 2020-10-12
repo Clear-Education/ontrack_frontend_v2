@@ -7,17 +7,16 @@ import ConfigTable from '../../../../../src/components/configuration/config_tabl
 import { Collapse, IconButton } from '@material-ui/core';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import DateFilter from '../../../../../src/components/tracking/view/date_filter/date_filter';
+import DateConfig from '../../../../../src/components/tracking/view/date_config/date_config';
 import EditIcon from '@material-ui/icons/Edit';
-import BackgroundLoader from '../../../../../src/components/commons/background_loader/background_loader'
-//REDUX TYPES
-import * as types from "../../../../../redux/types";
 import Link from "next/link";
 import { parseParticipantsToShowOnTable, parseStudentsToShowOnTable, parseSubjectsToShowOnTable } from '../../../../../src/utils/general_services/services';
 import GeneralInfo from './general_info/general_info';
 import DangerZone from './danger_zone/danger_zone';
 import GoalsConfig from './goals/goals_config';
 
+//REDUX TYPES
+import * as types from "../../../../../redux/types";
 
 const Configuracion = () => {
 
@@ -45,7 +44,7 @@ const Configuracion = () => {
     return (
         <Row lg={12} md={12} sm={12} xs={12} style={{ marginLeft: '5%' }}>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.header_container}>
-                <GeneralInfo adminView={adminView} />
+                    <GeneralInfo adminView={adminView} />
             </Row>
             <div className={styles.sub_menu_container}>
                 <SubMenu />
@@ -80,7 +79,7 @@ const Configuracion = () => {
                             <ConfigTable data={parseParticipantsToShowOnTable(currentTracking.integrantes)} tableName={"Participantes"} />
                         </Col>
                         <Col lg={12} md={12} sm={12} xs={12} className={`${styles.table_container} ${styles.dates_container}`}>
-                            <DateFilter adminView={adminView} />
+                            <DateConfig adminView={adminView} />
                         </Col>
                     </Collapse>
 

@@ -106,7 +106,6 @@ const UserProfileForm = (props) => {
     const theme = useTheme();
     const fullscreen = useMediaQuery(theme.breakpoints.down("719"));
     const [date, setDate] = useState(props.user.date_of_birth);
-    const user = useSelector((store) => store.user);
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingPass, setIsLoadingPass] = useState(false)

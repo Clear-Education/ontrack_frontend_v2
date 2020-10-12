@@ -25,9 +25,9 @@ const Seguimientos = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-    useEffect(()=>{
-    dispatch({type:types.RESET_CURRENT_TRACKING_DATA});
-    },[])
+    useEffect(() => {
+        dispatch({ type: types.RESET_CURRENT_TRACKING_DATA });
+    }, [])
 
 
     useSWR(url, () => {

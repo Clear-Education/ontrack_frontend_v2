@@ -42,7 +42,7 @@ const AddItemList = ({ labelText, handleList, previousItems }) => {
     }
 
     const handleValidation = (value) => {
-        const VALIDATION = !value.trim().length > 0;
+        const VALIDATION = !(value.length > 25);
         setValidateItem(VALIDATION);
         return VALIDATION;
     }
@@ -90,7 +90,7 @@ const AddItemList = ({ labelText, handleList, previousItems }) => {
                         className="helper-text"
                         style={{ color: "rgb(182, 60, 47)" }}
                     >
-                        Este campo no puede ser vacío
+                        Este campo debe superar el minimo de caracteres. Sea descriptivo
                     </FormHelperText>
                 )
             }
