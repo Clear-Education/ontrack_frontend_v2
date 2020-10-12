@@ -29,7 +29,6 @@ const Seguimientos = () => {
         dispatch({ type: types.RESET_CURRENT_TRACKING_DATA });
     }, [])
 
-
     useSWR(url, () => {
         setIsLoading(true);
         return getTrackingService(user.user.token).then((result) => {

@@ -1,9 +1,23 @@
-import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesCrud, addNovedadesFileCrud } from "../cruds/novedades_cruds";
+import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesCrud, addNovedadesFileCrud, getMoreNovedadesCrud } from "../cruds/novedades_cruds";
 import Alert from "react-s-alert";
 
 
 export async function getNovedadesService(token, seguimiento_id) {
     return await getNovedadesCrud(token, seguimiento_id).then((result) => {
+        if (result.success) {
+
+        } else {
+            Alert.error("Ocurrió un error al buscar las novedades", {
+                effect: "stackslide",
+            });
+        }
+        return result;
+    })
+}
+
+
+export async function getMoreNovedadesService(token, url) {
+    return await getMoreNovedadesCrud(token, url).then((result) => {
         if (result.success) {
 
         } else {
@@ -71,15 +85,13 @@ export async function editNovedadesService(data, token) {
 export async function deleteNovedadesService(token, data) {
     return await deleteNovedadesCrud(token, data).then((result) => {
         if (result.success) {
-            Alert.success("Materia eliminada correctamente", {
+            Alert.success("Novedad eliminada correctamente", {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-
-                    effect: "stackslide",
-                });
+            let message = result.result[0].message || 'Ocurrió un error al eliminar la novedad';
+            Alert.error(message, {
+                effect: "stackslide",
             });
         }
         return result;

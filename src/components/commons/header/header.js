@@ -9,12 +9,13 @@ import { IconButton, useTheme, useMediaQuery, Avatar } from "@material-ui/core";
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { logoutAction } from "../../../../redux/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import LogOutIcon from "../icons/logout_icon";
+import config from "../../../utils/config";
 
 const Header = () => {
 
@@ -24,10 +25,15 @@ const Header = () => {
   const dispatch = useDispatch();
   const user = useSelector((store) => store.user);
   const router = useRouter();
+  const [profileImg,setProfileImg] = useState();
 
   const handleOpen = () => {
     setOpen(!open);
   }
+
+  useEffect(()=>{
+    setProfileImg(config.picture_path + user.user.picture)
+  },[])
 
   const logout = () => {
     handleOpen();
@@ -39,6 +45,7 @@ const Header = () => {
   };
 
   return (
+    profileImg ? 
     <div id={styles.header_container}>
       <Row lg={12} md={12} sm={12} xs={12}>
         <Link href="/dashboard">
@@ -58,7 +65,9 @@ const Header = () => {
             </div>
             <div className={styles.user_info_container} onClick={handleOpen}>
               <div className={styles.avatar_container}>
-                <Avatar />
+                <Avatar
+                  src={profileImg ? profileImg : config.default_picture}
+                />
               </div>
               <div className={styles.label_container}>
                 <span className={styles.name_label}>{user.user.name}   {user.user.last_name}</span>
@@ -78,6 +87,7 @@ const Header = () => {
         </Col>
       </Row>
     </div>
+    : ''
   );
 };
 

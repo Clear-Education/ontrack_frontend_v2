@@ -2,7 +2,6 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { useState } from "react";
 
 const DeleteForm = (props) => {
-
     const [state, setState] = useState(props.data);
     const [isLoading,setIsLoading] = useState(false)
 
@@ -10,9 +9,7 @@ const DeleteForm = (props) => {
         setIsLoading(true);
         props.handleSubmitAction(e, state).then((result) => {
             setIsLoading(false)
-            if (result.success) {
-                props.handleClose(false);
-            }
+            props.handleClose(false);
         });
     }
     return (

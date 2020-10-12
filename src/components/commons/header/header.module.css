@@ -32,7 +32,7 @@
   height: 60px;
   width: 170px;
 }
-.collapse_item {
+.collapse_item { 
   display: flex;
   flex-direction: column;
 }
