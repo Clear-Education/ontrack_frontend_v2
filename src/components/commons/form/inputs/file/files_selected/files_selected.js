@@ -21,11 +21,11 @@ const FilesSelected = ({ state, input }) => {
         <Collapse in={state[input.name]}>
           {state[input.name] && state[input.name].length > 0 ? (
             <>
-              {state[input.name].map((file) => (
-                <div className={styles.preview_photo}>
+              {state[input.name].map((file,index) => (
+                <div className={styles.preview_photo} key={index}>
                   <div className={styles.photo_container}>
                     <img
-                      src="/icons/multiples_files.svg"
+                      src="/icons/multiple_default.svg"
                       alt="img-preview"
                       className={styles.defaul_img}
                     />

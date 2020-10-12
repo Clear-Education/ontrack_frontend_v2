@@ -59,13 +59,12 @@ const ConfigTable = ({tableName, data}) => {
                 title={`${tableName}`}
                 data={data}
                 options={MTConfig(`${tableName}`).options}
-                components={MTConfig().components}
                 localization={MTConfig().localization}
                 columns={colums}
             />
         </MuiThemeProvider>
     )
-
+ 
 }
 
 export default ConfigTable;

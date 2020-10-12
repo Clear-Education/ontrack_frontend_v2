@@ -22,13 +22,32 @@ export async function addTrackingCrud(data, auth_token) {
         });
 }
 
-export async function getTrackingCrud(auth_token,_id) {
+export async function getTrackingCrud(auth_token, _id) {
     const URL = _id ? `${config.api_url}/seguimientos/${_id}/` : `${config.api_url}/seguimientos/list/`
     return axios
         .get(URL, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },
+        })
+        .then(json => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+        })
+        .catch(error => errorHandler(error));
+}
+
+export async function getAllTrackings(auth_token) {
+    return axios
+        .get(`${config.api_url}/seguimientos/list/`, {
+            headers: {
+                Authorization: `Token ${auth_token}`,
+            },
+            params: { cerrado: true }
         })
         .then(json => {
             let response = {
@@ -101,7 +120,7 @@ export async function deleteTrackingCrud(data, auth_token) {
 }
 
 
-export async function checkExistingTrackingNameCrud(token,trackingName) {
+export async function checkExistingTrackingNameCrud(token, trackingName) {
     const DATA = {
         nombre: trackingName
     }
@@ -121,7 +140,7 @@ export async function checkExistingTrackingNameCrud(token,trackingName) {
         });
 }
 
-export async function changeTrackingStatusCrud(token,data) {
+export async function changeTrackingStatusCrud(token, data) {
     const DATA = {
         en_progreso: data.status
     }
@@ -143,7 +162,7 @@ export async function changeTrackingStatusCrud(token,data) {
 
 
 
-export async function editTrackingParticipantsCrud(data,token) {
+export async function editTrackingParticipantsCrud(data, token) {
     const seguimiento_id = data[0].seguimiento;
     return axios.patch(`${config.api_url}/seguimientos/${seguimiento_id}/integrantes/`, data, {
         headers: {

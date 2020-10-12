@@ -2,7 +2,15 @@
     display: flex;
     margin-top: 10px;
     justify-content: flex-end;
+    flex-direction: row-reverse;
 }
 .ontrack_btn.add_btn.custom{
     padding: 0px !important;
+}
+.send_container{
+    height: fit-content;
+    position: absolute;
+    right: 5px;
+    top: 57px;
+    z-index: 100;
 }

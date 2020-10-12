@@ -14,6 +14,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MaskedInput from 'react-text-mask';
 import Input from "@material-ui/core/Input";
+import config from "../../../utils/config";
 
 const CellphoneCustom = (props) => {
     const { inputRef, ...other } = props;
@@ -106,7 +107,6 @@ const UserProfileForm = (props) => {
     const theme = useTheme();
     const fullscreen = useMediaQuery(theme.breakpoints.down("719"));
     const [date, setDate] = useState(props.user.date_of_birth);
-    const user = useSelector((store) => store.user);
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingPass, setIsLoadingPass] = useState(false)
@@ -258,9 +258,9 @@ const UserProfileForm = (props) => {
                                     <Avatar alt="Remy Sharp"
                                         src={image !== null ? image :
                                             state.picture !== null ?
-                                                `https://ontrack-production.herokuapp.com${state.picture}`
+                                                `${config.picture_path}${state.picture}`
                                                 :
-                                                "https://c8.alamy.com/comp/P9MYWR/man-avatar-profile-P9MYWR.jpg"} className={styles.profile_image} />
+                                                config.default_picture} className={styles.profile_image} />
                                     <label htmlFor="upload_photo">
                                         <input
                                             id="upload_photo"

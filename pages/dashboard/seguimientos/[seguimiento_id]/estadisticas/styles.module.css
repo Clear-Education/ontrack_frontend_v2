@@ -1,0 +1,13 @@
+
+.contenedor {
+    opacity: 0.9;
+}
+
+.pie_chart_references {
+    font-size: 0.9rem;
+}
+.sub_menu_container{
+    position: absolute;
+    left: -90px;
+    top: 40px;
+}

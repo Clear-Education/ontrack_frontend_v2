@@ -77,3 +77,32 @@
   margin-bottom: 10px;
   display: block;
 }
+.collapse_container {
+  position: absolute;
+  right: 0;
+  top: 50px;
+  background: white;
+  padding: 10px 7px 0px 7px;
+  border-radius: 5px;
+  width: 200px;
+  z-index: 100;
+}
+.collapse_body{
+  display: flex;
+  flex-direction: column;
+}
+.options_label{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  background: var(--white);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.options_label_description{
+  padding-left: 15px;
+}

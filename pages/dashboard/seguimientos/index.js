@@ -1,7 +1,7 @@
 import TitlePage from "../../../src/components/commons/title_page/title_page";
 import styles from './styles.module.scss'
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import config from "../../../src/utils/config";
 import BackgroundLoader from "../../../src/components/commons/background_loader/background_loader";
@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { Row, Col } from "react-bootstrap";
 import MUIDataTable from "mui-datatables";
 import MTConfig from "../../../src/utils/table_options/MT_config";
-import { getTrackingService } from "../../../src/utils/tracking/services/tracking_services";
+import { getAllTrackingService } from "../../../src/utils/tracking/services/tracking_services";
 import { useRouter } from "next/dist/client/router";
 import * as types from "./../../../redux/types";
 
@@ -25,11 +25,13 @@ const Seguimientos = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-
+    useEffect(() => {
+        dispatch({ type: types.RESET_CURRENT_TRACKING_DATA });
+    }, [])
 
     useSWR(url, () => {
         setIsLoading(true);
-        return getTrackingService(user.user.token).then((result) => {
+        return getAllTrackingService(user.user.token).then((result) => {
             setIsLoading(false)
             let trackings = [...result.result.results];
             let parsedTrackings = [];
