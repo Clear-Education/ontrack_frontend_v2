@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import styles from './styles.module.scss';
+import styles from './styles.module.css';
 
 //MATERIAL UI
 import Select from '@material-ui/core/Select';
