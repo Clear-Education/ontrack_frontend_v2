@@ -162,3 +162,25 @@ export async function getGoalsProgressionStudent(auth_token, data) {
         })
         .catch(error => errorHandler(error));
 }
+
+export async function editGoalsState(data, auth_token) {
+
+    return axios
+        .patch(`${config.api_url}/objetivos/${data.id}/alumno/`, data, {
+            headers: {
+                Authorization: `Token ${auth_token}`,
+            },
+        })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        })
+        .catch((error) => {
+            return errorHandler(error);
+        });
+}

@@ -1,4 +1,4 @@
-import { getGoalsCrud, addGoalsCrud, editGoalsCrud, deleteGoalsCrud, getGoalsTypeCrud, addMultipleGoalsCrud, getStudentGoalsCrud, getTrackingGoalsCrud, getGoalsProgressionStudent } from "../cruds/goals_cruds";
+import { getGoalsCrud, addGoalsCrud, editGoalsCrud, deleteGoalsCrud, getGoalsTypeCrud, addMultipleGoalsCrud, getStudentGoalsCrud, getTrackingGoalsCrud, getGoalsProgressionStudent, editGoalsState } from "../cruds/goals_cruds";
 import Alert from "react-s-alert";
 import { parseGoalsData } from "./goals_functions_services";
 
@@ -127,6 +127,21 @@ export async function getGoalsProgressionStudentService(token, data) {
                 Alert.error(element.message, {
                     effect: "stackslide",
                 });
+            });
+        }
+        return result;
+    })
+}
+
+export async function editGoalsStateService(data, token) {
+    return await editGoalsState(data, token).then((result) => {
+        if (result.success) {
+            Alert.success("Estado del objetivo modificado correctamente", {
+                effect: "stackslide",
+            });
+        } else {
+            Alert.error("Ocurrió un error al editar el estado del objetivo", {
+                effect: "stackslide",
             });
         }
         return result;

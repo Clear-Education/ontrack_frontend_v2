@@ -1,46 +1,66 @@
 import { ListItem, Checkbox, ListItemText, List } from "@material-ui/core";
 import { useState, useEffect } from "react";
 import styles from './styles.module.scss';
+import { getStudentGoalsService, editGoalsStateService } from '../../../../utils/goals/services/goals_services'
+import { useSelector } from "react-redux";
 
-const INITIAL = [{id:1,descripcion:'uno',complete:true},{id:2,descripcion:'dos',complete:false},{id:3,descripcion:'tres',complete:true}];
 
-const GoalsViewer = () =>{
+const GoalsViewer = ({ student, tracking }) => {
 
-    const [loading,setLoading] = useState(true);
-    const [goals,setGoals] = useState(INITIAL)
+  const [loading, setLoading] = useState(true);
+  const [goals, setGoals] = useState(null);
+  const user = useSelector((store) => store.user);
 
-    useEffect(()=>{
-      setLoading(false);
-    },[])
+  async function getStudentGoals() {
+    await getStudentGoalsService(user.user.token, student.id, tracking.id).then((result) => {
+      setGoals(result.result.filter(objetivo => !objetivo.objetivo.valor_objetivo_cuantitativo));
+    })
+  }
 
-    const handleCheck = (idGoal)=>{
-      let goalsCopy = [...goals];
-      goalsCopy.map((goal)=>{
-        if(goal.id === idGoal){
-          goal.complete = !goal.complete;
-        }
-      })
-      setGoals(goalsCopy);
+  useEffect(() => {
+    setLoading(false);
+  }, [])
+
+  useEffect(() => {
+    if (student) {
+      getStudentGoals();
+    }
+  }, [student]);
+
+  const handleCheck = (idGoal, e) => {
+    const data = {
+      id: idGoal,
+      alumno: student.id,
+      alcanzada: e.target.checked
     }
 
-    return(
-      loading ? null :
-        <List>
-        {goals.map((goal)=>{
-            const labelId = goal.descripcion;
-            return(
-                <ListItem key={goal.id}>
-                  <Checkbox
-                    checked={goal.complete}
-                    onClick={()=>{handleCheck(goal.id)}}
-                  />
-                  <ListItemText id={labelId} primary={`Line item ${labelId}`} className={goal.complete ? styles.complete : ''}/>
-                </ListItem>
-            )
+    editGoalsStateService(data, user.user.token).then((result => {
+      if (result.success) {
+        getStudentGoals()
+      }
+    }))
+  }
+
+  return (
+    goals ?
+      <List>
+        {goals.map((goal) => {
+          const labelId = goal.objetivo.descripcion;
+          return (
+            <ListItem key={goal.objetivo.id}>
+              <Checkbox
+                checked={goal.alcanzada}
+                onClick={(e) => { handleCheck(goal.objetivo.id, e) }}
+              />
+              <ListItemText id={labelId} primary={goal.objetivo.descripcion} className={goal.complete ? styles.complete : ''} />
+            </ListItem>
+          )
         })
-    }
-        </List>
-    )
+        }
+      </List>
+      :
+      null
+  )
 }
 
 export default GoalsViewer;
