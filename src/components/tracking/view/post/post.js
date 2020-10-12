@@ -1,16 +1,17 @@
 import { Row, Col } from "react-bootstrap";
 import styles from './styles.module.scss';
 import { Avatar, IconButton, Collapse, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useEffect, useState } from "react";
 import Comment from "../commet/comment";
+import NewCommentModal from "../commet/new_comment_modal";
 
 const Post = ({ postData }) => {
 
     const [openComments, setOpenComments] = useState(false);
     const user = postData.usuario.usuario;
     const tracking = postData.seguimiento;
+    const comments = postData.comentarios;
     return (
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
             <Col lg={1} md={1} sm={1} xs={1}>
@@ -38,10 +39,8 @@ const Post = ({ postData }) => {
                 </Row>
             </Col>
             <Col lg={12} md={12} sm={12} xs={12} className={styles.comments_actions}>
-                <span className={styles.comments_label} onClick={() => setOpenComments(!openComments)}>{openComments ? 'Ocultar comentarios' : 'Ver comentarios'}</span>
-                <IconButton title="Agrega un comentario">
-                    <ChatBubbleOutlineIcon />
-                </IconButton>
+                <span className={styles.comments_label} onClick={() => !comments.length ? setOpenComments(!openComments) : null}>{openComments ? 'Ocultar comentarios' : !!comments.length ? `Ver ${comments.length} comentarios` : 'No hay comentarios, se el primero!'}</span>
+                <NewCommentModal />
             </Col>
             <Col lg={12} md={12} sm={12} xs={12} className={styles.comments_container}>
                 <Collapse in={openComments} timeout="auto" unmountOnExit>

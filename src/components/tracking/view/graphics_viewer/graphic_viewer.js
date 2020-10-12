@@ -103,7 +103,6 @@ const GraphicViewer = ({ student, tracking }) => {
 
             setCalificacionesData(progresoCalificacionesAlumno);
         }
-
     }, [progresoCalificaciones])
 
     const formatterdata = (value, entry, index) => {
