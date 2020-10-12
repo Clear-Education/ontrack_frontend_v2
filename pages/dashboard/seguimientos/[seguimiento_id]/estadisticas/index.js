@@ -65,10 +65,12 @@ const Estadisticas = () => {
     useEffect(() => {
         if (alumnoSeleccionado != "") {
 
-            getStudentGoalsService(user.user.token, alumnoSeleccionado, tracking.id).then((result) => {
-                let estado_objetivos = result.result.filter((objetivo) => !objetivo.objetivo.valor_objetivo_cuantitativo);
-                setEstadoObjetivosCualitativos(estado_objetivos);
-            })
+            if (tracking.cualitativos.length !== 0) {
+                getStudentGoalsService(user.user.token, alumnoSeleccionado, tracking.id).then((result) => {
+                    let estado_objetivos = result.result.filter((objetivo) => !objetivo.objetivo.valor_objetivo_cuantitativo);
+                    setEstadoObjetivosCualitativos(estado_objetivos);
+                })
+            }
 
             if (metricaAsistencia.id != "") {
                 const dataAsistencia = {
@@ -176,8 +178,8 @@ const Estadisticas = () => {
                         })
                         }
                     </ul>
-                    <li>Fecha de Inicio: {tracking.fecha_desde}</li>
-                    <li>Fecha de cierre: {tracking.fecha_hasta}</li>
+                    <li>Fecha de Inicio: {tracking.fecha_inicio}</li>
+                    <li>Fecha de cierre: {tracking.fecha_cierre}</li>
                     <li>Materias:</li>
                     <ul>
                         {tracking.materias.map((materia, i) => {

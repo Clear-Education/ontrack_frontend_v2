@@ -38,12 +38,14 @@ const RightSideBar = ({ currentTracking }) => {
                     </Row>
                 </Col>
             </Row>
-            <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
-                <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
-                    <span className={styles.section_title}>Objetivos</span>
-                    <GoalsViewer student={selectedStudent} tracking={currentTracking} />
-                </Col>
-            </Row>
+            {currentTracking.cualitativos?.length !== 0 &&
+                <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
+                    <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
+                        <span className={styles.section_title}>Objetivos</span>
+                        <GoalsViewer student={selectedStudent} tracking={currentTracking} />
+                    </Col>
+                </Row>
+            }
             <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
                     <span className={styles.section_title}>Métricas</span>
