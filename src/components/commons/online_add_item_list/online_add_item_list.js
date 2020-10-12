@@ -52,7 +52,7 @@ const OnlineAddItemList = ({ labelText, handleList, previousItems, editable }) =
     }
 
     const handleValidation = (value) => {
-        const VALIDATION = !value.trim().length > 0;
+        const VALIDATION = !(value.length > 25);
         setValidateItem(VALIDATION);
         return VALIDATION;
     }
@@ -62,25 +62,25 @@ const OnlineAddItemList = ({ labelText, handleList, previousItems, editable }) =
             <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 'auto', marginTop: '10px' }}>
                 {
                     !!listItems.length ?
-                    listItems.map((item, index) => {
-                        return (
-                            <Col lg={12} md={12} sm={12} xs={12}
-                                className={styles.item_container}
-                                key={index}
-                                style={!editable ? { paddingTop: '3px', paddingBottom: '3px' } : { padding: '15px' }}
-                            >
-                                {item.descripcion}
-                                {
-                                    !editable &&
-                                    <IconButton onClick={() => handleDeleteItem(index, item.id)}>
-                                        <Delete />
-                                    </IconButton>
-                                }
-                            </Col>
-                        )
-                    })
-                    :
-                    <span style={{marginBottom:'20px'}}>No hay objetivos creados por el momento. Creá uno!</span>
+                        listItems.map((item, index) => {
+                            return (
+                                <Col lg={12} md={12} sm={12} xs={12}
+                                    className={styles.item_container}
+                                    key={index}
+                                    style={!editable ? { paddingTop: '3px', paddingBottom: '3px' } : { padding: '15px' }}
+                                >
+                                    {item.descripcion}
+                                    {
+                                        !editable &&
+                                        <IconButton onClick={() => handleDeleteItem(index, item.id)}>
+                                            <Delete />
+                                        </IconButton>
+                                    }
+                                </Col>
+                            )
+                        })
+                        :
+                        <span style={{ marginBottom: '20px' }}>No hay objetivos creados por el momento. Creá uno!</span>
                 }
             </Row>
             {
@@ -107,7 +107,7 @@ const OnlineAddItemList = ({ labelText, handleList, previousItems, editable }) =
                                 className="helper-text"
                                 style={{ color: "rgb(182, 60, 47)" }}
                             >
-                                Este campo no puede ser vacío
+                                Este campo debe superar el minimo de caracteres. Sea descriptivo
                             </FormHelperText>
                         )
                     }
