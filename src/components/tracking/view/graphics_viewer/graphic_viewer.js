@@ -69,16 +69,18 @@ const GraphicViewer = ({ student, tracking }) => {
     }, [progresoAsistencias])
 
     useEffect(() => {
-        let progresoCalificacionesAlumno = []
-        progresoCalificaciones.map((progreso) => {
-            const data = {
-                promedio_calificaciones: progreso.valor
-            }
+        if (progresoCalificaciones) {
+            let progresoCalificacionesAlumno = []
+            progresoCalificaciones.map((progreso) => {
+                const data = {
+                    promedio_calificaciones: progreso.valor
+                }
 
-            progresoCalificacionesAlumno.push(data);
-        })
+                progresoCalificacionesAlumno.push(data);
+            })
 
-        setCalificacionesData(progresoCalificacionesAlumno);
+            setCalificacionesData(progresoCalificacionesAlumno);
+        }
 
     }, [progresoCalificaciones])
 

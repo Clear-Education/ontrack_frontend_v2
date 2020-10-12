@@ -147,7 +147,7 @@ export async function deleteGoalsCrud(auth_token, data) {
 
 export async function getGoalsProgressionStudent(auth_token, data) {
     return axios
-        .get(`${config.api_url}/objetivos/${data.id_objetivo}/alumno/${data.id_alumno}`, {
+        .get(`${config.api_url}/objetivos/${data.id_objetivo}/alumno/${data.id_alumno}/`, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },
