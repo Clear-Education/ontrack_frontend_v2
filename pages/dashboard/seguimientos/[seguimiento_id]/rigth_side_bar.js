@@ -28,17 +28,17 @@ const RightSideBar = ({ currentTracking }) => {
                     <span className={styles.section_title}>Plazos</span>
                     <Row lg={12} md={12} sm={12} xs={12} className={styles.container_plazos}>
                         <Col lg={5} md={5} sm={5} xs={5}>
-                            <span className={styles.viwer_date}>{currentTracking.fecha_inicio}</span>
+                            <span className={styles.viwer_date}>{currentTracking?.fecha_inicio}</span>
                         </Col>
 
                         <Col lg={2} md={2} sm={2} xs={2}><ArrowForwardIcon style={{ color: 'var(--orange)' }} /></Col>
                         <Col lg={5} md={5} sm={5} xs={5}>
-                            <span className={styles.viwer_date}>{currentTracking.fecha_cierre}</span>
+                            <span className={styles.viwer_date}>{currentTracking?.fecha_cierre}</span>
                         </Col>
                     </Row>
                 </Col>
             </Row>
-            {currentTracking.cualitativos?.length !== 0 &&
+            {currentTracking?.cualitativos?.length !== 0 &&
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
                         <span className={styles.section_title}>Objetivos</span>
@@ -53,7 +53,6 @@ const RightSideBar = ({ currentTracking }) => {
                         <Link href={`/dashboard/seguimientos/${currentTracking?.id}/estadisticas`}><a >Ver Estadisticas</a></Link>
                     </div>
                     <GraphicViewer student={selectedStudent} tracking={currentTracking} />
-
                 </Col>
             </Row>
         </Col>
