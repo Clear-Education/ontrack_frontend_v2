@@ -3,18 +3,25 @@ import { changeTrackingStatusService } from "../../../../../../src/utils/trackin
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import styles from './styles.module.scss';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col } from "react-bootstrap";
 import Modal from "../../../../../../src/components/commons/modals/modal";
 import DeleteForm from "../../../../../../src/components/commons/delete_form/deleteForm";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import * as types from "../../../../../../redux/types";
+
 
 const DangerZone = () => {
-    const [trackingStatus, setTrackingStatus] = useState(true);
+    const [trackingStatus, setTrackingStatus] = useState(null);
     const [dangerZone, setDangerZone] = useState();
     const currentTracking = useSelector((store) => store.currentTracking);
     const user = useSelector((store) => store.user);
-    
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        setTrackingStatus(currentTracking.en_progreso);
+    }, [])
+
     async function handleConfirmTrackingStatus() {
         const DATA = {
             id: currentTracking.id,
@@ -23,6 +30,8 @@ const DangerZone = () => {
         return changeTrackingStatusService(user.user.token, DATA).then((result) => {
             if (result.success) {
                 setTrackingStatus(!trackingStatus);
+                currentTracking.en_progreso = !trackingStatus;
+                dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: currentTracking });
             }
             return result;
         })
@@ -44,7 +53,7 @@ const DangerZone = () => {
                         body={<DeleteForm data={currentTracking} handleSubmitAction={handleConfirmTrackingStatus} labelButton={trackingStatus ? 'Finalizando...' : 'Activando...'} />}
                         button={
                             <Switch
-                                checked={!trackingStatus}
+                                checked={!currentTracking.en_progreso}
                                 color="primary"
                                 name="checkedB"
                                 inputProps={{ 'aria-label': 'primary checkbox' }}

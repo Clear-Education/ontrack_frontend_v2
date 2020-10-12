@@ -118,7 +118,7 @@ const QuantitativeGoals = ({ adminView, goalType }) => {
                     endAdornment={
                         adminView &&
                         <InputAdornment position="end">
-                            <IconButton disabled={validation[goalType]} onClick={!disabled ? () => handleSaveGoal(goalType) : () => setDisabled(!disabled)}>
+                            <IconButton disabled={validation[goalType] || !currentTracking.en_progreso} onClick={!disabled ? () => handleSaveGoal(goalType) : () => setDisabled(!disabled)}>
                                 {disabled ? <EditIcon /> : <DoneIcon />}
                             </IconButton>
                         </InputAdornment>
