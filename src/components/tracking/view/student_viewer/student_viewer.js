@@ -13,24 +13,20 @@ const StudentViewer = ({ handleSelectStudent, students }) => {
     }
 
     return (
-        <>
             <div className={styles.students_container}>
                 {
                     STUDENTS_DATA && STUDENTS_DATA.map((student, index) => {
                         return (
-                            <>
                                 <div
-                                    key={student.id}
+                                    key={index}
                                     onClick={() => { selectStudent(index, student) }}
                                     className={`${styles.student_container} ${index === selected ? styles.selected : ''}`}>
                                     {student.nombre}   {student.apellido}
                                 </div>
-                            </>
                         )
                     })
                 }
             </div>
-        </>
     )
 
 }

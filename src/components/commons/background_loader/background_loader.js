@@ -8,18 +8,21 @@ import Slide from "@material-ui/core/Slide";
 // Import componentes
 import styles from "./styles.module.css";
 
-const SlideTransition = (props) => {
-  return <Slide {...props} direction="down" />;
-};
 
 /**
  *
  * @param {boolean} show - Se tiene que llamar con el booleano que lo activa y desactiva. Ej: con swr se pasa el isValidating
  */
-const BackgroundLoader = ({ show }) => {
+const BackgroundLoader = ({ show, showMore }) => {
+
+  const SlideTransition = (props) => {
+    const dir = showMore ? 'up' : 'down';
+    return <Slide {...props} direction = {dir} />;
+  };
+
   const [state, setState] = useState({
     open: false,
-    vertical: "top",
+    vertical: showMore ? 'bottom' : 'top',
     horizontal: "center",
   });
   const { vertical, horizontal, open } = state;
@@ -27,7 +30,7 @@ const BackgroundLoader = ({ show }) => {
   useEffect(() => {
     setTimeout(() => {
       setState({ ...state, open: show });
-    }, 250);
+    }, showMore ? 0 : 250);
   }, [show]);
 
   return (
@@ -37,13 +40,22 @@ const BackgroundLoader = ({ show }) => {
         open={open}
         TransitionComponent={SlideTransition}
       >
-        <div id={styles.loader_container}>
+        <div id={styles.loader_container} 
+            style={showMore && {cursor:'pointer'}} 
+            onClick={showMore && showMore}
+            >
+          {showMore ? 
+            <p style={{margin:'10px'}}>Mostrar más</p>
+          :
+          <>
           <CircularProgress
             size={18}
             color="primary"
             className={styles.circular_progress}
           />
           Actualizando...
+          </>
+          }
         </div>
       </Snackbar>
     </div>

@@ -3,20 +3,27 @@ import SendIcon from '@material-ui/icons/Send';
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
 import styles from './styles.module.scss';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FileInput from "../../../commons/file_uploader";
 import { IconButton } from "@material-ui/core";
 
 
 const INITIAL_STATE = {
     cuerpo: "",
-    files: []
+    files: [],
+    padre:'',
 }
 
 
-const NewPost = ({ handleSubmitPost }) => {
+const NewPost = ({ handleSubmitPost, padre, handleModal }) => {
 
     const [state, setState] = useState(INITIAL_STATE);
+
+    useEffect(()=>{
+        if(padre){
+            setState({...state,padre:padre})
+        }
+    },[])
 
     const handleChange = (prop) => (e) => {
         const VALUE = e.target.value;
@@ -32,6 +39,7 @@ const NewPost = ({ handleSubmitPost }) => {
         handleSubmitPost(state).then((result)=>{
             if(result.success){
                 setState(INITIAL_STATE);
+                handleModal && handleModal(false);
             }
         });
     }
@@ -44,7 +52,7 @@ const NewPost = ({ handleSubmitPost }) => {
                         <TextField
                             multiline
                             value={state.cuerpo}
-                            label={"Publica alguna novedad"}
+                            label={padre ? "Respuesta" : "Publica alguna novedad"}
                             InputLabelProps={{ style: { color: 'var(--black) !important' } }}
                             rowsMax={3}
                             onChange={handleChange('cuerpo')}

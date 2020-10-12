@@ -58,8 +58,7 @@ const Seguimiento = () => {
         return () => {
             dispatch({ type: types.RESET_CURRENT_TRACKING_DATA });
         }
-    }, [])
-
+    }, []);
 
     return (
         loading ? <BackgroundLoader show={loading} /> :
