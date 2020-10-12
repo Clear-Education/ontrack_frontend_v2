@@ -19,7 +19,7 @@ const Seguimiento = () => {
     const currentTracking = useSelector((store) => store.currentTracking);
     const [trackingId, setTrackingId] = useState();
     const [loading, setLoading] = useState(true);
-    const [flag,setFlag] = useState();
+    const [flag, setFlag] = useState();
     const dispatch = useDispatch();
 
 
@@ -32,15 +32,15 @@ const Seguimiento = () => {
     useEffect(() => {
         if (trackingId) {
             getTrackingService(user.user.token, trackingId)
-            .then((result) => {
-                const TRACKING_DATA = result.result;
-                dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: TRACKING_DATA });
-            })
+                .then((result) => {
+                    const TRACKING_DATA = result.result;
+                    dispatch({ type: types.SAVE_CURRENT_TRACKING_DATA, payload: TRACKING_DATA });
+                })
         }
     }, [trackingId]);
 
-    useEffect(()=>{
-        if(currentTracking.id && !flag){
+    useEffect(() => {
+        if (currentTracking.id && !flag) {
             getTrackingGoalsService(user.user.token, currentTracking.id).then((result) => {
                 const GOALS = parseGoalsData(result.result);
                 const GOALS_PAYLOAD = {
@@ -52,7 +52,7 @@ const Seguimiento = () => {
                 setFlag(true);
             })
         }
-    },[currentTracking])
+    }, [currentTracking])
 
     useEffect(() => {
         return () => {
@@ -68,15 +68,13 @@ const Seguimiento = () => {
                     <SubMenu />
                 </div>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.header_container}>
-                    <>
-                        <TitlePage title={currentTracking.nombre} />
-                        <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
-                            <span>{currentTracking.descripcion}</span>
-                        </Col>
-                    </>
+                    <TitlePage title={currentTracking.nombre} />
+                    <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
+                        <span>{currentTracking.descripcion}</span>
+                    </Col>
                 </Row>
                 {/* LADO IZQ */}
-                <Novedades trackingId={trackingId}/>
+                <Novedades trackingId={trackingId} />
                 {/* LADO DER */}
                 <RightSideBar currentTracking={currentTracking} />
             </Row>

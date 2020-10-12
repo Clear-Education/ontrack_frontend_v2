@@ -12,7 +12,7 @@ const FileInput = ({handleChange}) => {
         type: "file",
         name: "media",
         fileType: "image/*",
-        fileAcceptMultiple: true,
+        fileAcceptMultiple: true, 
     }
 
     const fileAccept = (name, multiple, files) => {

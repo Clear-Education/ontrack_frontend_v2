@@ -3,7 +3,6 @@ import axios from 'axios';
 import errorHandler from "../../error_handler";
 
 export async function addNovedadesCrud(data, auth_token) {
-    debugger;
     let parsedData = {
         cuerpo: data.cuerpo,
     }
@@ -28,9 +27,13 @@ export async function addNovedadesCrud(data, auth_token) {
 }
 
 export async function addNovedadesFileCrud(data, auth_token) {
-    return axios.post(`${config.api_url}/`, data, {
+    let formData = new FormData();
+    formData.append("actualizacion", data.post);
+    formData.append("files", data.files);
+    return axios.post(`${config.api_url}/actualizaciones/${data.post}/files/`, formData, {
         headers: {
             Authorization: `Token ${auth_token}`,
+            "Content-Type": "multipart/form-data",
         },
     })
         .then((json) => {
@@ -53,6 +56,7 @@ export async function getNovedadesCrud(auth_token,seguimiento_id) {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },
+            
         })
         .then(json => {
             let response = {
