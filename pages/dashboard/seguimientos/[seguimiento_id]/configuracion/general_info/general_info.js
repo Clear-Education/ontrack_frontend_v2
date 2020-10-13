@@ -5,7 +5,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import TitlePage from '../../../../../../src/components/commons/title_page/title_page';
 import { editTrackingService } from '../../../../../../src/utils/tracking/services/tracking_services';
 import { useDispatch, useSelector } from 'react-redux';
-import { convertDate2 } from '../../../../../../src/utils/commons/common_services';
+import { convertDate2, convertDateFromStoreToSend } from '../../../../../../src/utils/commons/common_services';
 import * as types from "../../../../../../redux/types";
 import { useState } from 'react';
 import { IconButton } from '@material-ui/core';
@@ -22,9 +22,9 @@ const GeneralInfo = ({ adminView }) => {
                 id: currentTracking.id,
                 nombre: currentTracking.nombre,
                 descripcion: currentTracking.descripcion,
-                fecha_cierre: currentTracking.fecha_cierre == 'NaN-NaN-NaN' ? "10/10/1900" : convertDate2(currentTracking.fecha_cierre)
+                fecha_cierre: currentTracking.fecha_cierre == 'NaN-NaN-NaN' ? "10/10/1900" : convertDateFromStoreToSend(currentTracking.fecha_cierre)
             }
-            const validate = validateData('nombre') && validateData('descripcion');
+            const validate = validateData('nombre') && validateData('descripcion'); 
             if (validate) {
                 editTrackingService(DATA, user.user.token).then((result) => {
                     if (result.success) {

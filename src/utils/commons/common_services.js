@@ -49,3 +49,9 @@ export const convertDateToSend = (date) =>{
     let newDate = `${day}/${month}/${year}`;
     return newDate;
 }
+
+export const convertDateFromStoreToSend = (date) => {
+    let datearray = date.split("-");
+    let newdate = datearray[2] + '/' + datearray[1] + '/' + datearray[0];
+    return newdate;
+}
