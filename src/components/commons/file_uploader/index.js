@@ -5,28 +5,28 @@ import FileUploader from "./file_uploader";
 import styles from './styles.module.scss';
 import Alert from "react-s-alert";
 
-const FileInput = ({handleChange}) => {
+const FileInput = ({ handleChange, files }) => {
 
     const [state, setState] = useState({});
     const input = {
         type: "file",
         name: "media",
         fileType: "image/*",
-        fileAcceptMultiple: true, 
+        fileAcceptMultiple: true,
     }
 
     const fileAccept = (name, multiple, files) => {
         if (multiple) {
             const newFiles = [];
             let flag = false;
-            Array.from(files).forEach((el,i) => {
-                if(i<3){
+            Array.from(files).forEach((el, i) => {
+                if (i < 3) {
                     newFiles.push(el);
-                }else{
-                   flag = true;
+                } else {
+                    flag = true;
                 }
             });
-            if(flag){
+            if (flag) {
                 Alert.error("Se permite subir hasta tres fotos, el resto fueron ignoradas", {
                     effect: "stackslide",
                 });
@@ -39,9 +39,9 @@ const FileInput = ({handleChange}) => {
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         handleChange(state.media)
-    },[state]);
+    }, [state]);
 
     return (
         <>
@@ -51,9 +51,12 @@ const FileInput = ({handleChange}) => {
                         onFilesAdded={fileAccept}
                         input={input} />
                 </Col>
-                <Col lg={12} md={12} sm={12} xs={12} className={styles.selected_files_container}>
-                    <FilesSelected state={state} input={input} />
-                </Col>
+                {
+                    files && !!files.length &&
+                    <Col lg={12} md={12} sm={12} xs={12} className={styles.selected_files_container}>
+                        <FilesSelected state={state} input={input} />
+                    </Col>
+                }
             </Row>
 
 
