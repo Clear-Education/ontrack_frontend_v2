@@ -1,7 +1,6 @@
 import TitlePage from "../../../src/components/commons/title_page/title_page";
-import styles from './styles.module.css'
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useSWR, { mutate } from "swr";
 import config from "../../utils/config"
 import BackgroundLoader from "../commons/background_loader/background_loader";
@@ -11,7 +10,6 @@ import { Row, Col } from "react-bootstrap";
 import MUIDataTable from "mui-datatables";
 import MTConfig from "../../../src/utils/table_options/MT_config";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { useDispatch } from 'react-redux';
 import * as types from "./../../../redux/types";
 
@@ -27,6 +25,11 @@ const SolicitudesPedagogo = () => {
     const dispatch = useDispatch();
 
 
+    useEffect(() => {
+        setShowTable(true); 
+    }, [])
+
+    
     useSWR(url, () => {
         setIsLoading(true);
         return getSolicitudesService(user.user.token).then((result) => {
