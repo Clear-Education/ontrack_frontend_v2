@@ -102,7 +102,8 @@ const Post = ({ postData, handleSubmitPost }) => {
                         {postData.cuerpo}
                         <div style={{ overflow: 'auto', display: 'flex' }}>
                             {postData.adjuntos.map((file) => {
-                                <img src={file?.file} className={styles.post_image} />
+                                const url = config.picture_path + file.file;
+                                return <img src={url} className={styles.post_image} alt="imagen"/>
                             })}
                         </div>
                     </Col>

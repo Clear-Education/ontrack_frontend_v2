@@ -29,7 +29,7 @@ export async function addNovedadesCrud(data, auth_token) {
 export async function addNovedadesFileCrud(data, auth_token) {
     let formData = new FormData();
     formData.append("actualizacion", data.post);
-    formData.append("files", data.files);
+    formData.append("files", data.files[0]);
     return axios.post(`${config.api_url}/actualizaciones/${data.post}/files/`, formData, {
         headers: {
             Authorization: `Token ${auth_token}`,
