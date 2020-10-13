@@ -39,13 +39,13 @@ const Post = ({ postData, handleSubmitPost }) => {
         })
     }
 
-    async function handleEditPost(data){
+    async function handleEditPost(data) {
         const DATA = {
             id: postData.id,
             cuerpo: data.cuerpo,
             files: data.files
         }
-        return editNovedadesService(DATA,user.user.token).then((result) => {
+        return editNovedadesService(DATA, user.user.token).then((result) => {
             mutate(url);
             return result
         })
@@ -66,9 +66,11 @@ const Post = ({ postData, handleSubmitPost }) => {
                 <span className={styles.dot}></span>
                 <span className={styles.post_date}> {postData.fecha_creacion} : </span>
                 <div className={styles.more_options}>
-                    <IconButton onClick={handleOpen}>
-                        <MoreVertIcon />
-                    </IconButton>
+                    {user.user.id === owner.id &&
+                        <IconButton onClick={handleOpen}>
+                            <MoreVertIcon />
+                        </IconButton>
+                    }
                     <div className={styles.collapse_container} style={openMoreOptions ? { display: 'unset' } : { display: 'none' }}>
                         <div className={styles.collapse_body}>
                             <Modal
@@ -82,10 +84,10 @@ const Post = ({ postData, handleSubmitPost }) => {
                             <Modal
                                 title="Editar Publicación"
                                 body={
-                                        <EditPostForm 
-                                            postData={postData}
-                                            handleSubmitPost={handleEditPost}
-                                            />
+                                    <EditPostForm
+                                        postData={postData}
+                                        handleSubmitPost={handleEditPost}
+                                    />
                                 }
                                 close={handleOpen}
                                 button={
@@ -100,7 +102,8 @@ const Post = ({ postData, handleSubmitPost }) => {
                         {postData.cuerpo}
                         <div style={{ overflow: 'auto', display: 'flex' }}>
                             {postData.adjuntos.map((file) => {
-                                <img src={file?.file} className={styles.post_image} />
+                                const url = config.picture_path + file.file;
+                                return <img src={url} className={styles.post_image} alt="imagen"/>
                             })}
                         </div>
                     </Col>

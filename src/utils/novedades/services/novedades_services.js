@@ -47,6 +47,7 @@ export async function addNovedadesService(data, token) {
 }
 
 export async function addNovedadesFileService(data, token) {
+
     return await addNovedadesFileCrud(data, token).then((result) => {
         if (result.success) {
             Alert.success("Novedades creado correctamente", {

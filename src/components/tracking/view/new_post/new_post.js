@@ -41,9 +41,9 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
         e.preventDefault();
         handleSubmitPost(state).then((result)=>{
             if(result.success){
-                setState(INITIAL_STATE);
                 handleModal && handleModal(false);
             }
+            setState(INITIAL_STATE);
         });
     }
     return (
@@ -70,7 +70,7 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
                 </form>
             </Col>
             <Col lg={12} md={12} sm={12} xs={12} className={styles.bottom_container}>
-                <FileInput handleChange={handleFileChange} />
+                <FileInput handleChange={handleFileChange} files={state.files}/>
             </Col>
         </Row>
     )

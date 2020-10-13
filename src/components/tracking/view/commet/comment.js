@@ -51,16 +51,18 @@ export const Comment = ({ commentData }) => {
                         `${config.picture_path}${owner.picture}`
                         :
                         config.default_picture}
-                />
+                /> 
             </Col>
             <Col lg={11} md={11} sm={11} xs={11} className={styles.header_container}>
                 <span className={styles.highlight}>{owner.name} {owner.last_name}</span> comentó {" "}
                 <span className={styles.dot}></span>
                 <span className={styles.post_date}> {commentData.fecha_creacion} : </span>
                 <div className={styles.more_options}>
-                    <IconButton onClick={handleOpen}>
-                        <MoreVertIcon />
-                    </IconButton>
+                {user.user.id === owner.id &&
+                        <IconButton onClick={handleOpen}>
+                            <MoreVertIcon />
+                        </IconButton>
+                    }
                     <div className={styles.collapse_container} style={openMoreOptions ? { display: 'unset' } : { display: 'none' }}>
                         <div className={styles.collapse_body}>
                             <Modal
