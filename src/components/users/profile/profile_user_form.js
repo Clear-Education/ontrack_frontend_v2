@@ -258,7 +258,7 @@ const UserProfileForm = (props) => {
                                     <Avatar alt="Remy Sharp"
                                         src={image !== null ? image :
                                             state.picture !== null ?
-                                                `${config.picture_path}${state.picture}`
+                                                `${state.picture}`
                                                 :
                                                 config.default_picture} className={styles.profile_image} />
                                     <label htmlFor="upload_photo">
