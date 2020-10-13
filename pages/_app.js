@@ -52,7 +52,6 @@ const App = ({ Component, pageProps, router }) => {
     }
   }, []);
 
-  /* 
   
   //Código que protege de recargar la página
   
@@ -78,13 +77,13 @@ const App = ({ Component, pageProps, router }) => {
           return true;
         });
       };
-    }, [router]); */
+    }, [router]);
 
   return (
     <>
       <Head>
         <title>OnTrack</title>
-        <link rel="icon" href="#" /> {/* TODO favicon */}
+        <link rel="icon" href="/OnTrack_mini.svg" /> {/* TODO favicon */}
         <link
           href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800"
           rel="stylesheet"

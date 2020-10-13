@@ -22,6 +22,7 @@ const SolicitudesPedagogo = () => {
     const [selectedData, setSelectedData] = useState([])
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false)
+    const [showTable, setShowTable] = useState();
     const router = useRouter();
     const dispatch = useDispatch();
 
@@ -90,69 +91,71 @@ const SolicitudesPedagogo = () => {
                         sm={12}
                         xs={12}
                     >
-                        <MUIDataTable
-                            title={"Solicitudes Pendientes"}
-                            data={selectedData}
-                            options={MTConfig("Solicitudes").options}
-                            components={MTConfig().components}
-                            localization={MTConfig().localization}
-                            columns={[
+                        {showTable &&
+                            <MUIDataTable
+                                title={"Solicitudes Pendientes"}
+                                data={selectedData}
+                                options={MTConfig("Solicitudes").options}
+                                components={MTConfig().components}
+                                localization={MTConfig().localization}
+                                columns={[
 
-                                {
-                                    name: "id",
-                                    label: "Id",
-                                    options: {
-                                        display: false,
-                                        filter: false
-                                    },
-
-                                },
-                                {
-                                    name: "fecha_creacion",
-                                    label: "Fecha Solicitud",
-                                },
-                                {
-                                    name: "motivo_solicitud",
-                                    label: "Motivo",
-                                },
-                                {
-                                    name: "alumnos",
-                                    label: "Alumnos",
-                                    options: {
-                                        customBodyRender: (value, tableMeta, updateValue) => (
-                                            <div>{value.join(",")}</div>
-                                        )
-                                    }
-                                },
-                                {
-                                    name: "creador",
-                                    label: "Docente",
-                                },
-                                {
-                                    name: "estado",
-                                    label: "Estado"
-                                },
-                                {
-                                    name: "actions",
-                                    label: "Acciones",
-                                    options: {
-                                        customBodyRender: (value, tableMeta, updateValue) => {
-                                            return (
-                                                <div className=" d-flex flex-lg-row flex-column">
-                                                    <button className="ontrack_btn add_btn mr-2 mb-lg-0 mb-2" variant="contained" onClick={() => handleEditEstadoSolicitud(tableMeta.rowIndex, tableMeta.rowData[0], "Aceptada") /* aceptarSolicitud(selectedData[dataIndex]) */} >
-                                                        Aceptar
-                                                    </button>
-                                                    <button className="ontrack_btn delete_btn" variant="contained" onClick={() => editEstadoSolicitud(tableMeta.rowData[0], "Rechazada")} >
-                                                        Rechazar
-                                                    </button>
-                                                </div>
-                                            )
+                                    {
+                                        name: "id",
+                                        label: "Id",
+                                        options: {
+                                            display: false,
+                                            filter: false
                                         },
-                                        filter: false
+
                                     },
-                                }
-                            ]}
-                        />
+                                    {
+                                        name: "fecha_creacion",
+                                        label: "Fecha Solicitud",
+                                    },
+                                    {
+                                        name: "motivo_solicitud",
+                                        label: "Motivo",
+                                    },
+                                    {
+                                        name: "alumnos",
+                                        label: "Alumnos",
+                                        options: {
+                                            customBodyRender: (value, tableMeta, updateValue) => (
+                                                <div>{value.join(",")}</div>
+                                            )
+                                        }
+                                    },
+                                    {
+                                        name: "creador",
+                                        label: "Docente",
+                                    },
+                                    {
+                                        name: "estado",
+                                        label: "Estado"
+                                    },
+                                    {
+                                        name: "actions",
+                                        label: "Acciones",
+                                        options: {
+                                            customBodyRender: (value, tableMeta, updateValue) => {
+                                                return (
+                                                    <div className=" d-flex flex-lg-row flex-column">
+                                                        <button className="ontrack_btn add_btn mr-2 mb-lg-0 mb-2" variant="contained" onClick={() => handleEditEstadoSolicitud(tableMeta.rowIndex, tableMeta.rowData[0], "Aceptada") /* aceptarSolicitud(selectedData[dataIndex]) */} >
+                                                            Aceptar
+                                                    </button>
+                                                        <button className="ontrack_btn delete_btn" variant="contained" onClick={() => editEstadoSolicitud(tableMeta.rowData[0], "Rechazada")} >
+                                                            Rechazar
+                                                    </button>
+                                                    </div>
+                                                )
+                                            },
+                                            filter: false
+                                        },
+                                    }
+                                ]}
+                            />
+                        }
                     </Col>
                 </Row>
 
