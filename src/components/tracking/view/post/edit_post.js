@@ -11,20 +11,16 @@ import { IconButton } from "@material-ui/core";
 const INITIAL_STATE = {
     cuerpo: "",
     files: [],
-    padre:'',
 }
 
 
-const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
+const EditPostForm = (props) => {
 
     const [state, setState] = useState(INITIAL_STATE);
 
     useEffect(()=>{
-        if(padre){
-            setState({...state,padre:padre})
-        }
-        if(postData){
-            setState({...state,cuerpo:postData.cuerpo, files:postData.aduntos})
+        if(props.postData){
+            setState({...state,cuerpo:props.postData.cuerpo, files:props.postData.aduntos})
         }
     },[])
 
@@ -39,23 +35,23 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleSubmitPost(state).then((result)=>{
+        props.handleSubmitPost(state).then((result)=>{
             if(result.success){
                 setState(INITIAL_STATE);
-                handleModal && handleModal(false);
             }
+            props.handleClose && props.handleClose(false);
         });
     }
     return (
+        <div className={styles.edit_container}>
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
-
             <Col lg={12} md={12} sm={12} xs={12}>
                 <form onSubmit={handleSubmit}>
                     <FormControl variant="outlined">
                         <TextField
                             multiline
                             value={state.cuerpo}
-                            label={padre ? "Respuesta" : "Publica alguna novedad"}
+                            label={"Publica alguna novedad"}
                             InputLabelProps={{ style: { color: 'var(--black) !important' } }}
                             rowsMax={3}
                             onChange={handleChange('cuerpo')}
@@ -73,7 +69,8 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
                 <FileInput handleChange={handleFileChange} />
             </Col>
         </Row>
+        </div>
     )
 }
 
-export default NewPost;
+export default EditPostForm;

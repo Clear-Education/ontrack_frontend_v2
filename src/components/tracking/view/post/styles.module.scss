@@ -94,3 +94,27 @@
 .options_label_description{
   padding-left: 15px;
 }
+.edit_container{
+  padding: 20px;
+  margin-top: 40px;
+  width: 100%;
+  border-radius: 10px;
+  background: var(--medium-gray);
+}
+
+.bottom_container{
+  display: flex;
+  margin-top: 10px;
+  justify-content: flex-end;
+  flex-direction: row-reverse;
+}
+.ontrack_btn.add_btn.custom{
+  padding: 0px !important;
+}
+.send_container{
+  height: fit-content;
+  position: absolute;
+  right: 5px;
+  top: 57px;
+  z-index: 100;
+}

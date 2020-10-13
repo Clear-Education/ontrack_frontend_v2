@@ -93,7 +93,7 @@ export async function getMoreNovedadesCrud(auth_token, url) {
 export async function editNovedadesCrud(data, auth_token) {
 
     return axios
-        .patch(`${config.api_url}/`, data, {
+        .patch(`${config.api_url}/actualizaciones/${data.id}/mix/`, data, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },

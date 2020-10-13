@@ -9,11 +9,13 @@ import Delete from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import config from "../../../../utils/config";
 import Modal from '../../../commons/modals/modal';
-import { deleteNovedadesService } from "../../../../utils/novedades/services/novedades_services";
+import { deleteNovedadesService, editNovedadesService } from "../../../../utils/novedades/services/novedades_services";
 import { useSelector } from "react-redux";
 import DeleteForm from "../../../commons/delete_form/deleteForm";
 import { parsePostData } from "../../../../utils/general_services/services";
 import { mutate } from "swr";
+import NewPost from "../new_post/new_post";
+import EditPostForm from "./edit_post";
 
 const Post = ({ postData, handleSubmitPost }) => {
 
@@ -32,6 +34,18 @@ const Post = ({ postData, handleSubmitPost }) => {
         e.preventDefault();
         let novedad_id = data.id;
         return deleteNovedadesService(user.user.token, novedad_id).then((result) => {
+            mutate(url);
+            return result
+        })
+    }
+
+    async function handleEditPost(data){
+        const DATA = {
+            id: postData.id,
+            cuerpo: data.cuerpo,
+            files: data.files
+        }
+        return editNovedadesService(DATA,user.user.token).then((result) => {
             mutate(url);
             return result
         })
@@ -65,7 +79,19 @@ const Post = ({ postData, handleSubmitPost }) => {
                                     <span className={styles.options_label}> <Delete /> <span className={styles.options_label_description}>Eliminar</span></span>
                                 }
                             />
-                            <span className={styles.options_label}><EditIcon /> <span className={styles.options_label_description}>Editar</span></span>
+                            <Modal
+                                title="Editar Publicación"
+                                body={
+                                        <EditPostForm 
+                                            postData={postData}
+                                            handleSubmitPost={handleEditPost}
+                                            />
+                                }
+                                close={handleOpen}
+                                button={
+                                    <span className={styles.options_label}><EditIcon /> <span className={styles.options_label_description}>Editar</span></span>
+                                }
+                            />
                         </div>
                     </div>
                 </div>
@@ -89,7 +115,7 @@ const Post = ({ postData, handleSubmitPost }) => {
                     <List component="div" disablePadding>
 
                         {
-                            comments.map((comment,i) => {
+                            comments.map((comment, i) => {
                                 return (
                                     <div className={styles.comment_container} key={i}>
                                         <Comment commentData={parsePostData(comment, tracking)} />

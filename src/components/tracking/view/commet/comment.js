@@ -6,11 +6,12 @@ import EditIcon from '@material-ui/icons/Edit';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useState } from "react";
 import config from "../../../../utils/config";
-import { deleteNovedadesService } from "../../../../utils/novedades/services/novedades_services";
+import { deleteNovedadesService, editNovedadesService } from "../../../../utils/novedades/services/novedades_services";
 import Modal from '../../../commons/modals/modal';
 import DeleteForm from "../../../commons/delete_form/deleteForm";
 import { useSelector } from "react-redux";
 import { mutate } from "swr";
+import EditPostForm from "../post/edit_post";
 
 export const Comment = ({ commentData }) => {
     const owner = commentData.usuario.usuario;
@@ -22,10 +23,21 @@ export const Comment = ({ commentData }) => {
     const handleOpen = () => {
         setOpenMoreOptions(!openMoreOptions);
     }
-    async function handleDeletePost(e,data){
+    async function handleDeletePost(e, data) {
         e.preventDefault();
         let novedad_id = data.id;
-        return deleteNovedadesService(user.user.token, novedad_id).then((result)=>{
+        return deleteNovedadesService(user.user.token, novedad_id).then((result) => {
+            mutate(url);
+            return result
+        })
+    }
+    async function handleEditPost(data){
+        const DATA = {
+            id: commentData.id,
+            cuerpo: data.cuerpo,
+            files: data.files
+        }
+        return editNovedadesService(DATA,user.user.token).then((result) => {
             mutate(url);
             return result
         })
@@ -54,13 +66,24 @@ export const Comment = ({ commentData }) => {
                             <Modal
                                 title="¿Seguro que deseas eliminar esta novedad?"
                                 body={<DeleteForm data={commentData} handleSubmitAction={handleDeletePost} />}
-                                close = {handleOpen}
+                                close={handleOpen}
                                 button={
-                                    <span className={styles.options_label}> <Delete/> <span className={styles.options_label_description}>Eliminar</span></span>
+                                    <span className={styles.options_label}> <Delete /> <span className={styles.options_label_description}>Eliminar</span></span>
                                 }
                             />
-                            <span className={styles.options_label}><EditIcon /> <span className={styles.options_label_description}>Editar</span></span>
-                        </div>
+                            <Modal
+                                title="Editar Comentario"
+                                body={
+                                    <EditPostForm
+                                        postData={commentData}
+                                        handleSubmitPost={handleEditPost}
+                                    />
+                                }
+                                close={handleOpen}
+                                button={
+                                    <span className={styles.options_label}><EditIcon /> <span className={styles.options_label_description}>Editar</span></span>
+                                }
+                            />                        </div>
                     </div>
                 </div>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.content_container}>
