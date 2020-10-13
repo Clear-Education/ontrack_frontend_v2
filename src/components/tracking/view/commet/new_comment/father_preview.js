@@ -1,7 +1,6 @@
 import { Row, Col } from "react-bootstrap";
 import styles from './styles.module.scss';
-import { Avatar, IconButton } from "@material-ui/core";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { Avatar } from "@material-ui/core";
 import config from "../../../../../utils/config";
 import { useSelector } from "react-redux";
 

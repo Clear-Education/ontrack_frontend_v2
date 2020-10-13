@@ -37,7 +37,18 @@ const GraphicViewer = ({ student, tracking }) => {
                     id_alumno: student.id
                 }
                 getGoalsProgressionStudentService(user.user.token, dataAsistencia).then((result) => {
-                    setProgresoAsistencias(result.result.results);
+                    if (result.status === 204) {
+                        const asistenciaData = [];
+                        const data = {
+                            valor: 1
+                        }
+                        asistenciaData.push(data);
+                        setProgresoAsistencias(asistenciaData);
+
+                    } else {
+                        setProgresoAsistencias(result.result.results);
+                    }
+
                 })
             }
 
@@ -47,7 +58,18 @@ const GraphicViewer = ({ student, tracking }) => {
                     id_alumno: student.id
                 }
                 getGoalsProgressionStudentService(user.user.token, dataCalificaciones).then((result) => {
-                    setProgresoCalificaciones(result.result.results);
+                    if (result.status === 204) {
+                        const calificacionesData = [];
+                        const data = {
+                            valor: -1
+                        }
+                        calificacionesData.push(data);
+                        setProgresoCalificaciones(calificacionesData);
+
+                    } else {
+                        setProgresoCalificaciones(result.result.results);
+                    }
+
                 })
             }
         }
@@ -100,10 +122,10 @@ const GraphicViewer = ({ student, tracking }) => {
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name">
                             </XAxis>
-                            <YAxis />
+                            <YAxis type="number" domain={[0, 10]} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
-                            <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
+                            <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red"  /* alwaysShow */ ifOverflow="extendDomain" />
                             <Line type="monotone" dataKey="promedio_calificaciones" stroke="#82ca9d" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>
@@ -121,7 +143,7 @@ const GraphicViewer = ({ student, tracking }) => {
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name">
                             </XAxis>
-                            <YAxis />
+                            <YAxis type="number" domain={[0, 100]} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
                             <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
