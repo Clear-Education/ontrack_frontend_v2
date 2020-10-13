@@ -34,7 +34,7 @@ const BackgroundLoader = ({ show, showMore }) => {
   }, [show]);
 
   return (
-    <div>
+    <div style={{zIndex:'100'}}>
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={open}

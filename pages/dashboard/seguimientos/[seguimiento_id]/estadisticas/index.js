@@ -79,7 +79,17 @@ const Estadisticas = () => {
                     id_alumno: alumnoSeleccionado
                 }
                 getGoalsProgressionStudentService(user.user.token, dataAsistencia).then((result) => {
-                    setProgresoAsistencias(result.result.results);
+                    if (result.status === 204) {
+                        const asistenciaData = [];
+                        const data = {
+                            valor: 1
+                        }
+                        asistenciaData.push(data);
+                        setProgresoAsistencias(asistenciaData);
+
+                    } else {
+                        setProgresoAsistencias(result.result.results);
+                    }
                 })
             }
 
@@ -89,7 +99,17 @@ const Estadisticas = () => {
                     id_alumno: alumnoSeleccionado
                 }
                 getGoalsProgressionStudentService(user.user.token, dataCalificaciones).then((result) => {
-                    setProgresoCalificaciones(result.result.results);
+                    if (result.status === 204) {
+                        const calificacionesData = [];
+                        const data = {
+                            valor: -1
+                        }
+                        calificacionesData.push(data);
+                        setProgresoCalificaciones(calificacionesData);
+
+                    } else {
+                        setProgresoCalificaciones(result.result.results);
+                    }
                 })
             }
         }
@@ -268,7 +288,7 @@ const Estadisticas = () => {
                             <XAxis dataKey="name">
                                 <Label value="Porcentaje de Calificaciones en el Año Lectivo" offset={0} position="insideBottom" />
                             </XAxis>
-                            <YAxis />
+                            <YAxis type="number" domain={[0, 10]} />
                             <Tooltip />
                             <Legend verticalAlign="top" height={36} />
                             <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
@@ -291,7 +311,7 @@ const Estadisticas = () => {
                             <XAxis dataKey="name">
                                 <Label value="Porcentaje de Asistencias en el Año Lectivo" offset={0} position="insideBottom" />
                             </XAxis>
-                            <YAxis />
+                            <YAxis type="number" domain={[0, 100]} />
                             <Tooltip />
                             <Legend verticalAlign="top" height={36} />
                             <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
