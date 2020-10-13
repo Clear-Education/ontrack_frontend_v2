@@ -52,33 +52,6 @@ const App = ({ Component, pageProps, router }) => {
     }
   }, []);
 
-  /* 
-  
-  //Código que protege de recargar la página
-  
-    const browserTabcloseHandler = e => {
-      e.preventDefault();
-      e.returnValue = "";
-    };
-   
-    useEffect(() => {
-      if (window) {
-        Router.beforePopState(() => {
-          const result = window.confirm("¿Seguro que quieres salir?");
-          return result;
-        });
-        window.onbeforeunload = browserTabcloseHandler;
-      }
-   
-      return () => {
-        if (window) {
-          window.onbeforeunload = null;
-        }
-        Router.beforePopState(() => {
-          return true;
-        });
-      };
-    }, [router]); */
 
   return (
     <>

@@ -16,7 +16,7 @@ const Solicitudes = () => {
         <>
             {
                 user.user.groups == "Docente" ? <SolicitudesDocente /> : <SolicitudesPedagogo />
-            }
+            } 
         </>
     )
 
