@@ -43,7 +43,7 @@ const GoalsViewer = ({ student, tracking }) => {
 
   return (
     goals ?
-      <List>
+      <List style={{maxHeight:'300px', overflow:'auto'}}>
         {goals.map((goal) => {
           const labelId = goal.objetivo.descripcion;
           return (
