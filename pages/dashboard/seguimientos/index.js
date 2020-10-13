@@ -22,10 +22,12 @@ const Seguimientos = () => {
     const [trackingData, setTrackingData] = useState([])
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false)
+    const [showTable, setShowTable] = useState(false)
     const router = useRouter();
     const dispatch = useDispatch();
 
     useEffect(() => {
+        setShowTable(true);
         dispatch({ type: types.RESET_CURRENT_TRACKING_DATA });
     }, [])
 
@@ -84,63 +86,65 @@ const Seguimientos = () => {
                         xs={12}
                         style={{ marginTop: 20 }}
                     >
-                        <MUIDataTable
-                            data={trackingData}
-                            options={MTConfig("Seguimientos").options}
-                            components={MTConfig().components}
-                            localization={MTConfig().localization}
-                            columns={[
+                        {showTable &&
+                            <MUIDataTable
+                                data={trackingData}
+                                options={MTConfig("Seguimientos").options}
+                                components={MTConfig().components}
+                                localization={MTConfig().localization}
+                                columns={[
 
-                                {
-                                    name: "id",
-                                    label: "Id",
-                                    options: {
-                                        display: false,
-                                        filter: false
-                                    },
-
-                                },
-                                {
-                                    name: "nombre",
-                                    label: "Nombre",
-                                },
-                                {
-                                    name: "descripcion",
-                                    label: "Descripción",
-                                },
-                                {
-                                    name: "fecha_inicio",
-                                    label: "Inicio",
-                                },
-                                {
-                                    name: "fecha_cierre",
-                                    label: "Fin",
-                                },
-                                {
-                                    name: "estado",
-                                    label: "Estado",
-                                },
-                                {
-                                    name: "actions",
-                                    label: "Acciones",
-                                    options: {
-                                        customBodyRender: (value, tableMeta, updateValue) => {
-
-                                            return (
-                                                <>
-                                                    <Link href={`seguimientos/${tableMeta.rowData[0]}`}>
-                                                        <IconButton>
-                                                            <ArrowForwardIosIcon />
-                                                        </IconButton>
-                                                    </Link>
-                                                </>
-                                            )
+                                    {
+                                        name: "id",
+                                        label: "Id",
+                                        options: {
+                                            display: false,
+                                            filter: false
                                         },
-                                        filter: false
+
                                     },
-                                }
-                            ]}
-                        />
+                                    {
+                                        name: "nombre",
+                                        label: "Nombre",
+                                    },
+                                    {
+                                        name: "descripcion",
+                                        label: "Descripción",
+                                    },
+                                    {
+                                        name: "fecha_inicio",
+                                        label: "Inicio",
+                                    },
+                                    {
+                                        name: "fecha_cierre",
+                                        label: "Fin",
+                                    },
+                                    {
+                                        name: "estado",
+                                        label: "Estado",
+                                    },
+                                    {
+                                        name: "actions",
+                                        label: "Acciones",
+                                        options: {
+                                            customBodyRender: (value, tableMeta, updateValue) => {
+
+                                                return (
+                                                    <>
+                                                        <Link href={`seguimientos/${tableMeta.rowData[0]}`}>
+                                                            <IconButton>
+                                                                <ArrowForwardIosIcon />
+                                                            </IconButton>
+                                                        </Link>
+                                                    </>
+                                                )
+                                            },
+                                            filter: false
+                                        },
+                                    }
+                                ]}
+                            />
+                        }
                     </Col>
                 </Row>
 
