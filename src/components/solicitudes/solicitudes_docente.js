@@ -23,7 +23,7 @@ const SolicitudesDocente = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        setShowTable(true);
+        setShowTable(true); 
     }, [])
 
     let { data } = useSWR(url, () => {

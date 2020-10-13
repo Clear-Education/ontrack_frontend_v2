@@ -27,6 +27,11 @@ const SolicitudesPedagogo = () => {
     const dispatch = useDispatch();
 
 
+    useEffect(() => {
+        setShowTable(true); 
+    }, [])
+
+    
     useSWR(url, () => {
         setIsLoading(true);
         return getSolicitudesService(user.user.token).then((result) => {
