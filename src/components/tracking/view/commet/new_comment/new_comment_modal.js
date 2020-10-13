@@ -41,9 +41,6 @@ const NewCommentModal = ({postData,handleSubmitPost}) => {
                             handleModal={handleVisibilityModal}
                             />
                     </DialogContent>
-                    <DialogActions>
-                        acciones
-                    </DialogActions>
                 </Dialog>
                 :
                 <IconButton title="Agrega un comentario" onClick={()=>handleVisibilityModal(true)}>
