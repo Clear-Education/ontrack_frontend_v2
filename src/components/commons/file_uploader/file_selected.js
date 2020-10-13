@@ -38,7 +38,7 @@ const FilesSelected = ({ state, input, deleteFile }) => {
                                                         <CancelIcon style={{ color: 'var(--red)' }} />
                                                     </div>
                                                 }
-                                                <p>{file.name || `Archivo ${i + 1}`}</p>
+                                                <strong>{file.name || `Archivo ${i + 1}`}</strong>
                                                 {file.size && <p><strong>{Math.round(file.size / (1024 * 1024))} MB</strong></p>}
                                             </div>
                                         </div>
