@@ -37,7 +37,6 @@ const Modal = (props) => {
     
     let body = {...props.body};
     body.props = {...props.body.props,handleClose:handleVisibilityModal}
-
     return (
         <>
             {show ?

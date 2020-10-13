@@ -67,14 +67,13 @@ export async function addNovedadesFileService(data, token) {
 export async function editNovedadesService(data, token) {
     return await editNovedadesCrud(data, token).then((result) => {
         if (result.success) {
-            Alert.success("Novedades editado correctamente", {
+            Alert.success("Novedad editada correctamente", {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-                    effect: "stackslide",
-                });
+            let message = result.result[0].message || 'Ocurrió un error al eliminar la novedad';
+            Alert.error(message, {
+                effect: "stackslide",
             });
         }
         return result;
