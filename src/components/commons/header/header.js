@@ -32,7 +32,7 @@ const Header = () => {
   }
 
   useEffect(()=>{
-    setProfileImg(config.picture_path + user.user.picture)
+    setProfileImg(user.user.picture)
   },[])
 
   const logout = () => {

@@ -26,6 +26,13 @@
   flex-direction: row;
   overflow: auto;
 }
+.delete_container{
+  position: absolute;
+  top: -10px;
+  right: -15px;
+
+}
+
 // Change this on main color change
 $main_color: #004d67;
 .preview_photo {
@@ -35,6 +42,7 @@ $main_color: #004d67;
   padding: 10px;
   width: 200px;
   margin-right: 10px;
+  min-height: 75px;
   .photo_container {
     display: flex;
     align-items: center;

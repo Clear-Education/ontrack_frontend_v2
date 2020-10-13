@@ -50,12 +50,17 @@ const Post = ({ postData, handleSubmitPost }) => {
             return result
         })
     }
+
+    const handleOpenFile = (url) => {
+        window.open(url, '_blank');
+    }
+
     return (
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
             <Col lg={1} md={1} sm={1} xs={1}>
                 <Avatar
                     src={owner.picture ?
-                        `${config.picture_path}${owner.picture}`
+                        `${owner.picture}`
                         :
                         config.default_picture}
                 />
@@ -101,9 +106,9 @@ const Post = ({ postData, handleSubmitPost }) => {
                     <Col lg={12} md={12} sm={12} xs={12}>
                         {postData.cuerpo}
                         <div style={{ overflow: 'auto', display: 'flex' }}>
-                            {postData.adjuntos.map((file) => {
-                                const url = config.picture_path + file.file;
-                                return <img src={url} className={styles.post_image} alt="imagen"/>
+                            {postData.adjuntos.map((file, i) => {
+                                const url = file.file;
+                                return <div className={styles.file_container} onClick={() => handleOpenFile(url)}>Archivo {i + 1}</div>
                             })}
                         </div>
                     </Col>

@@ -14,7 +14,7 @@ const FatherPreview = ({ postData }) => {
             <Col lg={1} md={1} sm={1} xs={1} className={styles.avatar_container}>
                 <Avatar alt="Remy Sharp"
                     src={user.user.picture ?
-                        `${config.picture_path}${user.user.picture}`
+                        `${user.user.picture}`
                         :
                         config.default_picture} 
                         className={styles.profile_image} />

@@ -1,4 +1,4 @@
-.container{
+.container {
   margin: auto;
 }
 .header_container {
@@ -87,11 +87,11 @@
   width: 200px;
   z-index: 100;
 }
-.collapse_body{
+.collapse_body {
   display: flex;
   flex-direction: column;
 }
-.options_label{
+.options_label {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -103,6 +103,21 @@
   margin-bottom: 10px;
   cursor: pointer;
 }
-.options_label_description{
+.options_label_description {
   padding-left: 15px;
+}
+
+.file_container {
+  display: flex;
+  padding: 10px;
+  background: var(--gray);
+  border-radius: 10px;
+  width: fit-content;
+  min-width: 80px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-right: 10px;
+  border: solid 2px var(--main-color-dark);
 }

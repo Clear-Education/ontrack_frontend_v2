@@ -1,4 +1,4 @@
-import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesCrud, addNovedadesFileCrud, getMoreNovedadesCrud } from "../cruds/novedades_cruds";
+import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesCrud, addNovedadesFileCrud, getMoreNovedadesCrud, deleteNovedadesFileCrud } from "../cruds/novedades_cruds";
 import Alert from "react-s-alert";
 
 
@@ -58,6 +58,23 @@ export async function addNovedadesFileService(data, token) {
                 Alert.error(element.message, {
                     effect: "stackslide",
                 });
+            });
+        }
+        return result;
+    })
+}
+
+
+export async function deleteNovedadesFileService(fileId, token) {
+
+    return await deleteNovedadesFileCrud(fileId, token).then((result) => {
+        if (result.success) {
+            Alert.success("Archivo eliminado correctamente", {
+                effect: "stackslide",
+            });
+        } else {
+            Alert.error("Ocurrió un error al eliminar el archivo", {
+                effect: "stackslide",
             });
         }
         return result;

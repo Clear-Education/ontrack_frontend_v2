@@ -5,22 +5,27 @@ import FileUploader from "./file_uploader";
 import styles from './styles.module.scss';
 import Alert from "react-s-alert";
 
-const FileInput = ({ handleChange, files }) => {
-
+const FileInput = ({ handleChange, files, deleteFile }) => {
     const [state, setState] = useState({});
     const input = {
         type: "file",
         name: "media",
-        fileType: "image/*",
+        fileType: "*",
         fileAcceptMultiple: true,
     }
 
+    useEffect(() => {
+        if (!!files?.length) {
+            setState({ ...state, media: files })
+        }
+    }, [files])
+
     const fileAccept = (name, multiple, files) => {
         if (multiple) {
-            const newFiles = [];
+            const newFiles = state['media'] ? [...state['media']] : [];
             let flag = false;
             Array.from(files).forEach((el, i) => {
-                if (i < 3) {
+                if (i < 3 && newFiles.length < 3) {
                     newFiles.push(el);
                 } else {
                     flag = true;
@@ -40,9 +45,22 @@ const FileInput = ({ handleChange, files }) => {
     };
 
     useEffect(() => {
-        handleChange(state.media)
+        handleChange(state?.media)
     }, [state]);
 
+    const handleDeleteFile = (file) => {
+        if (file.id) {
+            deleteFile(file.id).then((result) => {
+                if (result.success) {
+                    const newFiles = [...state['media']].filter((selectedFile) => { return selectedFile.id !== file.id })
+                    setState({ ...state, media: newFiles });
+                }
+            });
+        } else {
+            const newFiles = [...state['media']].filter((selectedFile) => { return selectedFile.name !== file.name })
+            setState({ ...state, media: newFiles });
+        }
+    }
     return (
         <>
             <Row lg={12} md={12} sm={12} xs={12} style={{ width: '100%' }}>
@@ -54,7 +72,7 @@ const FileInput = ({ handleChange, files }) => {
                 {
                     files && !!files.length &&
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.selected_files_container}>
-                        <FilesSelected state={state} input={input} />
+                        <FilesSelected state={state} input={input} deleteFile={handleDeleteFile} />
                     </Col>
                 }
             </Row>

@@ -1,14 +1,20 @@
 // Import dependencies
-import { useEffect, useState } from "react";
 import { Row, Col, Collapse } from "react-bootstrap";
-
+import CancelIcon from '@material-ui/icons/Cancel';
 // Import components
 import styles from "./styles.module.scss";
 
 /**
  * Change styles in ./styles.module.scss file
  */
-const FilesSelected = ({ state, input }) => {
+
+
+const FilesSelected = ({ state, input, deleteFile }) => {
+
+    const handleDeleteFile = (file) =>{
+        deleteFile(file);
+    }
+
     return (
         <Row lg={12} md={12} sm={12} xs={12}>
             <Col
@@ -20,51 +26,48 @@ const FilesSelected = ({ state, input }) => {
                 styles={{ padding: 0 }}
             >
                 <div className={styles.files_container}>
-                <Collapse in={!!state[input.name]?.length}>
-                    {state[input.name] && state[input.name].length > 0 ? (
-                        <>
-                            {state[input.name].map((file) => (
+                    <Collapse in={!!state[input.name]?.length}>
+                        {state[input.name] && state[input.name].length > 0 ? (
+                            <>
+                                {state[input.name].map((file, i) => (
+                                    <div className={styles.preview_photo} key={i}>
+                                        <div className={styles.photo_container}>
+                                            <div className={styles.file_detail}>
+                                                {
+                                                    <div className={styles.delete_container} onClick={()=>handleDeleteFile(file)}>
+                                                        <CancelIcon style={{ color: 'var(--red)' }} />
+                                                    </div>
+                                                }
+                                                <strong>{file.name || `Archivo ${i + 1}`}</strong>
+                                                {file.size && <p><strong>{Math.round(file.size / (1024 * 1024))} MB</strong></p>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        ) : (
                                 <div className={styles.preview_photo}>
                                     <div className={styles.photo_container}>
                                         <img
-                                            src="/icons/multiple_default.svg"
+                                            src="#"
+                                            id={`${input.name}_img_preview`}
                                             alt="img-preview"
-                                            className={styles.defaul_img}
+                                            className={styles.selected_img}
                                         />
-                                        <div className={styles.file_detail}>
-                                            <p>{file.name}</p>
-                                            <p>
-                                                {Math.round(file.size / (1024 * 1024))}
-                                                <strong> MB</strong>
-                                            </p>
-                                        </div>
+                                        {state[input.name] && (
+                                            <div className={styles.file_detail}>
+                                                <p>{state[input.name].name}</p>
+                                                <p>
+                                                    {Math.round(state[input.name].size / (1024 * 1024))}
+                                                    <strong> MB</strong>
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
-                            ))}
-                        </>
-                    ) : (
-                            <div className={styles.preview_photo}>
-                                <div className={styles.photo_container}>
-                                    <img
-                                        src="#"
-                                        id={`${input.name}_img_preview`}
-                                        alt="img-preview"
-                                        className={styles.selected_img}
-                                    />
-                                    {state[input.name] && (
-                                        <div className={styles.file_detail}>
-                                            <p>{state[input.name].name}</p>
-                                            <p>
-                                                {Math.round(state[input.name].size / (1024 * 1024))}
-                                                <strong> MB</strong>
-                                            </p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                        
-                </Collapse>
+                            )}
+
+                    </Collapse>
                 </div>
             </Col>
         </Row>
