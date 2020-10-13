@@ -80,7 +80,7 @@ const GraphicViewer = ({ student, tracking }) => {
             let progresoAsistenciasAlumno = []
             progresoAsistencias.map((progreso) => {
                 const data = {
-                    porcentaje_asistencias: Number.parseFloat(progreso.valor * 100).toFixed(2)
+                    porcentaje: Number.parseFloat(progreso.valor * 100).toFixed(2)
                 }
 
                 progresoAsistenciasAlumno.push(data);
@@ -95,7 +95,7 @@ const GraphicViewer = ({ student, tracking }) => {
             let progresoCalificacionesAlumno = []
             progresoCalificaciones.map((progreso) => {
                 const data = {
-                    promedio_calificaciones: progreso.valor
+                    promedio: progreso.valor
                 }
 
                 progresoCalificacionesAlumno.push(data);
@@ -122,11 +122,11 @@ const GraphicViewer = ({ student, tracking }) => {
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name">
                             </XAxis>
-                            <YAxis type="number" domain={[0, 10]} />
+                            <YAxis type="number" domain={[4, 10]} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
                             <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red"  /* alwaysShow */ ifOverflow="extendDomain" />
-                            <Line type="monotone" dataKey="promedio_calificaciones" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                            <Line type="monotone" dataKey="promedio" stroke="#82ca9d" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
@@ -147,7 +147,7 @@ const GraphicViewer = ({ student, tracking }) => {
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
                             <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
-                            <Line type="monotone" dataKey="porcentaje_asistencias" stroke="#8884d8" activeDot={{ r: 8 }} />
+                            <Line type="monotone" dataKey="porcentaje" stroke="#8884d8" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
