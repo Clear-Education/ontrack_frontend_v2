@@ -29,7 +29,9 @@ export async function addNovedadesCrud(data, auth_token) {
 export async function addNovedadesFileCrud(data, auth_token) {
     let formData = new FormData();
     formData.append("actualizacion", data.post);
-    formData.append("files", data.files[0]);
+    data.files.map((files)=>{
+        formData.append("files", files);
+    });
     return axios.post(`${config.api_url}/actualizaciones/${data.post}/files/`, formData, {
         headers: {
             Authorization: `Token ${auth_token}`,
@@ -46,6 +48,25 @@ export async function addNovedadesFileCrud(data, auth_token) {
 
         })
         .catch((error) => {
+            return errorHandler(error);
+        });
+}
+
+export async function deleteNovedadesFileCrud(fileId, auth_token) {
+    return axios.delete(`${config.api_url}/actualizaciones/files/${fileId}/`, {
+        headers: {
+            Authorization: `Token ${auth_token}`,
+        },
+    })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        }).catch((error) => {
             return errorHandler(error);
         });
 }
