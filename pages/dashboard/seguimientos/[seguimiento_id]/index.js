@@ -73,9 +73,13 @@ const Seguimiento = () => {
                     </Col>
                 </Row>
                 {/* LADO IZQ */}
-                <Novedades trackingId={trackingId} />
+                <Col lg={7} md={7} sm={7} xs={7} >
+                    <Novedades trackingId={trackingId} />
+                </Col>
                 {/* LADO DER */}
-                <RightSideBar currentTracking={currentTracking} />
+                <Col lg={4} md={4} sm={4} xs={4} className={styles.container}>
+                    <RightSideBar currentTracking={currentTracking} />
+                </Col>
             </Row>
 
 
