@@ -5,7 +5,7 @@ import GoalsViewer from "../../../../src/components/tracking/view/goals_viewer/g
 import StudentViewer from "../../../../src/components/tracking/view/student_viewer/student_viewer";
 import GraphicViewer from "../../../../src/components/tracking/view/graphics_viewer/graphic_viewer";
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const RightSideBar = ({ currentTracking }) => {
 
@@ -15,8 +15,12 @@ const RightSideBar = ({ currentTracking }) => {
         setSelectedStudent(student);
     }
 
+    useEffect(()=>{
+        setSelectedStudent(currentTracking?.alumnos[0])
+    },[])
+
     return (
-        <Col lg={3} md={3} sm={3} xs={3} className={styles.container}>
+        <>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                     <span className={styles.section_title}>Alumnos</span>
@@ -55,7 +59,7 @@ const RightSideBar = ({ currentTracking }) => {
                     <GraphicViewer student={selectedStudent} tracking={currentTracking} />
                 </Col>
             </Row>
-        </Col>
+        </>
     )
 }
 

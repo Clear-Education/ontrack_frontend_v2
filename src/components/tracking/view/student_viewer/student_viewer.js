@@ -3,8 +3,8 @@ import { useState } from 'react';
 
 const StudentViewer = ({ handleSelectStudent, students }) => {
 
-    const [selected, setSelected] = useState();
-
+    const [selected, setSelected] = useState(students[0].alumno);
+    
     const STUDENTS_DATA = students && students.map((student) => { return student.alumno });
 
     const selectStudent = (index, student) => {
