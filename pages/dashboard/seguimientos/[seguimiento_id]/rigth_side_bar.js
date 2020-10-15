@@ -16,7 +16,8 @@ const RightSideBar = ({ currentTracking }) => {
     }
 
     useEffect(()=>{
-        setSelectedStudent(currentTracking?.alumnos[0])
+            const alumno = currentTracking?.alumnos[0].alumno;
+            setSelectedStudent(alumno)
     },[])
 
     return (
