@@ -38,7 +38,6 @@ const LastNews = () => {
 
 
     return (
-        <div className={styles.last_news_container}>
             <Row lg={12} md={12} sm={12} xs={12}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.title_container}>
                     <TitlePage title={"Últimas novedades"} fontSize={15} />
@@ -65,7 +64,6 @@ const LastNews = () => {
                     }
                 </Col>
             </Row>
-        </div>
     )
 }
 

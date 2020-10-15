@@ -23,12 +23,16 @@ const Seguimientos = () => {
     const url = `${config.api_url}/seguimientos/list/`;
     const [trackingData, setTrackingData] = useState([])
     const user = useSelector((store) => store.user);
-    const [isLoading, setIsLoading] = useState(false)
-    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [showTable, setShowTable] = useState();
     const dispatch = useDispatch();
 
     useEffect(() => {
         dispatch({ type: types.RESET_CURRENT_TRACKING_DATA });
+    }, [])
+
+    useEffect(() => {
+        setShowTable(true);
     }, [])
 
     useSWR(url, () => {
@@ -65,7 +69,7 @@ const Seguimientos = () => {
                 transition={{ duration: 0.3 }}
             >
                 <Row lg={12} md={12} sm={12} xs={12}>
-                    <Col lg={9} md={9} sm={9} xs={9} style={{marginLeft:'-4%'}}>
+                    <Col lg={9} md={9} sm={9} xs={9} style={{ marginLeft: '-4%' }}>
                         <Row lg={12} md={12} sm={12} xs={12} style={{ alignItems: 'center' }}>
                             <Col lg={6} md={6} sm={6} xs={6}>
                                 <TitlePage title="Seguimientos" />
@@ -88,67 +92,69 @@ const Seguimientos = () => {
                             xs={12}
                             style={{ marginTop: 20 }}
                         >
-                            <MUIDataTable
-                                data={trackingData}
-                                options={MTConfig("Seguimientos").options}
-                                components={MTConfig().components}
-                                localization={MTConfig().localization}
-                                columns={[
+                            {showTable &&
+                                <MUIDataTable
+                                    data={trackingData}
+                                    options={MTConfig("Seguimientos").options}
+                                    components={MTConfig().components}
+                                    localization={MTConfig().localization}
+                                    columns={[
 
-                                    {
-                                        name: "id",
-                                        label: "Id",
-                                        options: {
-                                            display: false,
-                                            filter: false
-                                        },
-
-                                    },
-                                    {
-                                        name: "nombre",
-                                        label: "Nombre",
-                                    },
-                                    {
-                                        name: "descripcion",
-                                        label: "Descripción",
-                                    },
-                                    {
-                                        name: "fecha_inicio",
-                                        label: "Inicio",
-                                    },
-                                    {
-                                        name: "fecha_cierre",
-                                        label: "Fin",
-                                    },
-                                    {
-                                        name: "estado",
-                                        label: "Estado",
-                                    },
-                                    {
-                                        name: "actions",
-                                        label: "Acciones",
-                                        options: {
-                                            customBodyRender: (value, tableMeta, updateValue) => {
-
-                                                return (
-                                                    <>
-                                                        <Link href={`seguimientos/${tableMeta.rowData[0]}`}>
-                                                            <IconButton>
-                                                                <ArrowForwardIosIcon />
-                                                            </IconButton>
-                                                        </Link>
-                                                    </>
-                                                )
+                                        {
+                                            name: "id",
+                                            label: "Id",
+                                            options: {
+                                                display: false,
+                                                filter: false
                                             },
-                                            filter: false
+
                                         },
-                                    }
-                                ]}
-                            />
+                                        {
+                                            name: "nombre",
+                                            label: "Nombre",
+                                        },
+                                        {
+                                            name: "descripcion",
+                                            label: "Descripción",
+                                        },
+                                        {
+                                            name: "fecha_inicio",
+                                            label: "Inicio",
+                                        },
+                                        {
+                                            name: "fecha_cierre",
+                                            label: "Fin",
+                                        },
+                                        {
+                                            name: "estado",
+                                            label: "Estado",
+                                        },
+                                        {
+                                            name: "actions",
+                                            label: "Acciones",
+                                            options: {
+                                                customBodyRender: (value, tableMeta, updateValue) => {
+
+                                                    return (
+                                                        <>
+                                                            <Link href={`seguimientos/${tableMeta.rowData[0]}`}>
+                                                                <IconButton>
+                                                                    <ArrowForwardIosIcon />
+                                                                </IconButton>
+                                                            </Link>
+                                                        </>
+                                                    )
+                                                },
+                                                filter: false
+                                            },
+                                        }
+                                    ]}
+                                />
+                            }
                         </Col>
                     </Col>
-                    <Col lg={3} md={3} sm={3} xs={3}>
-                        <LastNews/>
+                    <Col lg={3} md={3} sm={3} xs={3} className={styles.last_news_container}>
+                        <LastNews />
                     </Col>
                 </Row>
 
