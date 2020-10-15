@@ -1,4 +1,4 @@
-import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesCrud, addNovedadesFileCrud, getMoreNovedadesCrud, deleteNovedadesFileCrud } from "../cruds/novedades_cruds";
+import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesCrud, addNovedadesFileCrud, getMoreNovedadesCrud, deleteNovedadesFileCrud, getLastNovedadesCrud, getMoreLastNovedadesCrud } from "../cruds/novedades_cruds";
 import Alert from "react-s-alert";
 
 
@@ -15,6 +15,20 @@ export async function getNovedadesService(token, seguimiento_id) {
     })
 }
 
+export async function getLastNovedadesService(token) {
+    return await getLastNovedadesCrud(token).then((result) => {
+        if (result.success) {
+
+        } else {
+            Alert.error("Ocurrió un error al buscar las novedades", {
+                effect: "stackslide",
+            });
+        }
+        return result;
+    })
+}
+
+
 
 export async function getMoreNovedadesService(token, url) {
     return await getMoreNovedadesCrud(token, url).then((result) => {
@@ -28,6 +42,20 @@ export async function getMoreNovedadesService(token, url) {
         return result;
     })
 }
+
+export async function getMoreLastNovedadesService(token, url) {
+    return await getMoreLastNovedadesCrud(token, url).then((result) => {
+        if (result.success) {
+
+        } else {
+            Alert.error("Ocurrió un error al buscar las novedades", {
+                effect: "stackslide",
+            });
+        }
+        return result;
+    })
+}
+
 
 export async function addNovedadesService(data, token) {
     return await addNovedadesCrud(data, token).then((result) => {

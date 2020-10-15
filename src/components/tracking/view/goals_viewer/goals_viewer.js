@@ -13,7 +13,7 @@ const GoalsViewer = ({ student, tracking }) => {
 
   async function getStudentGoals() {
     await getStudentGoalsService(user.user.token, student.id, tracking.id).then((result) => {
-      setGoals(result.result.filter(objetivo => !objetivo.objetivo.valor_objetivo_cuantitativo));
+      setGoals(result.result.filter(objetivo => !objetivo.objetivo?.valor_objetivo_cuantitativo));
     })
   }
 
@@ -45,14 +45,14 @@ const GoalsViewer = ({ student, tracking }) => {
     goals ?
       <List style={{maxHeight:'300px', overflow:'auto'}}>
         {goals.map((goal) => {
-          const labelId = goal.objetivo.descripcion;
+          const labelId = goal.objetivo?.descripcion;
           return (
-            <ListItem key={goal.objetivo.id}>
+            <ListItem key={goal.objetivo?.id}>
               <Checkbox
                 checked={goal.alcanzada}
-                onClick={(e) => { handleCheck(goal.objetivo.id, e) }}
+                onClick={(e) => { handleCheck(goal.objetivo?.id, e) }}
               />
-              <ListItemText id={labelId} primary={goal.objetivo.descripcion} className={goal.complete ? styles.complete : ''} />
+              <ListItemText id={labelId} primary={goal.objetivo?.descripcion} className={goal.complete ? styles.complete : ''} />
             </ListItem>
           )
         })

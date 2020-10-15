@@ -32,7 +32,7 @@ const Novedades = ({ trackingId }) => {
     });
 
     useEffect(() => {
-        setDivHeight(divRef.current.clientHeight + 500)
+        setDivHeight(divRef.current.clientHeight + 100)
     }, [divRef])
 
     const handleShowMore = () => {
@@ -41,7 +41,7 @@ const Novedades = ({ trackingId }) => {
             const newData = [...news].concat(newPosts);
             setNews(newData);
             setNextUrl(result.result.next);
-            setDivHeight(prevState => divHeight !== prevState && prevState + 1500);
+            setDivHeight(prevState => prevState + 1500);
             setShowMore(false);
         })
     }
@@ -77,7 +77,7 @@ const Novedades = ({ trackingId }) => {
     }
     return (
 
-        <Row lg={12} md={12} sm={12} xs={12} className={styles.container} onScroll={handleScroll} ref={divRef}>
+        <Row lg={12} md={12} sm={12} xs={12} onScroll={handleScroll} ref={divRef} className={styles.container} onScroll={handleScroll}>
             {showMore
                 && nextUrl
                 && <ShowMore
@@ -86,16 +86,14 @@ const Novedades = ({ trackingId }) => {
                 />}
             <Col lg={12} md={12} sm={12} xs={12} >
                 <Row lg={12} md={12} sm={12} xs={12} >
-                    <Col lg={6} md={6} sm={6} xs={6}>
+                    <Col lg={11} md={11} sm={11} xs={11}>
                         <TitlePage title={"Novedades del Seguimiento"} fontSize={16} />
                     </Col>
-                    <Col lg={6} md={6} sm={6} xs={6}>
-                        <DateFilter />
-                    </Col>
+                    <DateFilter />
                 </Row>
 
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
-                    <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
+                    <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.new_post_container}>
                         <NewPost handleSubmitPost={handleSubmitPost} />
                     </Col>
                 </Row>
@@ -113,7 +111,10 @@ const Novedades = ({ trackingId }) => {
                                 )
                             })
                             :
-                            <span>¡Comenzá a publicar las novedades del seguimiento!</span>
+                            <div className={styles.empty_data}>
+                                <span>¡Comenzá a publicar las novedades del seguimiento!</span>
+                            </div>
+
                     }
                 </Row>
 
