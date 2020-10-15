@@ -32,7 +32,7 @@ const Novedades = ({ trackingId }) => {
     });
 
     useEffect(() => {
-        setDivHeight(divRef.current.clientHeight + 500)
+        setDivHeight(divRef.current.clientHeight + 100)
     }, [divRef])
 
     const handleShowMore = () => {
@@ -41,7 +41,7 @@ const Novedades = ({ trackingId }) => {
             const newData = [...news].concat(newPosts);
             setNews(newData);
             setNextUrl(result.result.next);
-            setDivHeight(prevState => divHeight !== prevState && prevState + 1500);
+            setDivHeight(prevState => prevState + 1500);
             setShowMore(false);
         })
     }
@@ -77,7 +77,7 @@ const Novedades = ({ trackingId }) => {
     }
     return (
 
-        <Row lg={12} md={12} sm={12} xs={12} onScroll={handleScroll} ref={divRef}>
+        <Row lg={12} md={12} sm={12} xs={12} onScroll={handleScroll} ref={divRef} className={styles.container} onScroll={handleScroll}>
             {showMore
                 && nextUrl
                 && <ShowMore

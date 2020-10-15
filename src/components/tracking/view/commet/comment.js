@@ -62,46 +62,46 @@ export const Comment = ({ commentData }) => {
                 <span className={styles.highlight}>{owner.name} {owner.last_name}</span> comentó {" "}
                 <span className={styles.dot}></span>
                 <span className={styles.post_date}> {commentData.fecha_creacion} : </span>
-                <div className={styles.more_options}>
-                    {user.user.id === owner.id &&
+
+                {user.user.id === owner.id &&
+                    <div className={styles.more_options}>
                         <IconButton onClick={handleOpen}>
                             <MoreVertIcon />
                         </IconButton>
-                    }
-                    <div className={styles.collapse_container} style={openMoreOptions ? { display: 'unset' } : { display: 'none' }}>
-                        <div className={styles.collapse_body}>
-                            <Modal
-                                title="¿Seguro que deseas eliminar esta novedad?"
-                                body={<DeleteForm data={commentData} handleSubmitAction={handleDeletePost} />}
-                                close={handleOpen}
-                                button={
-                                    <span className={styles.options_label}> <Delete /> <span className={styles.options_label_description}>Eliminar</span></span>
-                                }
-                            />
-                            <Modal
-                                title="Editar Comentario"
-                                body={
-                                    <EditPostForm
-                                        postData={commentData}
-                                        handleSubmitPost={handleEditPost}
-                                    />
-                                }
-                                close={handleOpen}
-                                button={
-                                    <span className={styles.options_label}><EditIcon /> <span className={styles.options_label_description}>Editar</span></span>
-                                }
-                            />
-                        </div>
-
+                    </div>
+                }
+                <div className={styles.collapse_container} style={openMoreOptions ? { display: 'unset' } : { display: 'none' }}>
+                    <div className={styles.collapse_body}>
+                        <Modal
+                            title="¿Seguro que deseas eliminar esta novedad?"
+                            body={<DeleteForm data={commentData} handleSubmitAction={handleDeletePost} />}
+                            close={handleOpen}
+                            button={
+                                <span className={styles.options_label}> <Delete /> <span className={styles.options_label_description}>Eliminar</span></span>
+                            }
+                        />
+                        <Modal
+                            title="Editar Comentario"
+                            body={
+                                <EditPostForm
+                                    postData={commentData}
+                                    handleSubmitPost={handleEditPost}
+                                />
+                            }
+                            close={handleOpen}
+                            button={
+                                <span className={styles.options_label}><EditIcon /> <span className={styles.options_label_description}>Editar</span></span>
+                            }
+                        />
                     </div>
                 </div>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.content_container}>
                     <Col lg={12} md={12} sm={12} xs={12}>
                         <span className={styles.comment_body}>{commentData.cuerpo}</span>
                         {
-                            !!commentData.adjuntos.length && commentData.adjuntos.map((file, i)=>{
-                                return(
-                                <div className={styles.file_container} onClick={()=>handleOpenFile(file.file)}>Archivo {i+1}</div>
+                            !!commentData.adjuntos.length && commentData.adjuntos.map((file, i) => {
+                                return (
+                                    <div className={styles.file_container} onClick={() => handleOpenFile(file.file)}>Archivo {i + 1}</div>
                                 )
                             })
 
