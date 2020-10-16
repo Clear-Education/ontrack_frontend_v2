@@ -3,25 +3,34 @@ import { useSelector } from "react-redux";
 import styles from './styles.module.css';
 import DateViewer from "../../../../../src/components/commons/date_viewer/date_viewer";
 //MATERIAL UI
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import { FormControl, InputLabel } from "@material-ui/core";
 import { getGoalsProgressionStudentService, getStudentGoalsService } from '../../../../../src/utils/goals/services/goals_services';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer, Label, PieChart, Pie, Sector, Cell, LabelList
 } from 'recharts';
-import SubMenu from '../../../../../src/components/commons/sub_menu/sub_menu';
 import { Col, Row } from "react-bootstrap";
 import TitlePage from "../../../../../src/components/commons/title_page/title_page";
 import StudentViewer from "../../../../../src/components/tracking/view/student_viewer/student_viewer";
 import ParticipantItem from "../../../../../src/components/commons/participant_item/participant_item";
 import { fromStoreToViewFormatDate } from "../../../../../src/utils/commons/common_services";
 import SubjectItem from "../../../../../src/components/commons/subject_item/subject_item";
+import BackLink from "../../../../../src/components/commons/back_link/back_link";
 
 
-const getIntroOfPage = () => {
-    return
-}
+const container = {
+    visible: {
+        opacity: 1,
+        transition: {
+            when: "beforeChildren",
+            staggerChildren: 0.1,
+        },
+    },
+    hidden: {
+        opacity: 0,
+        transition: {
+            when: "afterChildren",
+        },
+    },
+};
 
 const CustomTooltip = ({ active, payload, label }) => {
     if (active) {
@@ -193,7 +202,9 @@ const Estadisticas = () => {
 
     return (
         <Row lg={12} md={12} sm={12} xs={12}>
-
+            <div className={styles.sub_menu_container}>
+                <BackLink />
+            </div>
             <Col lg={12} md={12} sm={12} xs={12} >
                 <TitlePage title={"Estadísticas"} fontSize={20} />
             </Col>
@@ -243,89 +254,86 @@ const Estadisticas = () => {
                 </Col>
             </Row>
 
-            <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container}>
-                <Col lg={12} md={12} sm={12} xs={12} className={styles.stats_container}>
-                    <h3 className="subtitle mb-2 mt-5">Objetivos Cualitativos</h3>
-                    {objetivosCualitativosData.length != 0 ?
-                        <>
-                            <ResponsiveContainer width="60%" height={300} className="mx-auto">
-                                <PieChart>
-                                    <Tooltip content={<CustomTooltip />} />
-                                    <Legend verticalAlign="top" formatter={formatterdata} />
-                                    <Pie
-                                        data={objetivosCualitativosData}
-                                        labelLine={false}
-                                        outerRadius={80}
-                                        fill="#8884d8"
-                                        dataKey="value"
+                <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container}>
+                    <Col lg={5} md={5} sm={5} xs={5} className={styles.stats_container}>
+                        <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
+                        {calificacionesData.length != 0 ?
+                            <>
+                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                    <LineChart
+                                        data={calificacionesData}
+                                        className="mb-3"
                                     >
-                                        {
-                                            objetivosCualitativosData.map((objeto, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name">
+                                            <Label value="Porcentaje de Calificaciones en el Año Lectivo" offset={0} position="insideBottom" />
+                                        </XAxis>
+                                        <YAxis type="number" domain={[4, 10]} />
+                                        <Tooltip />
+                                        <Legend verticalAlign="top" height={36} />
+                                        <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
+                                        <Line type="monotone" dataKey="promedio" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </>
+                            :
+                            "No configurado"
+                        }
 
-                                        }
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </>
-                        :
-                        "No configurado"
-                    }
-                </Col>
+                    </Col>
+                    <Col lg={5} md={5} sm={5} xs={5} className={styles.stats_container}>
+                        <h3 className="subtitle mb-2 mt-3">Progreso Asistencias</h3>
+                        {asistenciasData.length != 0 ?
+                            <>
+                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                    <LineChart
+                                        data={asistenciasData}
+                                        className="mb-3"
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name">
+                                            <Label value="Porcentaje de Asistencias en el Año Lectivo" offset={0} position="insideBottom" />
+                                        </XAxis>
+                                        <YAxis type="number" domain={[0, 100]} />
+                                        <Tooltip />
+                                        <Legend verticalAlign="top" height={36} />
+                                        <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
+                                        <Line type="monotone" dataKey="porcentaje" stroke="#8884d8" activeDot={{ r: 8 }} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </>
+                            : "No configurado"
+                        }
+                    </Col>
 
-                <Col lg={5} md={5} sm={5} xs={5} className={styles.stats_container}>
-                <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
-                    {calificacionesData.length != 0 ?
-                        <>
-                            <ResponsiveContainer width="60%" height={300} className="mx-auto">
-                                <LineChart
-                                    data={calificacionesData}
-                                    className="mb-3"
-                                >
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name">
-                                        <Label value="Porcentaje de Calificaciones en el Año Lectivo" offset={0} position="insideBottom" />
-                                    </XAxis>
-                                    <YAxis type="number" domain={[4, 10]} />
-                                    <Tooltip />
-                                    <Legend verticalAlign="top" height={36} />
-                                    <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
-                                    <Line type="monotone" dataKey="promedio" stroke="#82ca9d" activeDot={{ r: 8 }} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </>
-                        :
-                        "No configurado"
-                    }
+                    <Col lg={12} md={12} sm={12} xs={12} className={styles.stats_container}>
+                        <h3 className="subtitle mb-2 mt-5">Objetivos Cualitativos</h3>
+                        {objetivosCualitativosData.length != 0 ?
+                            <>
+                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                    <PieChart>
+                                        <Tooltip content={<CustomTooltip />} />
+                                        <Legend verticalAlign="top" formatter={formatterdata} />
+                                        <Pie
+                                            data={objetivosCualitativosData}
+                                            labelLine={false}
+                                            outerRadius={80}
+                                            fill="#8884d8"
+                                            dataKey="value"
+                                        >
+                                            {
+                                                objetivosCualitativosData.map((objeto, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
 
-                </Col>
-                <Col lg={5} md={5} sm={5} xs={5} className={styles.stats_container}>
-                <h3 className="subtitle mb-2 mt-3">Progreso Asistencias</h3>
-                    {asistenciasData.length != 0 ?
-                        <>
-                            <ResponsiveContainer width="60%" height={300} className="mx-auto">
-                                <LineChart
-                                    data={asistenciasData}
-                                    className="mb-3"
-                                >
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name">
-                                        <Label value="Porcentaje de Asistencias en el Año Lectivo" offset={0} position="insideBottom" />
-                                    </XAxis>
-                                    <YAxis type="number" domain={[0, 100]} />
-                                    <Tooltip />
-                                    <Legend verticalAlign="top" height={36} />
-                                    <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
-                                    <Line type="monotone" dataKey="porcentaje" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </>
-                        : "No configurado"
-                    }
-                </Col>
-
-
-            </Row>
-
+                                            }
+                                        </Pie>
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </>
+                            :
+                            "No configurado"
+                        }
+                    </Col>
+                </Row>
         </Row>
     )
 }
