@@ -6,6 +6,8 @@ import StudentViewer from "../../../../src/components/tracking/view/student_view
 import GraphicViewer from "../../../../src/components/tracking/view/graphics_viewer/graphic_viewer";
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { useEffect, useState } from "react";
+import DateViewer from "../../../../src/components/commons/date_viewer/date_viewer";
+import { fromStoreToViewFormatDate } from "../../../../src/utils/commons/common_services";
 
 const RightSideBar = ({ currentTracking }) => {
 
@@ -31,16 +33,9 @@ const RightSideBar = ({ currentTracking }) => {
             <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                     <span className={styles.section_title}>Plazos</span>
-                    <Row lg={12} md={12} sm={12} xs={12} className={styles.container_plazos}>
-                        <Col lg={5} md={5} sm={5} xs={5}>
-                            <span className={styles.viwer_date}>{currentTracking?.fecha_inicio}</span>
-                        </Col>
-
-                        <Col lg={2} md={2} sm={2} xs={2}><ArrowForwardIcon style={{ color: 'var(--orange)' }} /></Col>
-                        <Col lg={5} md={5} sm={5} xs={5}>
-                            <span className={styles.viwer_date}>{currentTracking?.fecha_cierre}</span>
-                        </Col>
-                    </Row>
+                    <DateViewer 
+                        start={fromStoreToViewFormatDate(currentTracking.fecha_inicio)} 
+                        end={fromStoreToViewFormatDate(currentTracking.fecha_cierre)} />
                 </Col>
             </Row>
             {currentTracking?.cualitativos?.length !== 0 &&

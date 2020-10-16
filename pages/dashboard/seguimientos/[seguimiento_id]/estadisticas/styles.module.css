@@ -11,3 +11,64 @@
     left: -90px;
     top: 40px;
 }
+.general_info{
+    margin-top: 20px;
+    background-color: var(--white);
+    padding: 10px;
+    overflow: auto;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+.student_container{
+    margin-top: 20px;
+    height: 100%;
+    background-color: var(--white);
+    padding: 10px;
+    justify-content: flex-end;
+}
+
+.item_container, .general_item_container{
+    border-radius: 5px;
+    margin: 10px auto;
+    background-color: var(--gray);
+    padding: 20px;
+    padding-left: 0px;
+    padding-right: 0px;
+    height: 90%;
+}
+.general_item_container{
+    margin-right: 20px;
+    height: 90%;
+}
+.section_title {
+    padding-left: 15px;
+    text-align: left;
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+.title_name{
+    color: var(--orange);
+    font-weight: 600;
+}
+.description{
+    text-align: left;
+    display: block;
+    padding-left: 15px;
+    font-style: italic;
+}
+
+.stats_container{
+    padding: 20px;
+    background: var(--gray);
+    border-radius: 10px;
+    margin-top: 60px;
+}
+
+.stats_row_container{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 60px;
+}
