@@ -6,25 +6,25 @@ import styles from './styles.module.scss';
 import { useEffect, useState } from "react";
 import FileInput from "../../../commons/file_uploader";
 import { IconButton } from "@material-ui/core";
-
+import { addNovedadesFileService, deleteNovedadesFileService } from "../../../../utils/novedades/services/novedades_services";
+import { useSelector } from "react-redux";
+import { mutate } from "swr";
+import config from "../../../../utils/config";
 
 const INITIAL_STATE = {
     cuerpo: "",
     files: [],
-    padre:'',
 }
 
-
-const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
-
+ 
+const EditPostForm = (props) => {
+    const url = `${config.api_url}/actualizaciones/${props.postData.seguimiento.id}/list/`;
     const [state, setState] = useState(INITIAL_STATE);
+    const user = useSelector((store) => store.user);
 
     useEffect(()=>{
-        if(padre){
-            setState({...state,padre:padre})
-        }
-        if(postData){
-            setState({...state,cuerpo:postData.cuerpo, files:postData.aduntos})
+        if(props.postData){
+            setState({...state,cuerpo:props.postData.cuerpo, files:props.postData.adjuntos})
         }
     },[])
 
@@ -37,25 +37,53 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
         setState({ ...state, files: files })
     }
 
+    const checkFilesToSend = () =>{
+        let filesToSend = [];
+        state.files.map((file)=>{
+            if(!file.id){
+                filesToSend.push(file);
+            }
+        })
+        return filesToSend;
+    }
+       
+    async function handleDeleteFile(fileId){
+        return deleteNovedadesFileService(fileId, user.user.token).then((result) => {
+            return result
+        })
+    }
+
+    
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleSubmitPost(state).then((result)=>{
+        const filesToSend = checkFilesToSend();
+        props.handleSubmitPost(state).then((result)=>{
             if(result.success){
-                handleModal && handleModal(false);
+                setState(INITIAL_STATE);
+                if(!!filesToSend.length){
+                    const DATA = {
+                        post: props.postData.id,
+                        files: filesToSend
+                    }
+                     addNovedadesFileService(DATA, user.user.token).then(()=>{
+                        mutate(url);
+                     });
+                }
             }
-            setState(INITIAL_STATE);
+            mutate(url);
+            props.handleClose && props.handleClose(false);
         });
     }
     return (
+        <div className={styles.edit_container}>
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
-
             <Col lg={12} md={12} sm={12} xs={12}>
                 <form onSubmit={handleSubmit}>
                     <FormControl variant="outlined">
                         <TextField
                             multiline
                             value={state.cuerpo}
-                            label={padre ? "Respuesta" : "Publica alguna novedad"}
+                            label={"Publica alguna novedad"}
                             InputLabelProps={{ style: { color: 'var(--black) !important' } }}
                             rowsMax={3}
                             onChange={handleChange('cuerpo')}
@@ -70,10 +98,11 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
                 </form>
             </Col>
             <Col lg={12} md={12} sm={12} xs={12} className={styles.bottom_container}>
-                <FileInput handleChange={handleFileChange} files={state.files}/>
+                <FileInput handleChange={handleFileChange} files={state.files} deleteFile={handleDeleteFile}/>
             </Col>
         </Row>
+        </div>
     )
 }
 
-export default NewPost;
+export default EditPostForm;

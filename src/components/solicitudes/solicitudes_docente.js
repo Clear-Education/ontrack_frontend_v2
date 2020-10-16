@@ -1,14 +1,12 @@
 import TitlePage from "../../../src/components/commons/title_page/title_page";
 import styles from './styles.module.css'
 import { useSelector } from "react-redux";
-import { useState } from "react";
-import useSWR, { mutate } from "swr";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 import config from "../../utils/config"
 import BackgroundLoader from "../commons/background_loader/background_loader";
-import { getSolicitudesService, addSolicitudesService } from "../../../src/utils/solicitudes/services/solicitudes_services";
-import { IconButton, Link } from "@material-ui/core";
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import { getSolicitudesService } from "../../../src/utils/solicitudes/services/solicitudes_services";
+import { Link } from "@material-ui/core";
 import { motion } from "framer-motion";
 import { Row, Col } from "react-bootstrap";
 import MUIDataTable from "mui-datatables";
@@ -18,13 +16,15 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 
 
 const SolicitudesDocente = () => {
-
-
     const url = `${config.api_url}/seguimientos/solicitudes/list/`;
     const [selectedData, setSelectedData] = useState([]);
     const user = useSelector((store) => store.user);
-    const [isLoading, setIsLoading] = useState(false)
+    const [showTable, setShowTable] = useState();
+    const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        setShowTable(true); 
+    }, [])
 
     let { data } = useSWR(url, () => {
         setIsLoading(true);
@@ -46,15 +46,6 @@ const SolicitudesDocente = () => {
     }
     );
 
-    async function addSolicitudes(e, data) {
-        e.preventDefault();
-        setIsLoading(true);
-        return await addSolicitudesService(user.user.token, data).then((result) => {
-            setIsLoading(false);
-            mutate(url);
-            return result;
-        })
-    }
 
     const getMuiTheme = () => createMuiTheme({
         overrides: {
@@ -106,55 +97,41 @@ const SolicitudesDocente = () => {
                         md={12}
                         sm={12}
                         xs={12}
-                    >
-                        <MuiThemeProvider theme={getMuiTheme()}>
-                            <MUIDataTable
-                                title={"Solicitudes"}
-                                data={selectedData}
-                                options={MTConfig("Solicitudes").options}
-                                components={MTConfig().components}
-                                localization={MTConfig().localization}
-                                columns={[
-                                    {
-                                        name: "fecha_creacion",
-                                        label: "Fecha Solicitud",
-                                    },
-                                    {
-                                        name: "motivo_solicitud",
-                                        label: "Motivo",
-                                    },
-                                    {
-                                        name: "alumnos",
-                                        label: "Alumnos",
-                                        options: {
-                                            customBodyRender: (value, tableMeta, updateValue) => (
-                                                <div>{value.join(",")}</div>
-                                            )
-                                        }
-                                    },
-                                    {
-                                        name: "estado",
-                                        label: "Estado",
-                                    },
-                                    /*  {
-                                         name: "actions",
-                                         label: "Acciones",
-                                         options: {
-                                             customBodyRender: (value, tableMeta, updateValue) => {
-                                                 return (
-                                                     <>
-                                                         <IconButton onClick={() => setSelectedData(tableMeta.rowData[0])} >
-                                                             <VisibilityIcon />
-                                                         </IconButton>
-                                                     </>
-                                                 )
-                                             },
-                                         },
-                                     } */
-                                ]}
-                            />
-                        </MuiThemeProvider>
-
+                    >{
+                        showTable &&
+                            <MuiThemeProvider theme={getMuiTheme()}>
+                                <MUIDataTable
+                                    title={"Solicitudes"}
+                                    data={selectedData}
+                                    options={MTConfig("Solicitudes").options}
+                                    components={MTConfig().components}
+                                    localization={MTConfig().localization}
+                                    columns={[
+                                        {
+                                            name: "fecha_creacion",
+                                            label: "Fecha Solicitud",
+                                        },
+                                        {
+                                            name: "motivo_solicitud",
+                                            label: "Motivo",
+                                        },
+                                        {
+                                            name: "alumnos",
+                                            label: "Alumnos",
+                                            options: {
+                                                customBodyRender: (value, tableMeta, updateValue) => (
+                                                    <div>{value.join(",")}</div>
+                                                )
+                                            }
+                                        },
+                                        {
+                                            name: "estado",
+                                            label: "Estado",
+                                        },
+                                    ]}
+                                />
+                            </MuiThemeProvider>
+                        }
                     </Col>
                     <Col className={styles.add_btn_container}>
                         <Link href="solicitudes/nueva">

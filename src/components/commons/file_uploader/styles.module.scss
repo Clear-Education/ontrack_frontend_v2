@@ -16,16 +16,24 @@
   overflow: auto;
   max-height: 100px;
 }
-.input_file_container{
+.input_file_container {
   display: flex;
   justify-content: flex-end;
 }
 
-.files_container{
+.files_container {
   display: flex;
   flex-direction: row;
   overflow: auto;
+  zoom: 0.7;
 }
+.delete_container {
+  position: absolute;
+  top: -10px;
+  right: -20px;
+  cursor: pointer;
+}
+
 // Change this on main color change
 $main_color: #004d67;
 .preview_photo {
@@ -33,8 +41,11 @@ $main_color: #004d67;
   border: 3px solid $main_color;
   border-radius: 15px;
   padding: 10px;
-  width: 200px;
   margin-right: 10px;
+  min-height: 75px;
+  max-height: 50px;
+  font-size: 14px;
+  width: 230px;
   .photo_container {
     display: flex;
     align-items: center;

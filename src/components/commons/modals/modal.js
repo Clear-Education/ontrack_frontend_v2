@@ -14,7 +14,7 @@ Ejemplo de uso
 
 
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from './styles.module.scss'
 
 
@@ -27,22 +27,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const Modal = (props) => {
-
-
     const [show, setShow] = useState(false);
     const handleVisibilityModal = (value) => {
         setShow(value);
+        if(!value){
+            props.close();
+        }
     }
     
     let body = {...props.body};
     body.props = {...props.body.props,handleClose:handleVisibilityModal}
-
     return (
         <>
             {show ?
                 <Dialog
                     open={show}
-                    onClose={()=>handleVisibilityModal(false)}
+                    onClose={()=>{handleVisibilityModal(false)}}
                     fullScreen={true}
                     className="responsive_modal center"
                     TransitionComponent={Transition}

@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import useSWR, { mutate } from "swr";
+import BackgroundLoader from "../../../../src/components/commons/background_loader/background_loader";
+import ShowMore from "../../../../src/components/commons/show_more/show_more";
 import TitlePage from "../../../../src/components/commons/title_page/title_page";
 import DateFilter from "../../../../src/components/tracking/view/date_filter/date_filter";
 import NewPost from "../../../../src/components/tracking/view/new_post/new_post";
 import Post from "../../../../src/components/tracking/view/post/post";
 import config from "../../../../src/utils/config";
 import { parsePostData } from "../../../../src/utils/general_services/services";
-import { addNovedadesFileService, addNovedadesService, getNovedadesService } from "../../../../src/utils/novedades/services/novedades_services";
+import { addNovedadesFileService, addNovedadesService, getMoreNovedadesService, getNovedadesService } from "../../../../src/utils/novedades/services/novedades_services";
 import styles from './styles.module.scss';
-
 
 const Novedades = ({ trackingId }) => {
 
@@ -18,24 +19,47 @@ const Novedades = ({ trackingId }) => {
     const currentTracking = useSelector((store) => store.currentTracking);
     const user = useSelector((store) => store.user);
     const [news, setNews] = useState([]);
+    const divRef = useRef(null);
+    const [divHeight, setDivHeight] = useState();
+    const [showMore, setShowMore] = useState();
+    const [nextUrl, setNextUrl] = useState();
 
     useSWR(url, () => {
         getNovedadesService(user.user.token, trackingId).then((result) => {
             setNews(result.result.results);
+            setNextUrl(result.result.next);
         })
     });
 
-    async function handleSubmitPost({ cuerpo, files }){
+    useEffect(() => {
+        setDivHeight(divRef.current.clientHeight + 100)
+    }, [divRef])
+
+    const handleShowMore = () => {
+        getMoreNovedadesService(user.user.token, nextUrl).then((result) => {
+            const newPosts = result.result.results;
+            const newData = [...news].concat(newPosts);
+            setNews(newData);
+            setNextUrl(result.result.next);
+            setDivHeight(prevState => prevState + 1500);
+            setShowMore(false);
+        })
+    }
+    const handleScroll = (e) => {
+        const currentPosition = e.target.scrollTop;
+        setShowMore(currentPosition > divHeight);
+    }
+
+    async function handleSubmitPost({ cuerpo, files, padre }) {
         const token = user.user.token;
-        const DATA = {
+        let postData = {
             cuerpo: cuerpo,
             seguimiento: trackingId,
         }
-       return addNovedadesService(DATA, token).then((result) => {
+        if (padre) postData.seguimiento_padre = padre
+        return addNovedadesService(postData, token).then((result) => {
             if (result.success) {
-                mutate(url);
-                    return result;
-                /* if (files && !!files.length) {
+                if (files && !!files.length) {
                     const DATA = {
                         post: result.result.id,
                         files: files
@@ -48,50 +72,54 @@ const Novedades = ({ trackingId }) => {
                     mutate(url);
                     return result;
                 }
- */
             }
         })
     }
     return (
-        <Col lg={8} md={8} sm={8} xs={8} >
-            <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
-                <Col lg={12} md={12} sm={12} xs={12}>
-                    <Row lg={12} md={12} sm={12} xs={12}>
-                        <Col lg={6} md={6} sm={6} xs={6}>
-                            <TitlePage title={"Novedades del Seguimiento"} fontSize={16} />
-                        </Col>
-                        <Col lg={6} md={6} sm={6} xs={6}>
-                            <DateFilter />
-                        </Col>
-                    </Row>
 
-                    <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
-                        <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
-                            <NewPost handleSubmitPost={handleSubmitPost} />
-                        </Col>
-                    </Row>
+        <Row lg={12} md={12} sm={12} xs={12} onScroll={handleScroll} ref={divRef} className={styles.container}>
+            {showMore
+                && nextUrl
+                && <ShowMore
+                    show={showMore}
+                    showMore={handleShowMore}
+                />}
+            <Col lg={12} md={12} sm={12} xs={12} >
+                <Row lg={12} md={12} sm={12} xs={12} >
+                    <Col lg={11} md={11} sm={11} xs={11}>
+                        <TitlePage title={"Novedades del Seguimiento"} fontSize={16} />
+                    </Col>
+                    <DateFilter />
+                </Row>
 
-                    <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
+                <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
+                    <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.new_post_container}>
+                        <NewPost handleSubmitPost={handleSubmitPost} />
+                    </Col>
+                </Row>
 
-                        {
-                            news && !!news.length ?
-                                news.map((post,i) => {
-                                    return (
-                                        <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} key={i}>
-                                            <Post postData = {parsePostData(post,currentTracking)}/>
-                                        </Col>
+                <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container} >
 
-                                    )
-                                })
-                                :
+                    {
+                        news && !!news.length ?
+                            news.map((post, i) => {
+                                return (
+                                    <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} key={i}>
+                                        <Post postData={parsePostData(post, currentTracking)} handleSubmitPost={handleSubmitPost} />
+                                    </Col>
+
+                                )
+                            })
+                            :
+                            <div className={styles.empty_data}>
                                 <span>¡Comenzá a publicar las novedades del seguimiento!</span>
-                        }
-               
-                    </Row>
+                            </div>
 
-                </Col>
-            </Row>
-        </Col >
+                    }
+                </Row>
+
+            </Col>
+        </Row>
     )
 }
 

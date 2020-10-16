@@ -5,7 +5,9 @@ import GoalsViewer from "../../../../src/components/tracking/view/goals_viewer/g
 import StudentViewer from "../../../../src/components/tracking/view/student_viewer/student_viewer";
 import GraphicViewer from "../../../../src/components/tracking/view/graphics_viewer/graphic_viewer";
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import DateViewer from "../../../../src/components/commons/date_viewer/date_viewer";
+import { fromStoreToViewFormatDate } from "../../../../src/utils/commons/common_services";
 
 const RightSideBar = ({ currentTracking }) => {
 
@@ -15,8 +17,13 @@ const RightSideBar = ({ currentTracking }) => {
         setSelectedStudent(student);
     }
 
+    useEffect(()=>{
+            const alumno = currentTracking?.alumnos[0].alumno;
+            setSelectedStudent(alumno)
+    },[])
+
     return (
-        <Col lg={3} md={3} sm={3} xs={3} className={styles.container}>
+        <>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                     <span className={styles.section_title}>Alumnos</span>
@@ -26,16 +33,9 @@ const RightSideBar = ({ currentTracking }) => {
             <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container} id={styles.student_item_container}>
                     <span className={styles.section_title}>Plazos</span>
-                    <Row lg={12} md={12} sm={12} xs={12} className={styles.container_plazos}>
-                        <Col lg={5} md={5} sm={5} xs={5}>
-                            <span className={styles.viwer_date}>{currentTracking?.fecha_inicio}</span>
-                        </Col>
-
-                        <Col lg={2} md={2} sm={2} xs={2}><ArrowForwardIcon style={{ color: 'var(--orange)' }} /></Col>
-                        <Col lg={5} md={5} sm={5} xs={5}>
-                            <span className={styles.viwer_date}>{currentTracking?.fecha_cierre}</span>
-                        </Col>
-                    </Row>
+                    <DateViewer 
+                        start={fromStoreToViewFormatDate(currentTracking.fecha_inicio)} 
+                        end={fromStoreToViewFormatDate(currentTracking.fecha_cierre)} />
                 </Col>
             </Row>
             {currentTracking?.cualitativos?.length !== 0 &&
@@ -55,7 +55,7 @@ const RightSideBar = ({ currentTracking }) => {
                     <GraphicViewer student={selectedStudent} tracking={currentTracking} />
                 </Col>
             </Row>
-        </Col>
+        </>
     )
 }
 

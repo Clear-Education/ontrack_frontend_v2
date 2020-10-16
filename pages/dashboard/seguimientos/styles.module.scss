@@ -1,4 +1,16 @@
 .add_btn_container{
     text-align: right;
     margin-top: 20px;
+    padding-right: 32px;
  }
+ .last_news_container {
+    justify-content: center;
+    display: flex;
+    background: var(--white);
+    margin-top: 19px;
+    height: 98%;
+    border-radius: 5px;
+    max-height: 665px;
+    width: 300px;
+    overflow: auto;
+  }
