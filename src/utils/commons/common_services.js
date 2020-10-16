@@ -7,8 +7,12 @@ export const convertDate = (inputFormat) => {
 }
 
 export const convertDate2 = (date) => {
-    let datearray = date.split("-");
-    let newdate = datearray[0] + '/' + datearray[1] + '/' + datearray[2];
+    let datearray = date?.split("-");
+    let newdate;
+    if(datearray){
+       newdate = datearray[0] + '/' + datearray[1] + '/' + datearray[2];
+    }
+   
     return newdate;
 }
 
@@ -23,7 +27,7 @@ export const convertDate3 = (inputFormat) => {
 
 
 export const fromStoreToDateInputFormatDate = (date) =>{
-    let datearray = date.split("-");
+    let datearray = date?.split("-");
     const year = +datearray[0];
     const month = datearray[1]-1;
     const day = +datearray[2]
@@ -32,11 +36,14 @@ export const fromStoreToDateInputFormatDate = (date) =>{
 }
 
 export const fromStoreToViewFormatDate = (date) =>{
-    let datearray = date.split("-");
-    const year = +datearray[0];
-    const month = datearray[1];
-    const day = +datearray[2]
-    let newDate = `${day}/${month}/${year}`
+    let datearray = date?.split("-");
+    let newdate;
+    if(datearray){
+        const year = +datearray[0];
+        const month = datearray[1];
+        const day = +datearray[2]
+        newdate = `${day}/${month}/${year}`
+    }
     return newDate;
 }
 
@@ -51,7 +58,7 @@ export const convertDateToSend = (date) =>{
 }
 
 export const convertDateFromStoreToSend = (date) => {
-    let datearray = date.split("-");
+    let datearray = date?.split("-");
     let newdate = datearray[2] + '/' + datearray[1] + '/' + datearray[0];
     return newdate;
 }
