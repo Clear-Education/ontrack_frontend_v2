@@ -77,7 +77,7 @@ const Novedades = ({ trackingId }) => {
     }
     return (
 
-        <Row lg={12} md={12} sm={12} xs={12} onScroll={handleScroll} ref={divRef} className={styles.container} onScroll={handleScroll}>
+        <Row lg={12} md={12} sm={12} xs={12} onScroll={handleScroll} ref={divRef} className={styles.container}>
             {showMore
                 && nextUrl
                 && <ShowMore
