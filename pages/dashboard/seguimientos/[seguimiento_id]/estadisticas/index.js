@@ -237,8 +237,8 @@ const Estadisticas = () => {
                                 <div className={styles.general_item_container}>
                                     <span className={styles.section_title}>Fechas</span>
                                     <DateViewer
-                                        start={fromStoreToViewFormatDate(tracking.fecha_inicio)}
-                                        end={fromStoreToViewFormatDate(tracking.fecha_cierre)} />
+                                        start={tracking.fecha_inicio}
+                                        end={tracking.fecha_cierre} />
                                 </div>
                             </Col>
                             <Col lg={6} md={6} sm={6} xs={6}>
