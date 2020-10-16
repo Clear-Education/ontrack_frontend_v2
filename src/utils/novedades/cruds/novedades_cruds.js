@@ -93,7 +93,49 @@ export async function getNovedadesCrud(auth_token, seguimiento_id) {
         .catch(error => errorHandler(error));
 }
 
+
+export async function getLastNovedadesCrud(auth_token) {
+    return axios
+        .get(`${config.api_url}/actualizaciones/list_last/`, {
+            headers: {
+                Authorization: `Token ${auth_token}`,
+            },
+            params: {
+                limit: 10
+            }
+
+        })
+        .then(json => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+        })
+        .catch(error => errorHandler(error));
+}
+
 export async function getMoreNovedadesCrud(auth_token, url) {
+    return axios
+        .get(url, {
+            headers: {
+                Authorization: `Token ${auth_token}`,
+            },
+        })
+        .then(json => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+        })
+        .catch(error => errorHandler(error));
+}
+
+
+export async function getMoreLastNovedadesCrud(auth_token, url) {
     return axios
         .get(url, {
             headers: {

@@ -67,7 +67,7 @@ const Post = ({ postData, handleSubmitPost }) => {
             </Col>
             <Col lg={11} md={11} sm={11} xs={11} className={styles.header_container}>
                 <span className={styles.highlight}>{owner.name} {owner.last_name}</span> publicó en
-                <span className={styles.highlight}> seguimiento: {tracking.nombre} </span>
+                <span className={styles.highlight}>: {tracking.nombre} </span>
                 <span className={styles.dot}></span>
                 <span className={styles.post_date}> {postData.fecha_creacion} : </span>
                 <div className={styles.more_options}>

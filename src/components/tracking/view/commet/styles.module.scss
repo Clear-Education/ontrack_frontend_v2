@@ -5,6 +5,7 @@
   font-weight: 600;
   font-size: 12px;
   text-align: left;
+  padding-left: 35px;
 }
 .dot {
   height: 5px;
@@ -79,8 +80,8 @@
 }
 .collapse_container {
   position: absolute;
-  right: 0;
-  top: 50px;
+  right: 20px;
+  top: -10px;
   background: white;
   padding: 10px 7px 0px 7px;
   border-radius: 5px;

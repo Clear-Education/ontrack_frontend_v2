@@ -21,7 +21,7 @@ const FatherPreview = ({ postData }) => {
             </Col>
             <Col lg={11} md={11} sm={11} xs={11} className={styles.header_container}>
                 <span className={styles.highlight}>{father.name} {father.last_name}</span> publicó en
-                <span className={styles.highlight}> seguimiento: {tracking.nombre} </span>
+                <span className={styles.highlight}>: {tracking.nombre} </span>
                 <span className={styles.dot}></span>
                 <span className={styles.post_date}> {postData.fecha_creacion} : </span>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.content_container}>
