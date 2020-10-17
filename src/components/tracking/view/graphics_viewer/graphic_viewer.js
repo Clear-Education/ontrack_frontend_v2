@@ -112,7 +112,7 @@ const GraphicViewer = ({ student, tracking }) => {
     return (
         <div>
             {calificacionesData.length != 0 &&
-                <div>
+                <div className={styles.container} style={{paddingTop:'15px'}}>
                     <h6 className="subtitle mb-2">Progreso Calificaciones</h6>
                     <ResponsiveContainer width="100%" height={200} className="mx-auto">
                         <LineChart
@@ -125,7 +125,7 @@ const GraphicViewer = ({ student, tracking }) => {
                             <YAxis type="number" domain={[4, 10]} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
-                            <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red"  /* alwaysShow */ ifOverflow="extendDomain" />
+                            <ReferenceLine y={tracking.promedio?.value} label="Objetivo" stroke="red"  /* alwaysShow */ ifOverflow="extendDomain" />
                             <Line type="monotone" dataKey="promedio" stroke="#82ca9d" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>
@@ -133,7 +133,7 @@ const GraphicViewer = ({ student, tracking }) => {
             }
 
             {asistenciasData.length != 0 &&
-                <div className="h-100">
+                <div className="h-100" className={styles.container}>
                     <h6 className="subtitle mb-2 mt-3">Progreso Asistencias</h6>
                     <ResponsiveContainer width="100%" height={200} className="mx-auto">
                         <LineChart
@@ -146,7 +146,7 @@ const GraphicViewer = ({ student, tracking }) => {
                             <YAxis type="number" domain={[0, 100]} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
-                            <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
+                            <ReferenceLine y={tracking.asistencia?.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
                             <Line type="monotone" dataKey="porcentaje" stroke="#8884d8" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>

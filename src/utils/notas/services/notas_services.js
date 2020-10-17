@@ -1,4 +1,4 @@
-import { getNotasCrud, getNotasCursoCrud, addNotasCrud, editNotasCrud, deleteNotasCrud } from "../cruds/notas_cruds";
+import { getNotasCrud, getNotasCursoCrud, addNotasCrud, editNotasCrud, deleteNotasCrud, addNotasMultipleCrud } from "../cruds/notas_cruds";
 import Alert from "react-s-alert";
 
 
@@ -34,6 +34,23 @@ export async function getNotasCursoService(token, id_curso, id_evaluacion) {
 
 export async function addNotasService(token, data) {
     return await addNotasCrud(token, data).then((result) => {
+        if (result.success) {
+            Alert.success("Calificación cargada correctamente", {
+                effect: "stackslide",
+            });
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
+            });
+        }
+        return result;
+    })
+}
+
+export async function addNotasMultipleService(token, data) {
+    return await addNotasMultipleCrud(token, data).then((result) => {
         if (result.success) {
             Alert.success("Calificación cargada correctamente", {
                 effect: "stackslide",

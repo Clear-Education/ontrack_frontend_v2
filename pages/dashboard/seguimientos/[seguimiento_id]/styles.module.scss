@@ -63,3 +63,20 @@
 #new_post_container {
   margin-top: 40px;
 }
+
+.show_stats_container{
+  width: 100%;
+  text-align: left;
+  margin-left: 3%;
+  margin-bottom: 10px;
+}
+
+.show_stats{
+  color: var(--main-color-dark);
+  font-weight: 600;
+}
+
+.show_stats:hover{
+  color: var(--orange);
+  text-decoration: none;
+}

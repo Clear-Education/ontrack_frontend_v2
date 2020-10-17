@@ -1,8 +1,8 @@
 // Change this on main color change
-$main_color: #7a00f9;
+$main_color: #004d67;
 .preview_photo {
   margin: 10px 0px;
-  border: 3px solid lighten($color: $main_color, $amount: 45);
+  border: 3px solid $main_color;
   border-radius: 15px;
   padding: 10px;
   .photo_container {

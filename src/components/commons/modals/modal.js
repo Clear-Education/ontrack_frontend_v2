@@ -31,7 +31,7 @@ const Modal = (props) => {
     const handleVisibilityModal = (value) => {
         setShow(value);
         if(!value){
-            props.close();
+            props.close && props.close();
         }
     }
     

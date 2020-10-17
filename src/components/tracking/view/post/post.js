@@ -108,11 +108,11 @@ const Post = ({ postData, handleSubmitPost }) => {
                         <div style={{ overflow: 'auto', display: 'flex' }}>
                             {postData.adjuntos.map((file, i) => {
                                 const url = file.file;
-                                return <div className={styles.file_container} onClick={() => handleOpenFile(url)}>Archivo {i + 1}</div>
+                                return <div className={styles.file_container} onClick={() => handleOpenFile(url)}>{file.upload_name}</div>
                             })}
                         </div>
                     </Col>
-                </Row>
+                </Row> 
             </Col>
             <Col lg={12} md={12} sm={12} xs={12} className={styles.comments_actions}>
                 <span className={styles.comments_label} onClick={() => !!comments.length ? setOpenComments(!openComments) : null}>{openComments ? 'Ocultar comentarios' : !!comments.length ? `Ver ${comments.length} comentarios` : 'Sin comentarios'}</span>

@@ -30,7 +30,6 @@
     align-items: center;
 }
 .item_area_text{
-    color: var(--gray);
     font-weight: 600;
     position: absolute;
     bottom: 60px;
