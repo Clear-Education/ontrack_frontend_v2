@@ -18,6 +18,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "date-fns": "^2.15.0",
+    "file-saver": "^2.0.2",
     "framer-motion": "^2.1.0",
     "material-table": "1.66.0",
     "material-ui-color-picker": "^3.5.0",
@@ -30,6 +31,7 @@
     "react-bootstrap": "^1.2.2",
     "react-country-region-selector": "^2.1.0",
     "react-dom": "16.13.1",
+    "react-export-excel": "^0.5.3",
     "react-redux": "^7.2.0",
     "react-s-alert": "^1.4.1",
     "react-text-mask": "^5.4.3",
@@ -38,7 +40,8 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "sass": "^1.26.10",
-    "swr": "^0.3.0"
+    "swr": "^0.3.0",
+    "xlsx": "^0.16.8"
   },
   "devDependencies": {
     "json-server": "0.16.1"

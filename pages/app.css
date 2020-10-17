@@ -28,7 +28,7 @@ body {
 }
 
 #dashboard_container {
-  margin-left: auto;
+  margin-left: 240px;
 }
 #component_container {
   color: #6f6f6f;
@@ -259,10 +259,11 @@ button:focus {
   width: 100%;
 }
 
-
 .MuiTableCell-root:focus{
 outline: none !important;
 }
+
+
 @media (max-width: 600px) {
   .ontrack_btn_modal {
     width: 90% !important;

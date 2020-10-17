@@ -13,6 +13,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { getStudentService } from "../../../utils/student/service/student_service";
 import CountrySelector from "../../commons/country_selector/country_selector";
 import MaskedInput from "react-text-mask";
+import { convertDateToSend } from "../../../utils/commons/common_services";
 
 const list = {
     visible: {
@@ -172,10 +173,10 @@ const AddEditStudentForm = (props) => {
         setIsLoading(true);
         let parseData = { ...state };
         if (parseData['fecha_nacimiento'] !== "") {
-            parseData['fecha_nacimiento'] = convertDate(parseData['fecha_nacimiento']);
+            parseData['fecha_nacimiento'] = convertDateToSend(parseData['fecha_nacimiento']);
         }
         if (parseData['fecha_inscripcion'] !== "") {
-            parseData['fecha_inscripcion'] = convertDate(parseData['fecha_inscripcion']);
+            parseData['fecha_inscripcion'] = convertDateToSend(parseData['fecha_inscripcion']);
         }
 
         props.handleSubmitAction(e, parseData).then((result) => {

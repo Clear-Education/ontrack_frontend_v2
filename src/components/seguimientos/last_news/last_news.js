@@ -18,9 +18,11 @@ const LastNews = () => {
 
     useSWR(lastNewsUrl, () => {
         getLastNovedadesService(user.user.token).then((result) => {
-            let news = [...result.result.results];
-            setNewsData(news);
-            setNextUrl(result.result.next);
+            if(result.success){
+                let news = [...result.result.results];
+                setNewsData(news);
+                setNextUrl(result.result.next);
+            }
         })
     });
 
@@ -50,9 +52,9 @@ const LastNews = () => {
                         !newsData.length ?
                             <span>No hay actualizaciones nuevas</span>
                             :
-                            newsData.map((newData) => {
+                            newsData.map((newData, i) => {
                                 return (
-                                    <ItemContainer newData={newData} />
+                                    <ItemContainer newData={newData} key={i}/>
                                 );
                             })}
                     {

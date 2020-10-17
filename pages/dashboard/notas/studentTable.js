@@ -24,6 +24,7 @@ import EditNotasForm from "../../../src/components/notas/edit_notas.form";
 import Delete from '@material-ui/icons/Delete';
 import DeleteForm from '../../../src/components/commons/delete_form/deleteForm';
 import { formatDistanceToNowStrict } from "date-fns";
+import CSVForm from "../../../src/components/notas/add_csv_form";
 
 
 const theme = createMuiTheme({
@@ -48,8 +49,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
     const [tableToShow, setTableToShow] = useState();
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);
-    const [date, setDate] = useState(null);
-    const [selectedDate, setSelectedDate] = useState("");
+
 
 
     async function getCalificacionesCurso() {
@@ -153,10 +153,23 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
             >
                 <Row className={styles.table_button_container}>
                     <Col>
-                        <button onClick={() => handleTableToShow('add')} className="ontrack_btn add_btn" style={{ padding: 10 }}>Agregar Calificaciones</button>
+                        <button onClick={() => handleTableToShow('add')} className="ontrack_btn add_btn" style={{ padding: 10, width: '75%' }}>Agregar Manualmente</button>
                     </Col>
                     <Col>
-                        <button onClick={() => handleTableToShow('delete')} className="ontrack_btn cancel_btn" style={{ padding: 10 }}>Ver Calificaciones</button>
+                        <Modal
+                            title="Agregar Calificación por CSV"
+                            body={<CSVForm data={{...data,students:addStudentAssistance}}/>}
+                            button={
+                                <button
+                                    className="ontrack_btn add_btn"
+                                    style={{ padding: 10, width: '75%' }}>
+                                    Agregar vía CSV
+                        </button>
+                            }
+                        />
+                    </Col>
+                    <Col>
+                        <button onClick={() => handleTableToShow('delete')} className="ontrack_btn add_btn" style={{ padding: 10, width: '75%' }}>Ver Calificaciones</button>
                     </Col>
                 </Row>
                 {

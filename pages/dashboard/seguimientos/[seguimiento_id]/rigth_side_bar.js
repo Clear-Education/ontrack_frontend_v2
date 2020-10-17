@@ -6,7 +6,6 @@ import StudentViewer from "../../../../src/components/tracking/view/student_view
 import GraphicViewer from "../../../../src/components/tracking/view/graphics_viewer/graphic_viewer";
 import { useEffect, useState } from "react";
 import DateViewer from "../../../../src/components/commons/date_viewer/date_viewer";
-import { fromStoreToViewFormatDate } from "../../../../src/utils/commons/common_services";
 
 const RightSideBar = ({ currentTracking }) => {
 
@@ -50,8 +49,8 @@ const RightSideBar = ({ currentTracking }) => {
             <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.item_container}>
                     <span className={styles.section_title}>Métricas</span>
-                    <div className="mb-3">
-                        <Link href={`/dashboard/seguimientos/${currentTracking?.id}/estadisticas`}><a >Ver Estadisticas</a></Link>
+                    <div className={styles.show_stats_container}>
+                        <Link href={`/dashboard/seguimientos/${currentTracking?.id}/estadisticas`}><a className={styles.show_stats}>Ver Estadisticas</a></Link>
                     </div>
                     <GraphicViewer student={selectedStudent} tracking={currentTracking} />
                 </Col>
