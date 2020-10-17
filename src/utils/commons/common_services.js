@@ -40,7 +40,7 @@ export const fromStoreToDateInputFormatDate = (date) => {
 export const fromStoreToViewFormatDate = (date) => {
     let datearray = date?.split("-");
     let formatDate = '10/10/1997';
-    if (!!datearray.length) {
+    if (!!datearray?.length) {
         const year = +datearray[0];
         const month = datearray[1];
         const day = +datearray[2]
@@ -83,6 +83,7 @@ export const parseCsvToJson = (file, handleOnLoad) => {
 }
 
 export const parseStudentsDataToExport = (students) =>{
+    debugger;
     let newStudentData = [];
     students.map((student)=>{
         let newStudent = {
