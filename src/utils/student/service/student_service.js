@@ -68,11 +68,9 @@ export async function addStudentService(token, data) {
         effect: "stackslide",
       });
     } else {
-      result.result.forEach((element) => {
-        Alert.error(element.message, {
+      Alert.error("Ocurrió un error agregando al alumno", {
           effect: "stackslide",
         });
-      });
     }
     return result;
   })

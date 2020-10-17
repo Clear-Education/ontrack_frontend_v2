@@ -1,3 +1,13 @@
 .label {
     font-size: 0.8rem;
 }
+.container{
+    background: var(--medium-gray);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding-right: 20px;
+}

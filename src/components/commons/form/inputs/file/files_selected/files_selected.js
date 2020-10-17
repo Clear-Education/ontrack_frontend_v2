@@ -18,7 +18,7 @@ const FilesSelected = ({ state, input }) => {
         xs={12}
         styles={{ padding: 0 }}
       >
-        <Collapse in={state[input.name]}>
+        <Collapse in={state[input.name] && state[input.name].length !== 0}>
           {state[input.name] && state[input.name].length > 0 ? (
             <>
               {state[input.name].map((file,index) => (
