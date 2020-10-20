@@ -13,7 +13,8 @@ import StudentTable from "./studentTable";
 import { addNotasService, editNotasService, deleteNotasService } from "../../../src/utils/notas/services/notas_services";
 import { useSelector } from "react-redux";
 import { getActualSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
-
+import Modal from '../../../src/components/commons/modals/modal';
+import CSVForm from "../../../src/components/notas/add_csv_form";
 
 const INITIAL_STATE = {
     department: '',
@@ -29,11 +30,11 @@ const Notas = () => {
     const [state, setState] = useState(INITIAL_STATE);
     const user = useSelector((store) => store.user);
 
-    useEffect(()=>{
-        getActualSchoolYearService(user.user.token).then((result)=>{
-            setState({...state,school_year: result.result.id});
+    useEffect(() => {
+        getActualSchoolYearService(user.user.token).then((result) => {
+            setState({ ...state, school_year: result.result.id });
         })
-    },[])
+    }, [])
 
     async function addnotas(e, data) {
         e.preventDefault();
@@ -63,12 +64,12 @@ const Notas = () => {
 
     function getSteps() {
         return ['Seleccione la carrera deseada',
-                'Seleccione el año deseado',
-                'Seleccione el curso deseado',
-                'Seleccione la materia deseada',
-                'Seleccione el examen deseado',
-                'Seleccione los alumnos'
-                ];
+            'Seleccione el año deseado',
+            'Seleccione el curso deseado',
+            'Seleccione la materia deseada',
+            'Seleccione el examen deseado',
+            'Seleccione los alumnos'
+        ];
     }
 
     function getStepContent(step) {
@@ -76,7 +77,7 @@ const Notas = () => {
             case 0:
                 return <SelectInput type="department" data={state} changeAction={handleChange} />
             case 1:
-                return <SelectInput type="year" data={state} changeAction={handleChange} show_school_year={false}/>;
+                return <SelectInput type="year" data={state} changeAction={handleChange} show_school_year={false} />;
             case 2:
                 return <SelectInput type="curso" data={state} changeAction={handleChange} />;
             case 3:
@@ -143,7 +144,7 @@ const Notas = () => {
                                         Anterior
                                     </Button>
                                     <button
-                                        onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ?  'year' : activeStep === 2 ? 'curso' : activeStep === 3 ? 'subject' : activeStep === 4 ? 'exam' : 'send')}
+                                        onClick={() => handleNext(activeStep === 0 ? 'department' : activeStep === 1 ? 'year' : activeStep === 2 ? 'curso' : activeStep === 3 ? 'subject' : activeStep === 4 ? 'exam' : 'send')}
                                         className={`ontrack_btn csv_btn ${styles.stepper_button}`}
                                     >
                                         {activeStep === steps.length - 1 ? 'Volver al Inicio' : 'Siguiente'}

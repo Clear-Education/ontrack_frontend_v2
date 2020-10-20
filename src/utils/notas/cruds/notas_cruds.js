@@ -22,6 +22,26 @@ export async function addNotasCrud(auth_token, data) {
         });
 }
 
+export async function addNotasMultipleCrud(auth_token, data) {
+    return axios.post(`${config.api_url}/calificaciones/multiple/`, data, {
+        headers: {
+            Authorization: `Token ${auth_token}`,
+        },
+    })
+        .then((json) => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+
+        })
+        .catch((error) => {
+            return errorHandler(error);
+        });
+}
+
 export async function getNotasCrud(auth_token) {
     return axios
         .get(`${config.api_url}/`, {

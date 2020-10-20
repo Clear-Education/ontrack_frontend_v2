@@ -101,11 +101,11 @@ export const Comment = ({ commentData }) => {
                         {
                             !!commentData.adjuntos.length && commentData.adjuntos.map((file, i) => {
                                 return (
-                                    <div className={styles.file_container} onClick={() => handleOpenFile(file.file)}>Archivo {i + 1}</div>
+                                    <div className={styles.file_container} onClick={() => handleOpenFile(file.file)}>{file.upload_name}</div>
                                 )
                             })
 
-                        }
+                        } 
                     </Col>
                 </Row>
             </Col>

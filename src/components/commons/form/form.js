@@ -131,17 +131,24 @@ const Form = ({
   };
 
   const fileAccept = (name, multiple, files) => {
-    if (multiple) {
-      const newFiles = [];
-      Array.from(files).forEach((el) => {
-        newFiles.push(el);
-      });
-      setState({ ...state, [name]: newFiles });
-    } else {
-      let previewEl = document.getElementById(`${name}_img_preview`);
-      previewEl.src = window.URL.createObjectURL(files[0]);
-      setState({ ...state, [name]: files[0] });
+    if(!!files.length){
+      if (multiple) {
+        const newFiles = [];
+        Array.from(files).forEach((el) => {
+          newFiles.push(el);
+        });
+        setState({ ...state, [name]: newFiles });
+      } else {
+        let previewEl = document.getElementById(`${name}_img_preview`);
+        const excelType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        const src = files[0].type === 'text/csv' ? '/icons/csv.svg' : files[0].type === excelType ? '/icons/xlsx.svg' : window.URL.createObjectURL(files[0]);
+        previewEl.src = src;
+        setState({ ...state, [name]: files[0] });
+      }
+    }else{
+      setState({...state,[name]:[]});
     }
+    
   };
 
   const handleSubmitAction = () => {
@@ -154,7 +161,7 @@ const Form = ({
   };
 
   return (
-    <Row lg={12} md={12} sm={12} xs={12} style={{width:'100%'}}>
+    <Row lg={12} md={12} sm={12} xs={12} style={{ width: '100%' }}>
       <Col lg={11} md={11} sm={11} xs={11} className="margin-center">
         <Row lg={12} md={12} sm={12} xs={12}>
           {inputs.map(
@@ -172,43 +179,43 @@ const Form = ({
                     variant={input.variant ? input.variant : "standard"}
                   >
                     {input.type !== "date" &&
-                    input.type !== "time" &&
-                    input.type !== "datetime" &&
-                    input.type !== "file" ? (
-                      <TextFieldInput
-                        input={input}
-                        state={state}
-                        validations={validations}
-                        passwordsVisibilities={passwordsVisibilities}
-                        handleChange={handleChange}
-                        handleClickShowPassword={handleClickShowPassword}
-                      />
-                    ) : input.type === "date" ? (
-                      <DateInput
-                        input={input}
-                        handleChangeDate={handleChangeDate}
-                        dates={dates}
-                      />
-                    ) : input.type === "time" ? (
-                      <TimeInput
-                        input={input}
-                        handleChangeDate={handleChangeDate}
-                        dates={dates}
-                      />
-                    ) : input.type === "datetime" ? (
-                      <DateTimeInput
-                        input={input}
-                        handleChangeDate={handleChangeDate}
-                        dates={dates}
-                      />
-                    ) : input.type === "file" ? (
-                      <>
-                        <FileInput onFilesAdded={fileAccept} input={input} />
-                        <FilesSelected state={state} input={input} />
-                      </>
-                    ) : ( 
-                      <div></div>
-                    )}
+                      input.type !== "time" &&
+                      input.type !== "datetime" &&
+                      input.type !== "file" ? (
+                        <TextFieldInput
+                          input={input}
+                          state={state}
+                          validations={validations}
+                          passwordsVisibilities={passwordsVisibilities}
+                          handleChange={handleChange}
+                          handleClickShowPassword={handleClickShowPassword}
+                        />
+                      ) : input.type === "date" ? (
+                        <DateInput
+                          input={input}
+                          handleChangeDate={handleChangeDate}
+                          dates={dates}
+                        />
+                      ) : input.type === "time" ? (
+                        <TimeInput
+                          input={input}
+                          handleChangeDate={handleChangeDate}
+                          dates={dates}
+                        />
+                      ) : input.type === "datetime" ? (
+                        <DateTimeInput
+                          input={input}
+                          handleChangeDate={handleChangeDate}
+                          dates={dates}
+                        />
+                      ) : input.type === "file" ? (
+                        <>
+                          <FileInput onFilesAdded={fileAccept} input={input} />
+                          <FilesSelected state={state} input={input} />
+                        </>
+                      ) : (
+                                <div></div>
+                              )}
                     {/* Helpers Space */}
                     {input.helperTexts &&
                       input.helperTexts.length > 0 &&
@@ -217,24 +224,24 @@ const Form = ({
                       ))}
                     {/* Validation Errors Space */}
                     {input.validatable &&
-                    validations &&
-                    validations[input.name] ? (
-                      input.type === "email" ? (
-                        <FormHelperText className={styles.errors_styles}>
-                          Este campo debe tener el formato x@x.x.
-                        </FormHelperText>
-                      ) : input.type === "password" ? (
-                        <FormHelperText className={styles.errors_styles}>
-                          Este campo debe tener más de 8 caracteres.
-                        </FormHelperText>
+                      validations &&
+                      validations[input.name] ? (
+                        input.type === "email" ? (
+                          <FormHelperText className={styles.errors_styles}>
+                            Este campo debe tener el formato x@x.x.
+                          </FormHelperText>
+                        ) : input.type === "password" ? (
+                          <FormHelperText className={styles.errors_styles}>
+                            Este campo debe tener más de 8 caracteres.
+                          </FormHelperText>
+                        ) : (
+                              <FormHelperText className={styles.errors_styles}>
+                                Este campo no puede estar vacío.
+                              </FormHelperText>
+                            )
                       ) : (
-                        <FormHelperText className={styles.errors_styles}>
-                          Este campo no puede estar vacío.
-                        </FormHelperText>
-                      )
-                    ) : (
-                      <div></div>
-                    )}
+                        <div></div>
+                      )}
                   </FormControl>
                 </Col>
               )
@@ -252,20 +259,20 @@ const Form = ({
         {button ? (
           <span onClick={handleSubmitAction}>{button}</span>
         ) : (
-          // Change default button style here
-          <button
-            onClick={handleSubmitAction}
-            style={{
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: 20,
-              backgroundColor: "var(--main-color)",
-              color: "#ffffff",
-            }}
-          >
-            Enviar Form
-          </button>
-        )}
+            // Change default button style here
+            <button
+              onClick={handleSubmitAction}
+              style={{
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: 20,
+                backgroundColor: "var(--main-color)",
+                color: "#ffffff",
+              }}
+            >
+              Enviar Form
+            </button>
+          )}
       </Col>
     </Row>
   );
