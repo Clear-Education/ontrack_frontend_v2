@@ -83,7 +83,6 @@ export const parseCsvToJson = (file, handleOnLoad) => {
 }
 
 export const parseStudentsDataToExport = (students) =>{
-    debugger;
     let newStudentData = [];
     students.map((student)=>{
         let newStudent = {
@@ -91,7 +90,7 @@ export const parseStudentsDataToExport = (students) =>{
             nombre: student.nombre,
             apellido: student.apellido,
             legajo: student.legajo,
-            puntaje: ''
+            puntaje: student.puntaje
         }
         newStudentData.push(newStudent);
     });
