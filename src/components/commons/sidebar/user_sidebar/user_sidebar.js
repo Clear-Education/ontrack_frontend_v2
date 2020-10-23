@@ -63,7 +63,7 @@ const UserSidebar = () => {
   return (
     <>
       <div className={styles.sidebar_container}>
-        <Row className="center" lg={12} md={12} sm={12} xs={12}>
+        <Row className="center" lg={12} md={12} sm={12} xs={12}  style={{margin:0}}>
           <Col
             className={styles.responsive_col}
             style={{ padding: '0px' }}

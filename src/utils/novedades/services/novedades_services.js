@@ -7,7 +7,8 @@ export async function getNovedadesService(token, seguimiento_id, filters) {
         if (result.success) {
 
         } else {
-            Alert.error("Ocurrió un error al buscar las novedades", {
+            let message = result?.result[0]?.message || "Ocurrió un error al buscar las novedades";
+            Alert.error(message, {
                 effect: "stackslide",
             });
         }
