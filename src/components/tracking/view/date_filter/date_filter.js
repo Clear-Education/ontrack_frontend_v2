@@ -7,7 +7,7 @@ import { Collapse, IconButton } from "@material-ui/core";
 import styles from './styles.module.scss';
 import DoneIcon from '@material-ui/icons/Done';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { convertDateToSend } from "../../../../utils/commons/common_services";
+import { convertDateToSendOnQuery } from "../../../../utils/commons/common_services";
 
 
 const DateFilter = ({handleSend}) => {
@@ -31,8 +31,8 @@ const DateFilter = ({handleSend}) => {
     }
 
     const handleSendFilter = () =>{
-        const from = convertDateToSend(startDate);
-        const to = convertDateToSend(endDate);
+        const from = convertDateToSendOnQuery(startDate);
+        const to = convertDateToSendOnQuery(endDate);
         handleSend(from,to).then((result)=>{
             if(result.success){
                 handleOpenFilter();
