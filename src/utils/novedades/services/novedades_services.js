@@ -2,8 +2,8 @@ import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesC
 import Alert from "react-s-alert";
 
 
-export async function getNovedadesService(token, seguimiento_id) {
-    return await getNovedadesCrud(token, seguimiento_id).then((result) => {
+export async function getNovedadesService(token, seguimiento_id, filters) {
+    return await getNovedadesCrud(token, seguimiento_id, filters).then((result) => {
         if (result.success) {
 
         } else {

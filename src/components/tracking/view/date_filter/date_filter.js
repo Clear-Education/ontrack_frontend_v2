@@ -10,7 +10,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { convertDateToSend } from "../../../../utils/commons/common_services";
 
 
-const DateFilter = () => {
+const DateFilter = ({handleSend}) => {
 
     const [endDate, setEndDate] = useState(new Date());
     const [startDate, setStartDate] = useState(new Date());
@@ -33,7 +33,11 @@ const DateFilter = () => {
     const handleSendFilter = () =>{
         const from = convertDateToSend(startDate);
         const to = convertDateToSend(endDate);
-        console.log('enviando desde '+from+ " hasta: "+to);
+        handleSend(from,to).then((result)=>{
+            if(result.success){
+                handleOpenFilter();
+            }
+        });
     }
 
 
