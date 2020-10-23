@@ -28,7 +28,7 @@ body {
 }
 
 #dashboard_container {
-  margin-left: 240px;
+  margin-left: 230px;
 }
 #component_container {
   color: #6f6f6f;
@@ -245,6 +245,26 @@ button:focus {
   max-height: 230px;
   overflow: auto;
 }
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;    
+}
+/* Track */
+  ::-webkit-scrollbar-track {
+  background: var(--white); 
+}
+/* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: var(--medium-gray); 
+    border-radius: 10px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--main-color-dark);
+} 
 
 /* STEPPER */
 

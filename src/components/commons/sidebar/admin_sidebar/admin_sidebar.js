@@ -61,7 +61,7 @@ const AdminSideBar = () => {
   return (
     <>
       <div className={styles.sidebar_container}>
-        <Row className="center" lg={12} md={12} sm={12} xs={12}>
+        <Row className="center" lg={12} md={12} sm={12} xs={12} style={{margin:0}}>
           <Col
             className={styles.responsive_col}
             style={{ padding: '0px' }}
@@ -84,8 +84,7 @@ const AdminSideBar = () => {
                 <img src="/icons/curricula.svg" style={{ width: '30%', display: 'inline' }} />
                 <p style={{ marginTop: '10px' }} className={styles.nav_text}>
                   Estructura Curricular
-              </p>
-
+                </p>
               </Col>
             </Link>
           </Col>
@@ -195,19 +194,6 @@ const AdminSideBar = () => {
               </Col>
             </Link>
           </Col>
-
-          <Col
-            className={styles.logout_admin_container}
-            onClick={logout}
-            lg={12}
-            md={12}
-            sm={12}
-            xs={12}
-          >
-            <img src="/icons/logout_icon.svg" style={{ width: '35px', display: 'inline' }} />
-            <p style={{ marginTop: 10 }} className={styles.nav_text}> Cerrar Sesión </p>
-          </Col>
-
         </Row>
       </div>
     </>

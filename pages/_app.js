@@ -74,7 +74,7 @@ const App = ({ Component, pageProps, router }) => {
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
         {router.route.match(/(dashboard)/i) ? (
 
-          <Row lg={12} md={12} sm={12} xs={12}>
+          <Row lg={12} md={12} sm={12} xs={12} style={{margin: 0}}>
             <SideBar />
             <Col
               id="dashboard_container"

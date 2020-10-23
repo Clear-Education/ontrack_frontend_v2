@@ -59,6 +59,15 @@ export const convertDateToSend = (date) => {
     return newDate;
 }
 
+export const convertDateToSendOnQuery = (date) => {
+    let formatDate = new Date(date);
+    const year = formatDate.getFullYear();
+    const month = formatDate.getMonth() + 1;
+    const day = formatDate.getDate();
+    let newDate = `${day}-${month}-${year}`;
+    return newDate;
+}
+
 export const convertDateFromStoreToSend = (date) => {
     let datearray = date?.split("-");
     let newdate = datearray[2] + '/' + datearray[1] + '/' + datearray[0];
@@ -83,7 +92,6 @@ export const parseCsvToJson = (file, handleOnLoad) => {
 }
 
 export const parseStudentsDataToExport = (students) =>{
-    debugger;
     let newStudentData = [];
     students.map((student)=>{
         let newStudent = {
@@ -91,7 +99,7 @@ export const parseStudentsDataToExport = (students) =>{
             nombre: student.nombre,
             apellido: student.apellido,
             legajo: student.legajo,
-            puntaje: ''
+            puntaje: student.puntaje
         }
         newStudentData.push(newStudent);
     });

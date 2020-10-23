@@ -2,9 +2,8 @@ import { Col, Row } from "react-bootstrap"
 import MUIDataTable from "mui-datatables"
 import { useState, useEffect } from "react";
 import MTConfig from "../../../src/utils/table_options/MT_config";
-import { getStudentsCourseService } from '../../../src/utils/student/service/student_service';
+import { getStudentsCourseExamService } from '../../../src/utils/student/service/student_service';
 import { getNotasCursoService } from "../../../src/utils/notas/services/notas_services";
-import { getStudentService } from "../../../src/utils/student/service/student_service";
 import { getOneSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
 import { useSelector } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
@@ -16,14 +15,10 @@ import EditIcon from '@material-ui/icons/Edit';
 import Icon from '@material-ui/core/Icon';
 import { IconButton } from '@material-ui/core';
 import AddNotasForm from '../../../src/components/notas/add_notas_form';
-import AddAsistenciaForm from '../../../src/components/notas/edit_notas.form';
 import { orange } from '@material-ui/core/colors';
-import FormLabel from '@material-ui/core/FormLabel';
-import { KeyboardDatePicker } from "@material-ui/pickers";
 import EditNotasForm from "../../../src/components/notas/edit_notas.form";
 import Delete from '@material-ui/icons/Delete';
 import DeleteForm from '../../../src/components/commons/delete_form/deleteForm';
-import { formatDistanceToNowStrict } from "date-fns";
 import CSVForm from "../../../src/components/notas/add_csv_form";
 
 
@@ -87,9 +82,8 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
     useEffect(() => {
 
         getCalificacionesCurso()
-
         setIsLoading(true);
-        getStudentsCourseService(user.user.token, data.curso, data.school_year).then((result) => {
+        getStudentsCourseExamService(user.user.token, data.curso, data.school_year, data.exam).then((result) => {
             setIsLoading(false);
             let students = [];
             result.result.results.forEach((element) => {
@@ -101,7 +95,8 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                     apellido: element.alumno.apellido,
                     legajo: element.alumno.legajo,
                     email: element.alumno.email,
-                    evaluacion: data.exam
+                    evaluacion: data.exam,
+                    puntaje: element.puntaje_field
                 }
 
                 students.push(dataStudent);
@@ -159,7 +154,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                         <Modal
                             title="Agregar Calificación por CSV"
                             body={<CSVForm data={{...data,students:addStudentAssistance}}/>}
-                            button={
+                            button={ 
                                 <button
                                     className="ontrack_btn add_btn"
                                     style={{ padding: 10, width: '75%' }}>
