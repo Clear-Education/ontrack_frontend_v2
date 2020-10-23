@@ -6,7 +6,8 @@ import {
   getStudentsCourseCrud,
   addMultipleStudentsCourseCrud,
   deleteMultipleStudentsCourseCrud,
-  getStudentCrud
+  getStudentCrud,
+  getStudentsCourseExamCrud
 } from "../cruds/student_cruds";
 
 import Alert from "react-s-alert";
@@ -58,6 +59,25 @@ export async function getStudentsCourseService(token, course_id, schoolYearId) {
     return result;
   })
 }
+
+
+export async function getStudentsCourseExamService(token, course_id, schoolYearId, exam_id) { // Trae la nota de los alumnos del curso para un exámen 
+  return await getStudentsCourseExamCrud(token, course_id, schoolYearId, exam_id).then((result) => {
+    if (result.success) {
+
+    } else {
+      result.result.forEach((element) => {
+        Alert.error(element.message, {
+          effect: "stackslide",
+        });
+      });
+    }
+    return result;
+  })
+}
+
+
+
 
 
 export async function addStudentService(token, data) {

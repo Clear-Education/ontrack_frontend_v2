@@ -2,12 +2,13 @@ import { getNovedadesCrud, addNovedadesCrud, editNovedadesCrud, deleteNovedadesC
 import Alert from "react-s-alert";
 
 
-export async function getNovedadesService(token, seguimiento_id) {
-    return await getNovedadesCrud(token, seguimiento_id).then((result) => {
+export async function getNovedadesService(token, seguimiento_id, filters) {
+    return await getNovedadesCrud(token, seguimiento_id, filters).then((result) => {
         if (result.success) {
 
         } else {
-            Alert.error("Ocurrió un error al buscar las novedades", {
+            let message = result?.result[0]?.message || "Ocurrió un error al buscar las novedades";
+            Alert.error(message, {
                 effect: "stackslide",
             });
         }

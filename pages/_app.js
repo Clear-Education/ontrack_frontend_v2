@@ -57,7 +57,7 @@ const App = ({ Component, pageProps, router }) => {
     <>
       <Head>
         <title>OnTrack</title>
-        <link rel="icon" href="#" /> {/* TODO favicon */}
+        <link rel="icon" href="/OnTrack_mini.svg" /> {/* TODO favicon */}
         <link
           href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800"
           rel="stylesheet"
@@ -74,7 +74,7 @@ const App = ({ Component, pageProps, router }) => {
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
         {router.route.match(/(dashboard)/i) ? (
 
-          <Row lg={12} md={12} sm={12} xs={12}>
+          <Row lg={12} md={12} sm={12} xs={12} style={{margin: 0}}>
             <SideBar />
             <Col
               id="dashboard_container"

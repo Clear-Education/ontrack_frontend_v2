@@ -71,14 +71,16 @@ export async function deleteNovedadesFileCrud(fileId, auth_token) {
         });
 }
 
-export async function getNovedadesCrud(auth_token, seguimiento_id) {
+export async function getNovedadesCrud(auth_token, seguimiento_id, filters) {
     return axios
         .get(`${config.api_url}/actualizaciones/${seguimiento_id}/list/`, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },
             params: {
-                limit: 10
+                limit: 10,
+                fecha_desde: filters?.from,
+                fecha_hasta: filters?.to
             }
 
         })
