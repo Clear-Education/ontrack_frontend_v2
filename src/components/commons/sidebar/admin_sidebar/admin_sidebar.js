@@ -84,8 +84,7 @@ const AdminSideBar = () => {
                 <img src="/icons/curricula.svg" style={{ width: '30%', display: 'inline' }} />
                 <p style={{ marginTop: '10px' }} className={styles.nav_text}>
                   Estructura Curricular
-              </p>
-
+                </p>
               </Col>
             </Link>
           </Col>
@@ -195,9 +194,6 @@ const AdminSideBar = () => {
               </Col>
             </Link>
           </Col>
-
-
-
         </Row>
       </div>
     </>

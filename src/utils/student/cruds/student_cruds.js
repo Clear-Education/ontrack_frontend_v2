@@ -132,6 +132,30 @@ export async function getStudentsCourseCrud(token,course_id,schoolYearId){ //tra
   });
 }
 
+export async function getStudentsCourseExamCrud(token,course_id,schoolYearId,exam_id){ //trae los alumnos de un curso para un año lectivo
+  return await axios
+  .get(`${config.api_url}/alumnos/curso/list/evaluaciones/`,{ 
+      headers:{
+          Authorization: `Token ${token}`
+      },
+      params:{
+        curso: course_id,
+        anio_lectivo: schoolYearId,
+        evaluacion: exam_id,
+      }
+  })
+  .then((json) => {
+    let response = {
+      success: true,
+      result: json.data,
+    };
+    return response;
+  })
+  .catch((error) => {
+    return errorHandler(error);
+  });
+}
+
 export async function addMultipleStudentsCourseCrud(token,data){
   return await axios
   .post(`${config.api_url}/alumnos/curso/multiple/`,data,{
