@@ -108,10 +108,11 @@ const Estadisticas = () => {
                 getGoalsProgressionStudentService(user.user.token, dataAsistencia).then((result) => {
                     if (result.status === 204) {
                         const asistenciaData = [];
+                        const noData = {}
                         const data = {
                             valor: 1
                         }
-                        asistenciaData.push(data);
+                        asistenciaData.push(noData);
                         setProgresoAsistencias(asistenciaData);
 
                     } else {
@@ -128,10 +129,11 @@ const Estadisticas = () => {
                 getGoalsProgressionStudentService(user.user.token, dataCalificaciones).then((result) => {
                     if (result.status === 204) {
                         const calificacionesData = [];
+                        const noData = {}
                         const data = {
                             valor: -1
                         }
-                        calificacionesData.push(data);
+                        calificacionesData.push(noData);
                         setProgresoCalificaciones(calificacionesData);
 
                     } else {
@@ -166,7 +168,8 @@ const Estadisticas = () => {
             let progresoAsistenciasAlumno = []
             progresoAsistencias.map((progreso) => {
                 const data = {
-                    porcentaje: Number.parseFloat(progreso.valor * 100).toFixed(2)
+                    porcentaje: Number.parseFloat(progreso.valor * 100).toFixed(2),
+                    fecha: progreso.fecha_relacionada
                 }
 
                 progresoAsistenciasAlumno.push(data);
@@ -181,7 +184,8 @@ const Estadisticas = () => {
             let progresoCalificacionesAlumno = []
             progresoCalificaciones.map((progreso) => {
                 const data = {
-                    promedio: progreso.valor
+                    promedio: progreso.valor,
+                    fecha: progreso.fecha_relacionada
                 }
 
                 progresoCalificacionesAlumno.push(data);
@@ -259,20 +263,20 @@ const Estadisticas = () => {
                         <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
                         {calificacionesData.length != 0 ?
                             <>
-                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                <ResponsiveContainer width="100%" height={300} className="mx-auto">
                                     <LineChart
                                         data={calificacionesData}
                                         className="mb-3"
                                     >
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name">
-                                            <Label value="Porcentaje de Calificaciones en el Año Lectivo" offset={0} position="insideBottom" />
+                                        <XAxis dataKey="fecha">
+                                            
                                         </XAxis>
                                         <YAxis type="number" domain={[4, 10]} />
                                         <Tooltip />
                                         <Legend verticalAlign="top" height={36} />
                                         <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
-                                        <Line type="monotone" dataKey="promedio" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                                        <Line type="monotone" dataKey="promedio" stroke="#004d67" activeDot={{ r: 8 }} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </>
@@ -285,14 +289,14 @@ const Estadisticas = () => {
                         <h3 className="subtitle mb-2 mt-3">Progreso Asistencias</h3>
                         {asistenciasData.length != 0 ?
                             <>
-                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                <ResponsiveContainer width="100%" height={300} className="mx-auto">
                                     <LineChart
                                         data={asistenciasData}
                                         className="mb-3"
                                     >
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name">
-                                            <Label value="Porcentaje de Asistencias en el Año Lectivo" offset={0} position="insideBottom" />
+                                        <XAxis dataKey="fecha">
+                                            
                                         </XAxis>
                                         <YAxis type="number" domain={[0, 100]} />
                                         <Tooltip />
