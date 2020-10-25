@@ -14,6 +14,8 @@ import ParticipantItem from "../../../../../src/components/commons/participant_i
 import { fromStoreToViewFormatDate } from "../../../../../src/utils/commons/common_services";
 import SubjectItem from "../../../../../src/components/commons/subject_item/subject_item";
 import BackLink from "../../../../../src/components/commons/back_link/back_link";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 const container = {
@@ -56,7 +58,6 @@ const Estadisticas = () => {
     const [progresoCalificaciones, setProgresoCalificaciones] = useState([]);
     const [calificacionesData, setCalificacionesData] = useState([]);
     const [asistenciasData, setAsistenciasData] = useState([]);
-
     const [estadoObjetivosCualitativos, setEstadoObjetivosCualitativos] = useState([]);
     const [objetivosCualitativosData, setObjetivosCualitativosData] = useState([]);
 
@@ -77,6 +78,36 @@ const Estadisticas = () => {
     const handleSelectStudent = (student) => {
         setSelectedStudent(student);
         setAlumnoSeleccionado(student.id);
+    }
+
+    const handlePrintPage = () => {
+        const input = document.getElementById('estadisticas');
+        html2canvas(input).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'px', "a4");
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+    
+        const widthRatio = pageWidth / canvas.width;
+        const heightRatio = pageHeight / canvas.height;
+        const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
+    
+        const canvasWidth = canvas.width * ratio;
+        const canvasHeight = canvas.height * ratio;
+    
+        const marginX = (pageWidth - canvasWidth) / 2;
+        const marginY = (pageHeight - canvasHeight) / 2;
+
+        pdf.setFontSize(10)
+        pdf.text(5,10,`Reporte del Seguimiento: ${tracking.nombre}`);
+        pdf.setFontSize(8)
+        pdf.text(5, 20, `Fecha de Reporte: ${new Date().toLocaleString()}`)
+        pdf.text(5,30,`Generado por: ${user.user.name} ${user.user.last_name}`)
+        *pdf.addImage(imgData, 'JPEG', marginX, 50, canvasWidth, canvasHeight);
+        pdf.save(`Reporte ${tracking.nombre}.pdf`);
+      })
+    ;
     }
 
     // VERIFICA QUE METRICAS TIENE EL SEGUIMIENTO
@@ -211,8 +242,10 @@ const Estadisticas = () => {
             </div>
             <Col lg={12} md={12} sm={12} xs={12} >
                 <TitlePage title={"Estadísticas"} fontSize={20} />
-            </Col>
+                <button className="ontrack_btn add_btn" onClick={handlePrintPage}>Generar Reporte</button>
 
+            </Col>
+            <div id="estadisticas">
             <Row lg={12} md={12} sm={12} xs={12} style={{ width: '100%' }}>
                 <Col lg={3} md={3} sm={3} xs={3} className={styles.student_container}>
                     <div className={styles.item_container}>
@@ -338,6 +371,7 @@ const Estadisticas = () => {
                         }
                     </Col>
                 </Row>
+                </div>
         </Row>
     )
 }
