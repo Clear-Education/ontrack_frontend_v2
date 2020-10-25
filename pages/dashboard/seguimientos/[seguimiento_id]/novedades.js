@@ -26,8 +26,10 @@ const Novedades = ({ trackingId }) => {
 
     useSWR(url, () => {
         getNovedadesService(user.user.token, trackingId).then((result) => {
-            setNews(result.result.results);
-            setNextUrl(result.result.next);
+            if(result.success){
+                setNews(result.result.results);
+                setNextUrl(result.result.next);
+            }
         })
     });
 
@@ -75,6 +77,23 @@ const Novedades = ({ trackingId }) => {
             }
         })
     }
+
+
+    async function handleFilterNewsByDates(from, to){
+        const FILTER_DATE = {
+            from: from,
+            to: to
+        }
+        return getNovedadesService(user.user.token, trackingId, FILTER_DATE ).then((result) => {
+            if(result.success){
+                setNews(result.result.results);
+                setNextUrl(result.result.next);
+            }
+            return result;
+        })
+    }
+
+
     return (
 
         <Row lg={12} md={12} sm={12} xs={12} onScroll={handleScroll} ref={divRef} className={styles.container}>
@@ -89,7 +108,7 @@ const Novedades = ({ trackingId }) => {
                     <Col lg={11} md={11} sm={11} xs={11}>
                         <TitlePage title={"Novedades del Seguimiento"} fontSize={16} />
                     </Col>
-                    <DateFilter />
+                    <DateFilter handleSend={handleFilterNewsByDates}/>
                 </Row>
 
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
