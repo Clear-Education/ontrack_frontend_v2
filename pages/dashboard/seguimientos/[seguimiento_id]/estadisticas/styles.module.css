@@ -1,83 +1,142 @@
-
 .contenedor {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 .pie_chart_references {
-    font-size: 0.9rem;
-}
-.sub_menu_container{
-    position: absolute;
-    left: -90px;
-    top: 40px;
-}
-.general_info{
-    margin-top: 20px;
-    background-color: var(--white);
-    padding: 10px;
-    overflow: auto;
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
-.student_container{
-    margin-top: 20px;
-    height: 100%;
-    background-color: var(--white);
-    padding: 10px;
-    justify-content: flex-end;
+  font-size: 0.9rem;
 }
 
-.item_container, .general_item_container{
-    border-radius: 5px;
-    margin: 10px auto;
-    background-color: var(--gray);
-    padding: 20px;
-    padding-left: 0px;
-    padding-right: 0px;
-    height: 90%;
+.general_info {
+  margin-top: 20px;
+  background-color: var(--white);
+  padding: 10px;
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
-.general_item_container{
-    margin-right: 20px;
-    height: 90%;
+.student_container {
+  margin-top: 20px;
+  height: 100%;
+  background-color: var(--white);
+  padding: 10px;
+  justify-content: flex-end;
+}
+
+.item_container,
+.general_item_container {
+  border-radius: 5px;
+  margin: 10px auto;
+  background-color: var(--gray);
+  padding: 20px;
+  padding-left: 0px;
+  padding-right: 0px;
+  height: 90%;
+}
+.general_item_container {
+  margin-right: 20px;
+  height: 90%;
 }
 .section_title {
-    padding-left: 15px;
-    text-align: left;
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-.title_name{
-    color: var(--orange);
-    font-weight: 600;
+  padding-left: 15px;
+  text-align: left;
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
-.description{
-    text-align: left;
-    display: block;
-    padding-left: 15px;
-    font-style: italic;
+.title_name {
+  color: var(--orange);
+  font-weight: 600;
 }
-
-.stats_container{
-    padding: 20px;
-    background: var(--gray);
-    border-radius: 10px;
-    margin-top: 60px;
+.description {
+  text-align: left;
+  display: block;
+  padding-left: 15px;
+  font-style: italic;
 }
 
-.stats_row_container{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 60px;
+.stats_container {
+  padding: 20px;
+  background: var(--white);
+  border-radius: 10px;
+  margin-top: 60px;
+}
+
+.stats_row_container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: 0px;
 }
 
 .sub_menu_container {
-    position: absolute;
-    left: -31px;
-    top: 10px;
-    z-index: 99;
-    background: var(--main-color-dark);
-    border-radius: 100%;
-  }
+  position: absolute;
+  top: 40px;
+  z-index: 99;
+  left: 0px;
+  background: var(--main-color-dark);
+  border-radius: 100%;
+}
+
+.header_container {
+  margin-bottom: 20px;
+  text-align: left;
+  margin-left: 2%;
+  width: 100%;
+}
+
+
+.container {
+  background-color: var(--gray);
+  border-radius: 5px;
+  padding: 20px;
+  margin-left: 3%;
+}
+
+.table_container {
+  margin-bottom: 20px;
+}
+
+.edit_icon_button {
+  width: fit-content;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: var(--main-color-dark);
+  border-radius: 100%;
+}
+
+.collapse_container {
+  width: 100%;
+  display: flex;
+  padding: 20px 40px;
+  cursor: pointer;
+}
+
+.dates_container {
+  background-color: var(--white);
+  border-radius: 10px;
+  padding: 10px 20px;
+  margin-left: 15px;
+  width: 96.5%;
+}
+
+
+.edit_icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.edit_participants_icon {
+  position: absolute;
+  top: 17px;
+  left: 20%;
+  z-index: 9998;
+}
+
+.select_students_container {
+  width: 98%;
+  justify-content: left;
+  margin: auto;
+}

@@ -35,7 +35,7 @@ const App = ({ Component, pageProps, router }) => {
   useEffect(() => {
     if (
       AUTH_USER !== undefined &&
-      AUTH_USER.user.isLoggedIn &&
+      AUTH_USER.user?.isLoggedIn &&
       (router.route.match(/(login)/) || router.route.match(/(register)/) || router.route === '/')
     ) {
       router.push("/dashboard");

@@ -5,7 +5,7 @@ import { IconButton } from '@material-ui/core';
 import Delete from '@material-ui/icons/Delete';
 
 /* HOOKS */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 
 /* COMPONENTS */
@@ -28,9 +28,14 @@ const Accounts = () => {
   const url = `${config.api_url}/users/list`;
 
   const [allData, setAllData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [showTable, setShowTable] = useState();
   const [selectedUser, setSelectedUser] = useState({});
   const user = useSelector((store) => store.user);
+
+  useEffect(() => {
+    setShowTable(true);
+  }, [])
 
   useSWR(url, () => {
     setIsLoading(true);
@@ -193,22 +198,24 @@ const Accounts = () => {
             xs={12}
             style={{ marginTop: 20 }}
           >
-            <MUIDataTable
-              title={"Lista de Usuarios"}
-              data={allData && allData.map(user => {
-                const estado = user.is_active ? "Activo" : "Suspendido";
-                return [
-                  user.id,
-                  user.name,
-                  user.last_name,
-                  user.dni,
-                  user.cargo,
-                  user.email,
-                ]
-              })}
-              columns={columns}
-              options={options}
-            />
+            {showTable &&
+              <MUIDataTable
+                title={"Lista de Usuarios"}
+                data={allData && allData.map(user => {
+                  const estado = user.is_active ? "Activo" : "Suspendido";
+                  return [
+                    user.id,
+                    user.name,
+                    user.last_name,
+                    user.dni,
+                    user.cargo,
+                    user.email,
+                  ]
+                })}
+                columns={columns}
+                options={options}
+              />
+            }
           </Col>
         </Row>
 
