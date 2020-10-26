@@ -14,6 +14,8 @@ import ParticipantItem from "../../../../../src/components/commons/participant_i
 import { fromStoreToViewFormatDate } from "../../../../../src/utils/commons/common_services";
 import SubjectItem from "../../../../../src/components/commons/subject_item/subject_item";
 import BackLink from "../../../../../src/components/commons/back_link/back_link";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 const container = {
@@ -56,7 +58,6 @@ const Estadisticas = () => {
     const [progresoCalificaciones, setProgresoCalificaciones] = useState([]);
     const [calificacionesData, setCalificacionesData] = useState([]);
     const [asistenciasData, setAsistenciasData] = useState([]);
-
     const [estadoObjetivosCualitativos, setEstadoObjetivosCualitativos] = useState([]);
     const [objetivosCualitativosData, setObjetivosCualitativosData] = useState([]);
 
@@ -77,6 +78,36 @@ const Estadisticas = () => {
     const handleSelectStudent = (student) => {
         setSelectedStudent(student);
         setAlumnoSeleccionado(student.id);
+    }
+
+    const handlePrintPage = () => {
+        const input = document.getElementById('estadisticas');
+        html2canvas(input).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'px', "a4");
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+    
+        const widthRatio = pageWidth / canvas.width;
+        const heightRatio = pageHeight / canvas.height;
+        const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
+    
+        const canvasWidth = canvas.width * ratio;
+        const canvasHeight = canvas.height * ratio;
+    
+        const marginX = (pageWidth - canvasWidth) / 2;
+        const marginY = (pageHeight - canvasHeight) / 2;
+
+        pdf.setFontSize(10)
+        pdf.text(5,10,`Reporte del Seguimiento: ${tracking.nombre}`);
+        pdf.setFontSize(8)
+        pdf.text(5, 20, `Fecha de Reporte: ${new Date().toLocaleString()}`)
+        pdf.text(5,30,`Generado por: ${user.user.name} ${user.user.last_name}`)
+        *pdf.addImage(imgData, 'JPEG', marginX, 50, canvasWidth, canvasHeight);
+        pdf.save(`Reporte ${tracking.nombre}.pdf`);
+      })
+    ;
     }
 
     // VERIFICA QUE METRICAS TIENE EL SEGUIMIENTO
@@ -108,10 +139,11 @@ const Estadisticas = () => {
                 getGoalsProgressionStudentService(user.user.token, dataAsistencia).then((result) => {
                     if (result.status === 204) {
                         const asistenciaData = [];
+                        const noData = {}
                         const data = {
                             valor: 1
                         }
-                        asistenciaData.push(data);
+                        asistenciaData.push(noData);
                         setProgresoAsistencias(asistenciaData);
 
                     } else {
@@ -128,10 +160,11 @@ const Estadisticas = () => {
                 getGoalsProgressionStudentService(user.user.token, dataCalificaciones).then((result) => {
                     if (result.status === 204) {
                         const calificacionesData = [];
+                        const noData = {}
                         const data = {
                             valor: -1
                         }
-                        calificacionesData.push(data);
+                        calificacionesData.push(noData);
                         setProgresoCalificaciones(calificacionesData);
 
                     } else {
@@ -166,7 +199,8 @@ const Estadisticas = () => {
             let progresoAsistenciasAlumno = []
             progresoAsistencias.map((progreso) => {
                 const data = {
-                    porcentaje: Number.parseFloat(progreso.valor * 100).toFixed(2)
+                    porcentaje: Number.parseFloat(progreso.valor * 100).toFixed(2),
+                    fecha: progreso.fecha_relacionada
                 }
 
                 progresoAsistenciasAlumno.push(data);
@@ -181,7 +215,8 @@ const Estadisticas = () => {
             let progresoCalificacionesAlumno = []
             progresoCalificaciones.map((progreso) => {
                 const data = {
-                    promedio: progreso.valor
+                    promedio: progreso.valor,
+                    fecha: progreso.fecha_relacionada
                 }
 
                 progresoCalificacionesAlumno.push(data);
@@ -207,8 +242,10 @@ const Estadisticas = () => {
             </div>
             <Col lg={12} md={12} sm={12} xs={12} >
                 <TitlePage title={"Estadísticas"} fontSize={20} />
-            </Col>
+                <button className="ontrack_btn add_btn" onClick={handlePrintPage}>Generar Reporte</button>
 
+            </Col>
+            <div id="estadisticas">
             <Row lg={12} md={12} sm={12} xs={12} style={{ width: '100%' }}>
                 <Col lg={3} md={3} sm={3} xs={3} className={styles.student_container}>
                     <div className={styles.item_container}>
@@ -259,20 +296,20 @@ const Estadisticas = () => {
                         <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
                         {calificacionesData.length != 0 ?
                             <>
-                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                <ResponsiveContainer width="100%" height={300} className="mx-auto">
                                     <LineChart
                                         data={calificacionesData}
                                         className="mb-3"
                                     >
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name">
-                                            <Label value="Porcentaje de Calificaciones en el Año Lectivo" offset={0} position="insideBottom" />
+                                        <XAxis dataKey="fecha">
+                                            
                                         </XAxis>
                                         <YAxis type="number" domain={[4, 10]} />
                                         <Tooltip />
                                         <Legend verticalAlign="top" height={36} />
                                         <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
-                                        <Line type="monotone" dataKey="promedio" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                                        <Line type="monotone" dataKey="promedio" stroke="#004d67" activeDot={{ r: 8 }} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </>
@@ -285,14 +322,14 @@ const Estadisticas = () => {
                         <h3 className="subtitle mb-2 mt-3">Progreso Asistencias</h3>
                         {asistenciasData.length != 0 ?
                             <>
-                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                <ResponsiveContainer width="100%" height={300} className="mx-auto">
                                     <LineChart
                                         data={asistenciasData}
                                         className="mb-3"
                                     >
                                         <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name">
-                                            <Label value="Porcentaje de Asistencias en el Año Lectivo" offset={0} position="insideBottom" />
+                                        <XAxis dataKey="fecha">
+                                            
                                         </XAxis>
                                         <YAxis type="number" domain={[0, 100]} />
                                         <Tooltip />
@@ -334,6 +371,7 @@ const Estadisticas = () => {
                         }
                     </Col>
                 </Row>
+                </div>
         </Row>
     )
 }

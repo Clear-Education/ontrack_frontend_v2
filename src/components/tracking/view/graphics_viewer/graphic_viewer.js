@@ -39,10 +39,11 @@ const GraphicViewer = ({ student, tracking }) => {
                 getGoalsProgressionStudentService(user.user.token, dataAsistencia).then((result) => {
                     if (result.status === 204) {
                         const asistenciaData = [];
+                        const noData = {}
                         const data = {
                             valor: 1
                         }
-                        asistenciaData.push(data);
+                        asistenciaData.push(noData);
                         setProgresoAsistencias(asistenciaData);
 
                     } else {
@@ -60,10 +61,11 @@ const GraphicViewer = ({ student, tracking }) => {
                 getGoalsProgressionStudentService(user.user.token, dataCalificaciones).then((result) => {
                     if (result.status === 204) {
                         const calificacionesData = [];
+                        const noData = {};
                         const data = {
                             valor: -1
                         }
-                        calificacionesData.push(data);
+                        calificacionesData.push(noData);
                         setProgresoCalificaciones(calificacionesData);
 
                     } else {
@@ -80,7 +82,8 @@ const GraphicViewer = ({ student, tracking }) => {
             let progresoAsistenciasAlumno = []
             progresoAsistencias.map((progreso) => {
                 const data = {
-                    porcentaje: Number.parseFloat(progreso.valor * 100).toFixed(2)
+                    porcentaje: Number.parseFloat(progreso.valor * 100).toFixed(2),
+                    fecha: progreso.fecha_relacionada
                 }
 
                 progresoAsistenciasAlumno.push(data);
@@ -95,7 +98,8 @@ const GraphicViewer = ({ student, tracking }) => {
             let progresoCalificacionesAlumno = []
             progresoCalificaciones.map((progreso) => {
                 const data = {
-                    promedio: progreso.valor
+                    promedio: progreso.valor,
+                    fecha: progreso.fecha_relacionada
                 }
 
                 progresoCalificacionesAlumno.push(data);
@@ -120,13 +124,13 @@ const GraphicViewer = ({ student, tracking }) => {
                             className="mb-3"
                         >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name">
+                            <XAxis dataKey="fecha">
                             </XAxis>
                             <YAxis type="number" domain={[4, 10]} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
                             <ReferenceLine y={tracking.promedio?.value} label="Objetivo" stroke="red"  /* alwaysShow */ ifOverflow="extendDomain" />
-                            <Line type="monotone" dataKey="promedio" stroke="#82ca9d" activeDot={{ r: 8 }} />
+                            <Line type="monotone" dataKey="promedio" stroke="#004d67" activeDot={{ r: 8 }} />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
@@ -141,7 +145,7 @@ const GraphicViewer = ({ student, tracking }) => {
                             className="mb-3"
                         >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name">
+                            <XAxis dataKey="fecha">
                             </XAxis>
                             <YAxis type="number" domain={[0, 100]} />
                             <Tooltip />
