@@ -85,7 +85,7 @@ export const parseCsvToJson = (file, handleOnLoad) => {
         workbook.SheetNames.forEach((sheetname) => {
             const sheet = workbook.Sheets[sheetname];
             var XL_row_object = XLXS.utils.sheet_to_json(sheet);
-            fileData = [...XL_row_object]
+            fileData = [...XL_row_object].filter((student)=>{ return student.puntaje !== 0});
             handleOnLoad(fileData);
         })
     }

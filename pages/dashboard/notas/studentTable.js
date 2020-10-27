@@ -20,6 +20,8 @@ import EditNotasForm from "../../../src/components/notas/edit_notas.form";
 import Delete from '@material-ui/icons/Delete';
 import DeleteForm from '../../../src/components/commons/delete_form/deleteForm';
 import CSVForm from "../../../src/components/notas/add_csv_form";
+import { mutate } from "swr";
+import config from "../../../src/utils/config";
 
 
 const theme = createMuiTheme({
@@ -33,6 +35,8 @@ const theme = createMuiTheme({
     },
 
 });
+
+const url = `${config.api_url}/calificaciones/list/`;
 
 const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
@@ -60,7 +64,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                     id_calificacion: element.id,
                     puntaje: element.puntaje,
                     evaluacion: element.evaluacion,
-                    fecha: element.fecha,
+                    fecha: element.fecha, 
                     fecha_desde: minDate,
                     fecha_hasta: maxDate
                 }
@@ -69,6 +73,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
             })
             setEditStudentAssistance(students);
+            mutate(url);
         })
     }
 
