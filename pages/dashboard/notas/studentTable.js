@@ -153,8 +153,8 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                     <Col>
                         <Modal
                             title="Agregar Calificación por CSV"
-                            body={<CSVForm data={{...data,students:addStudentAssistance}}/>}
-                            button={ 
+                            body={<CSVForm data={{ ...data, students: addStudentAssistance }} />}
+                            button={
                                 <button
                                     className="ontrack_btn add_btn"
                                     style={{ padding: 10, width: '75%' }}>
@@ -298,7 +298,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                                                             }
                                                                         />
                                                                         <Modal
-                                                                            title="¿Seguro que deseas eliminar la asistencia de este alumno?"
+                                                                            title="¿Seguro que deseas eliminar la calificación de este alumno?"
                                                                             body={<DeleteForm data={selectedData} handleSubmitAction={handleDeleteNota} />}
                                                                             button={
                                                                                 <IconButton onClick={() => setSelectedData(editStudentAssistance[dataIndex])} >

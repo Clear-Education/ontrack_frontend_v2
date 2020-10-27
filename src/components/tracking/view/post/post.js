@@ -104,7 +104,9 @@ const Post = ({ postData, handleSubmitPost }) => {
                 </div>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.content_container}>
                     <Col lg={12} md={12} sm={12} xs={12}>
-                        {postData.cuerpo}
+                        <p className="text-break">
+                            {postData.cuerpo}
+                        </p>
                         <div style={{ overflow: 'auto', display: 'flex' }}>
                             {postData.adjuntos.map((file, i) => {
                                 const url = file.file;
@@ -112,7 +114,7 @@ const Post = ({ postData, handleSubmitPost }) => {
                             })}
                         </div>
                     </Col>
-                </Row> 
+                </Row>
             </Col>
             <Col lg={12} md={12} sm={12} xs={12} className={styles.comments_actions}>
                 <span className={styles.comments_label} onClick={() => !!comments.length ? setOpenComments(!openComments) : null}>{openComments ? 'Ocultar comentarios' : !!comments.length ? `Ver ${comments.length} comentarios` : 'Sin comentarios'}</span>

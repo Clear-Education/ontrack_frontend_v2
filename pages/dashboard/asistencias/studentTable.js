@@ -185,7 +185,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
         let dateSelectedFormatted = Date.parse(dateFormatted)
         let minimalDate = Date.parse(minDate)
-        let maximalDate = Date.parse(maxDate)
+        let maximalDate = Date.parse(new Date())
 
         if (dateSelectedFormatted >= minimalDate && dateSelectedFormatted <= maximalDate) {
             let dateFormatted2 = convertDate3(date)
@@ -202,7 +202,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
         let dateSelectedFormatted = Date.parse(dateFormatted)
         let minimalDate = Date.parse(minDate)
-        let maximalDate = Date.parse(maxDate)
+        let maximalDate = Date.parse(new Date())
 
         if (dateSelectedFormatted >= minimalDate && dateSelectedFormatted <= maximalDate) {
             setFechaValida(true)
@@ -257,11 +257,11 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                         placeholder="DD/MM/YYYY"
                                         onChange={date => handleDateAddAssistance(date)}
                                         minDate={new Date(minDate)}
-                                        maxDate={new Date(maxDate)}
+                                        maxDate={new Date()}
                                         format="dd/MM/yyyy"
                                         invalidDateMessage="Formato de fecha inválido"
                                         minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo actual"
-                                        maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo actual"
+                                        maxDateMessage="La fecha no debería ser mayor a la fecha de hoy"
                                         required
                                     />
                                 </Col>
@@ -351,11 +351,11 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                     placeholder="DD/MM/YYYY"
                                     onChange={date => handleDateAssistance(date)}
                                     minDate={new Date(minDate)}
-                                    maxDate={new Date(maxDate)}
+                                    maxDate={new Date()}
                                     format="dd/MM/yyyy"
                                     invalidDateMessage="Formato de fecha inválido"
                                     minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo actual"
-                                    maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo actual"
+                                    maxDateMessage="La fecha no debería ser mayor a la fecha de hoy"
                                     required
                                 />
 

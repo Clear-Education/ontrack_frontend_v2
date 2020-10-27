@@ -157,7 +157,7 @@ const EditUserForm = (props) => {
         else if (prop == "is_active") {
             setState({ ...state, [prop]: JSON.parse(event.target.value) });
         }
-        else if (prop !== "groups" && prop !== "direccion") {
+        else if (prop !== "groups") {
             handleValidation(prop, event.target.value);
             setState({ ...state, [prop]: event.target.value });
         }
@@ -451,6 +451,7 @@ const EditUserForm = (props) => {
                                             value={state.direccion ? state.direccion : ""}
                                             onChange={handleChange("direccion")}
                                             disabled={initialStateUserAccount == false ? true : false}
+                                            required
                                         />
                                     </FormControl>
                                 </motion.li>

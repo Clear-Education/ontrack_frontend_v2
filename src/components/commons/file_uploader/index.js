@@ -32,7 +32,7 @@ const FileInput = ({ handleChange, files, deleteFile }) => {
                 }
             });
             if (flag) {
-                Alert.error("Se permite subir hasta tres fotos, el resto fueron ignoradas", {
+                Alert.error("Se permite subir hasta tres archivos, el resto fueron ignoradas", {
                     effect: "stackslide",
                 });
             }

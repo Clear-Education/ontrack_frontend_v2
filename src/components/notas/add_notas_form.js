@@ -101,7 +101,7 @@ const AddNotasForm = (props) => {
 
         let dateSelectedFormatted = Date.parse(state["fecha"])
         let minimalDate = Date.parse(state["fecha_desde"])
-        let maximalDate = Date.parse(state["fecha_hasta"])
+        let maximalDate = Date.parse(new Date());
 
         if (validation["puntaje"] === false &&
             (dateSelectedFormatted >= minimalDate && dateSelectedFormatted <= maximalDate)) {
@@ -131,18 +131,18 @@ const AddNotasForm = (props) => {
                             <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
                                 <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
                                     <motion.li variants={item}>
-                                        <FormLabel className="left" component="legend">Fecha</FormLabel>
+                                        <FormLabel className="left" component="legend">Fecha del Exámen</FormLabel>
                                         <KeyboardDatePicker
                                             clearable
                                             value={date}
                                             placeholder="DD/MM/YYYY"
                                             onChange={date => handleDate(date)}
                                             minDate={new Date(state["fecha_desde"])}
-                                            maxDate={new Date(state["fecha_hasta"])}
+                                            maxDate={new Date()}
                                             format="dd/MM/yyyy"
                                             invalidDateMessage="Formato de fecha inválido"
                                             minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                            maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo seleccionado"
+                                            maxDateMessage="La fecha no debería ser mayor a la fecha de hoy"
                                             required
                                         />
                                     </motion.li>

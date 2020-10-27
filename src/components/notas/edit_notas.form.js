@@ -82,22 +82,10 @@ const EditNotasForm = (props) => {
         return [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join("-");
     }
 
-
-    const handleDate = (date) => {
-        setDate(date);
-        let dateFormatted = convertDate(date);
-        setState({ ...state, ["fecha"]: dateFormatted });
-
-    }
-
     const handleSubmit = (e) => {
         setIsLoading(true);
-        let dateSelectedFormatted = Date.parse(state["fecha"])
-        let minimalDate = Date.parse(state["fecha_desde"])
-        let maximalDate = Date.parse(state["fecha_hasta"])
 
-        if (validation["puntaje"] === false &&
-            (dateSelectedFormatted >= minimalDate && dateSelectedFormatted <= maximalDate)) {
+        if (validation["puntaje"] === false) {
             props.handleSubmitAction(e, state).then((result) => {
                 setIsLoading(false)
                 if (result.success) {
@@ -121,26 +109,6 @@ const EditNotasForm = (props) => {
                 <Row>
                     <Col>
                         <form onSubmit={(e) => handleSubmit(e)}>
-                            <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
-                                <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
-                                    <motion.li variants={item}>
-                                        <FormLabel className="left" component="legend">Fecha</FormLabel>
-                                        <KeyboardDatePicker
-                                            clearable
-                                            value={date}
-                                            placeholder="DD/MM/YYYY"
-                                            onChange={date => handleDate(date)}
-                                            minDate={new Date(state["fecha_desde"])}
-                                            maxDate={new Date(state["fecha_hasta"])}
-                                            format="dd/MM/yyyy"
-                                            invalidDateMessage="Formato de fecha inválido"
-                                            minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                                            maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo seleccionado"
-                                            required
-                                        />
-                                    </motion.li>
-                                </Col>
-                            </Row>
                             <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
                                 <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
                                     <motion.li variants={item}>
