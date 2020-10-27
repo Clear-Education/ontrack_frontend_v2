@@ -26,7 +26,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const Modal = (props) => {
+const Modal = (props) => { 
     const [show, setShow] = useState(false);
     const handleVisibilityModal = (value) => {
         setShow(value);

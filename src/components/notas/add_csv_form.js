@@ -17,7 +17,7 @@ const INITIAL_STATE = {
     evaluacion: '',
     calificaciones: []
 }
-const CSVForm = ({ data, handleClose }) => {
+const CSVForm = ({ data, handleClose, refreshData }) => {
     const user = useSelector((store) => store.user);
     const [minDate, setMinDate] = useState("");
     const [maxDate, setMaxDate] = useState("");
@@ -61,6 +61,7 @@ const CSVForm = ({ data, handleClose }) => {
         addNotasMultipleService(user.user.token, DATA).then((result) => {
             if (result.success) {
                 handleClose();
+                refreshData();
             }
         })
     }

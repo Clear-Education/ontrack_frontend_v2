@@ -38,7 +38,7 @@ export async function addNotasMultipleCrud(auth_token, data) {
 
         })
         .catch((error) => {
-            return errorHandler(error);
+            return error.response;
         });
 }
 

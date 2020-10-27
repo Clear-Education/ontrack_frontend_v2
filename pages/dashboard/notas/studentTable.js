@@ -85,9 +85,17 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
     }
 
     useEffect(() => {
-
         getCalificacionesCurso()
         setIsLoading(true);
+        getStudentCourseExam();
+        if (minDate == "") {
+            getSchoolYear()
+        }
+
+
+    }, [tableToShow]);
+
+    async function getStudentCourseExam (){
         getStudentsCourseExamService(user.user.token, data.curso, data.school_year, data.exam).then((result) => {
             setIsLoading(false);
             let students = [];
@@ -107,15 +115,17 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                 students.push(dataStudent);
             })
             setAddStudentAssistance(students);
-        })
+        });
+    }
 
-        if (minDate == "") {
-            getSchoolYear()
-        }
-
-
-    }, [tableToShow]);
-
+    const handleRefreshData = () =>{
+        setIsLoading(true);
+        setTableToShow();
+        getStudentCourseExam().then((res)=>{
+            setTableToShow('delete');
+        });
+        mutate(`${config.api_url}/alumnos/curso/multiple/`)
+    }
 
     const handleTableToShow = (table) => {
         setTableToShow(table);
@@ -154,11 +164,14 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                 <Row className={styles.table_button_container}>
                     <Col>
                         <button onClick={() => handleTableToShow('add')} className="ontrack_btn add_btn" style={{ padding: 10, width: '75%' }}>Agregar Manualmente</button>
-                    </Col>
+                    </Col> 
                     <Col>
                         <Modal
                             title="Agregar Calificación por CSV"
-                            body={<CSVForm data={{...data,students:addStudentAssistance}}/>}
+                            body={<CSVForm 
+                                    data={{...data,students:addStudentAssistance}}
+                                    refreshData = {handleRefreshData}
+                                    />}
                             button={ 
                                 <button
                                     className="ontrack_btn add_btn"
