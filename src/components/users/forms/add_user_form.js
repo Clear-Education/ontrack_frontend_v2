@@ -539,6 +539,7 @@ const AddUserForm = (props) => {
                                             variant="outlined"
                                             value={state.direccion}
                                             onChange={handleChange("direccion")}
+                                            required
 
                                         />
                                     </FormControl>

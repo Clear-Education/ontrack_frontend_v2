@@ -56,11 +56,14 @@ export async function addNotasMultipleService(token, data) {
                 effect: "stackslide",
             });
         } else {
-            result.result.forEach((element) => {
-                Alert.error(element.message, {
-                    effect: "stackslide",
-                });
+            let msg = !!result.data.calificaciones.length ?
+                'Asegúrese de que los valores ingresados son menores o iguales a 10'
+                : 'Ocurrió un error inesperado, pruebe cargando desde la plantilla'
+
+            Alert.error(msg, {
+                effect: "stackslide",
             });
+
         }
         return result;
     })

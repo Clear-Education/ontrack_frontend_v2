@@ -17,7 +17,7 @@ const INITIAL_STATE = {
     evaluacion: '',
     calificaciones: []
 }
-const CSVForm = ({ data, handleClose }) => {
+const CSVForm = ({ data, handleClose, refreshData }) => {
     const user = useSelector((store) => store.user);
     const [minDate, setMinDate] = useState("");
     const [maxDate, setMaxDate] = useState("");
@@ -33,11 +33,15 @@ const CSVForm = ({ data, handleClose }) => {
     const handleDate = (date) => {
         setState({ ...state, fecha: date });
     }
+
+    const validationDate = () => {
+        return (state.fecha !== "" && state.fecha <= new Date() && state.fecha > new Date(minDate));
+    }
     async function handleDataToSubmit(submitData) {
-        if (!!Object.keys(submitData).length && state.fecha !== "") {
+        if (!!Object.keys(submitData).length && validationDate()) {
             parseCsvToJson(submitData.media, handleSubmit);
         } else {
-            Alert.error("Debe subir un archivo CSV y proporcionar una fecha para continuar", {
+            Alert.error("Debe subir un archivo CSV y proporcionar una fecha válida para continuar", {
                 effect: "stackslide",
             });
         }
@@ -61,6 +65,7 @@ const CSVForm = ({ data, handleClose }) => {
         addNotasMultipleService(user.user.token, DATA).then((result) => {
             if (result.success) {
                 handleClose();
+                refreshData();
             }
         })
     }
@@ -69,31 +74,25 @@ const CSVForm = ({ data, handleClose }) => {
         <div className={styles.csv_container}>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.row_input_container}>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
-                    <FormLabel className="left" component="legend">Fecha</FormLabel>
+                    <FormLabel className="left" component="legend">Fecha del Exámen</FormLabel>
                     <KeyboardDatePicker
                         clearable
-                        value={state.fecha}
+                        value={state.fecha ? state.fecha : null}
                         placeholder="DD/MM/YYYY"
                         onChange={date => handleDate(date)}
                         minDate={new Date(minDate)}
-                        maxDate={new Date(maxDate)}
+                        maxDate={new Date()}
                         format="dd/MM/yyyy"
                         invalidDateMessage="Formato de fecha inválido"
                         minDateMessage="La fecha no debería ser menor a la fecha de Inicio del Año Lectivo seleccionado"
-                        maxDateMessage="La fecha no debería ser mayor a la fecha de Fin del Año Lectivo seleccionado"
+                        maxDateMessage="La fecha no debería ser mayor a la fecha de hoy"
                         required
                     />
                 </Col>
             </Row>
             <div className={styles.message_alert}>
                 <p>
-                    Recuerde que es importante seguir un formato específico para la carga mediante CSV. Se recomienda el uso de la
-                    plantilla propuesta.
-                </p>
-            </div>
-            <div className={styles.message_alert} style={{marginTop:'5px'}}>
-                <p>
-                    Atención! Si la plantilla se encuentra vacía es porque no existen alumnos en el curso seleccionado.
+                    Se recomienda siempre el uso de la plantilla propuesta.
                 </p>
             </div>
             <Row lg={12} md={12} sm={12} xs={12}>

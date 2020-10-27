@@ -18,7 +18,7 @@ const LastNews = () => {
 
     useSWR(lastNewsUrl, () => {
         getLastNovedadesService(user.user.token).then((result) => {
-            if(result.success){
+            if (result.success) {
                 let news = [...result.result.results];
                 setNewsData(news);
                 setNextUrl(result.result.next);
@@ -40,32 +40,32 @@ const LastNews = () => {
 
 
     return (
-            <Row lg={12} md={12} sm={12} xs={12}>
-                <Col lg={12} md={12} sm={12} xs={12} className={styles.title_container}>
-                    <TitlePage title={"Últimas novedades"} fontSize={15} />
-                </Col>
-                <Col
-                    lg={12} md={12} sm={12} xs={12}
-                    className={!newsData.length ? styles.empty_content_container : styles.content_container}
-                >
-                    {
-                        !newsData.length ?
-                            <span>No hay actualizaciones nuevas</span>
-                            :
-                            newsData.map((newData, i) => {
-                                return (
-                                    <ItemContainer newData={newData} key={i}/>
-                                );
-                            })}
-                    {
-                        nextUrl
-                        &&
-                        <div className={styles.show_more_container} onClick={handleShowMore}>
-                            <span>Mostrar más</span>
-                        </div>
-                    }
-                </Col>
-            </Row>
+        <Row lg={12} md={12} sm={12} xs={12} className="mw-100">
+            <Col lg={12} md={12} sm={12} xs={12} className={styles.title_container}>
+                <TitlePage title={"Últimas novedades"} fontSize={15} />
+            </Col>
+            <Col
+                lg={12} md={12} sm={12} xs={12}
+                className={!newsData.length ? styles.empty_content_container : styles.content_container}
+            >
+                {
+                    !newsData.length ?
+                        <span>No hay actualizaciones nuevas</span>
+                        :
+                        newsData.map((newData, i) => {
+                            return (
+                                <ItemContainer newData={newData} key={i} />
+                            );
+                        })}
+                {
+                    nextUrl
+                    &&
+                    <div className={styles.show_more_container} onClick={handleShowMore}>
+                        <span>Mostrar más</span>
+                    </div>
+                }
+            </Col>
+        </Row>
     )
 }
 

@@ -79,21 +79,21 @@ export const parseCsvToJson = (file, handleOnLoad) => {
     let fileData = [];
     let reader = new FileReader();
     reader.readAsArrayBuffer(file);
-    reader.onloadend = (e) =>{
+    reader.onloadend = (e) => {
         var data = new Uint8Array(e.target.result);
-        var workbook = XLXS.read(data, {type:'array'});
-        workbook.SheetNames.forEach((sheetname)=>{
+        var workbook = XLXS.read(data, { type: 'array' });
+        workbook.SheetNames.forEach((sheetname) => {
             const sheet = workbook.Sheets[sheetname];
             var XL_row_object = XLXS.utils.sheet_to_json(sheet);
-            fileData = [...XL_row_object]
+            fileData = [...XL_row_object].filter((student)=>{ return student.puntaje !== 0});
             handleOnLoad(fileData);
         })
     }
 }
 
-export const parseStudentsDataToExport = (students) =>{
+export const parseStudentsDataToExport = (students) => {
     let newStudentData = [];
-    students.map((student)=>{
+    students.map((student) => {
         let newStudent = {
             id: student.id,
             nombre: student.nombre,

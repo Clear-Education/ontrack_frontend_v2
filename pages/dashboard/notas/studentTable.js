@@ -20,6 +20,8 @@ import EditNotasForm from "../../../src/components/notas/edit_notas.form";
 import Delete from '@material-ui/icons/Delete';
 import DeleteForm from '../../../src/components/commons/delete_form/deleteForm';
 import CSVForm from "../../../src/components/notas/add_csv_form";
+import { mutate } from "swr";
+import config from "../../../src/utils/config";
 
 
 const theme = createMuiTheme({
@@ -33,6 +35,8 @@ const theme = createMuiTheme({
     },
 
 });
+
+const url = `${config.api_url}/calificaciones/list/`;
 
 const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
@@ -60,7 +64,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                     id_calificacion: element.id,
                     puntaje: element.puntaje,
                     evaluacion: element.evaluacion,
-                    fecha: element.fecha,
+                    fecha: element.fecha, 
                     fecha_desde: minDate,
                     fecha_hasta: maxDate
                 }
@@ -69,6 +73,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
             })
             setEditStudentAssistance(students);
+            mutate(url);
         })
     }
 
@@ -80,9 +85,17 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
     }
 
     useEffect(() => {
-
         getCalificacionesCurso()
         setIsLoading(true);
+        getStudentCourseExam();
+        if (minDate == "") {
+            getSchoolYear()
+        }
+
+
+    }, [tableToShow]);
+
+    async function getStudentCourseExam (){
         getStudentsCourseExamService(user.user.token, data.curso, data.school_year, data.exam).then((result) => {
             setIsLoading(false);
             let students = [];
@@ -102,15 +115,17 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                 students.push(dataStudent);
             })
             setAddStudentAssistance(students);
-        })
+        });
+    }
 
-        if (minDate == "") {
-            getSchoolYear()
-        }
-
-
-    }, [tableToShow]);
-
+    const handleRefreshData = () =>{
+        setIsLoading(true);
+        setTableToShow();
+        getStudentCourseExam().then((res)=>{
+            setTableToShow('delete');
+        });
+        mutate(`${config.api_url}/alumnos/curso/multiple/`)
+    }
 
     const handleTableToShow = (table) => {
         setTableToShow(table);
@@ -149,11 +164,14 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                 <Row className={styles.table_button_container}>
                     <Col>
                         <button onClick={() => handleTableToShow('add')} className="ontrack_btn add_btn" style={{ padding: 10, width: '75%' }}>Agregar Manualmente</button>
-                    </Col>
+                    </Col> 
                     <Col>
                         <Modal
                             title="Agregar Calificación por CSV"
-                            body={<CSVForm data={{...data,students:addStudentAssistance}}/>}
+                            body={<CSVForm 
+                                    data={{...data,students:addStudentAssistance}}
+                                    refreshData = {handleRefreshData}
+                                    />}
                             button={ 
                                 <button
                                     className="ontrack_btn add_btn"
@@ -298,7 +316,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                                                             }
                                                                         />
                                                                         <Modal
-                                                                            title="¿Seguro que deseas eliminar la asistencia de este alumno?"
+                                                                            title="¿Seguro que deseas eliminar la calificación de este alumno?"
                                                                             body={<DeleteForm data={selectedData} handleSubmitAction={handleDeleteNota} />}
                                                                             button={
                                                                                 <IconButton onClick={() => setSelectedData(editStudentAssistance[dataIndex])} >
