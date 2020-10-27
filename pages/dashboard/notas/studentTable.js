@@ -316,7 +316,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                                                             }
                                                                         />
                                                                         <Modal
-                                                                            title="¿Seguro que deseas eliminar la asistencia de este alumno?"
+                                                                            title="¿Seguro que deseas eliminar la calificación de este alumno?"
                                                                             body={<DeleteForm data={selectedData} handleSubmitAction={handleDeleteNota} />}
                                                                             button={
                                                                                 <IconButton onClick={() => setSelectedData(editStudentAssistance[dataIndex])} >

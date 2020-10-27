@@ -5,31 +5,43 @@ import FormControl from "@material-ui/core/FormControl";
 import styles from './styles.module.scss';
 import { useEffect, useState } from "react";
 import FileInput from "../../../commons/file_uploader";
-import { IconButton } from "@material-ui/core";
+import { FormHelperText, IconButton } from "@material-ui/core";
 
 
 const INITIAL_STATE = {
     cuerpo: "",
     files: [],
-    padre:'',
+    padre: '',
 }
 
 
 const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
 
     const [state, setState] = useState(INITIAL_STATE);
+    const [validationLength, setValidationLength] = useState(false);
 
-    useEffect(()=>{
-        if(padre){
-            setState({...state,padre:padre})
+
+    useEffect(() => {
+        if (padre) {
+            setState({ ...state, padre: padre })
         }
-        if(postData){
-            setState({...state,cuerpo:postData.cuerpo, files:postData.aduntos})
+        if (postData) {
+            setState({ ...state, cuerpo: postData.cuerpo, files: postData.aduntos })
         }
-    },[])
+    }, [])
+
+
+    const handleValidationLength = (value) => {
+        if (value.length < 500) {
+            setValidationLength(false);
+        } else {
+            setValidationLength(true);
+        }
+    }
 
     const handleChange = (prop) => (e) => {
         const VALUE = e.target.value;
+        handleValidationLength(VALUE);
         setState({ ...state, [prop]: VALUE });
     }
 
@@ -39,8 +51,11 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleSubmitPost(state).then((result)=>{
-            if(result.success){
+        if (validationLength) {
+            return
+        }
+        handleSubmitPost(state).then((result) => {
+            if (result.success) {
                 handleModal && handleModal(false);
             }
             setState(INITIAL_STATE);
@@ -62,6 +77,14 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
                             required
                         />
                     </FormControl>
+                    {validationLength && (
+                        <FormHelperText
+                            className="helper-text"
+                            style={{ color: "rgb(182, 60, 47)" }}
+                        >
+                            La actualización debe contener menos de 500 caracteres
+                        </FormHelperText>
+                    )}
                     <div className={styles.send_container}>
                         <IconButton type="submit">
                             <SendIcon />
@@ -70,7 +93,7 @@ const NewPost = ({ handleSubmitPost, padre, handleModal, postData }) => {
                 </form>
             </Col>
             <Col lg={12} md={12} sm={12} xs={12} className={styles.bottom_container}>
-                <FileInput handleChange={handleFileChange} files={state.files}/>
+                <FileInput handleChange={handleFileChange} files={state.files} />
             </Col>
         </Row>
     )
