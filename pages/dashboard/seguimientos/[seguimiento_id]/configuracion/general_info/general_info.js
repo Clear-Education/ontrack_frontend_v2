@@ -10,7 +10,7 @@ import * as types from "../../../../../../redux/types";
 import { useState } from 'react';
 import { IconButton } from '@material-ui/core';
 
-const GeneralInfo = ({ adminView }) => {
+const GeneralInfo = ({ adminView, titleSection }) => {
     const [editTitle, setEditTitle] = useState();
     const dispatch = useDispatch();
     const user = useSelector((store) => store.user);
@@ -68,7 +68,7 @@ const GeneralInfo = ({ adminView }) => {
 
             {!editTitle ?
                 <>
-                    <TitlePage title={`Configuración del seguimiento ${currentTracking.nombre}`} />
+                    <TitlePage title={`${titleSection} del seguimiento ${currentTracking.nombre}`} />
                     <Col lg={12} md={12} sm={12} xs={12} className="left" style={{ paddingLeft: '20px' }}>
                         <span>{currentTracking.descripcion}</span>
                     </Col>

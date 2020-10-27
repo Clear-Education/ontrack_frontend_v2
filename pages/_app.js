@@ -35,7 +35,7 @@ const App = ({ Component, pageProps, router }) => {
   useEffect(() => {
     if (
       AUTH_USER !== undefined &&
-      AUTH_USER.user.isLoggedIn &&
+      AUTH_USER.user?.isLoggedIn &&
       (router.route.match(/(login)/) || router.route.match(/(register)/) || router.route === '/')
     ) {
       router.push("/dashboard");
@@ -69,12 +69,15 @@ const App = ({ Component, pageProps, router }) => {
           crossOrigin="anonymous"
         />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"></link>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
       </Head>
       <Alert timeout={3000} stack={true} />
       <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
         {router.route.match(/(dashboard)/i) ? (
 
-          <Row lg={12} md={12} sm={12} xs={12} style={{margin: 0}}>
+          <Row lg={12} md={12} sm={12} xs={12} style={{ margin: 0 }}>
             <SideBar />
             <Col
               id="dashboard_container"

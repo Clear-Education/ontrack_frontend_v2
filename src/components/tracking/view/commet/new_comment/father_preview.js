@@ -16,8 +16,8 @@ const FatherPreview = ({ postData }) => {
                     src={user.user.picture ?
                         `${user.user.picture}`
                         :
-                        config.default_picture} 
-                        className={styles.profile_image} />
+                        config.default_picture}
+                    className={styles.profile_image} />
             </Col>
             <Col lg={11} md={11} sm={11} xs={11} className={styles.header_container}>
                 <span className={styles.highlight}>{father.name} {father.last_name}</span> publicó en
@@ -26,7 +26,9 @@ const FatherPreview = ({ postData }) => {
                 <span className={styles.post_date}> {postData.fecha_creacion} : </span>
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.content_container}>
                     <Col lg={12} md={12} sm={12} xs={12}>
-                        {postData.cuerpo}
+                        <p className="text-break">
+                            {postData.cuerpo}
+                        </p>
                     </Col>
                 </Row>
             </Col>

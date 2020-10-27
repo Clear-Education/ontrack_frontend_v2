@@ -88,9 +88,11 @@ export async function addStudentService(token, data) {
         effect: "stackslide",
       });
     } else {
-      Alert.error("Ocurrió un error agregando al alumno", {
+      result.result.forEach((element) => {
+        Alert.error(element.message, {
           effect: "stackslide",
         });
+      })
     }
     return result;
   })
@@ -139,17 +141,16 @@ export async function deleteStudentService(token, data) {
 }
 
 
-
-
-
 export async function deleteMultipleStudentsCourseService(token, data) {
   const DATA = parseStudentCourseData(data, 'delete');
   return await deleteMultipleStudentsCourseCrud(token, DATA).then((result) => {
     if (result.success) {
 
     } else {
-      Alert.success("Ocurrió un error", {
-        effect: "stackslide",
+      result.result.forEach((element) => {
+        Alert.error(element.message, {
+          effect: "stackslide",
+        });
       });
     }
     return result;
@@ -164,8 +165,10 @@ export async function addMultipleStudentsCourseService(token, data) {
         effect: "stackslide",
       });
     } else {
-      Alert.success("Ocurrió un error", {
-        effect: "stackslide",
+      result.result.forEach((element) => {
+        Alert.error(element.message, {
+          effect: "stackslide",
+        });
       });
     }
     return result;

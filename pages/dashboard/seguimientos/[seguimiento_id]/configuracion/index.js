@@ -44,7 +44,7 @@ const Configuracion = () => {
     return (
         <Row lg={12} md={12} sm={12} xs={12} style={{ marginLeft: '5%' }}>
             <Row lg={12} md={12} sm={12} xs={12} className={styles.header_container}>
-                <GeneralInfo adminView={adminView} />
+                <GeneralInfo adminView={adminView} titleSection={"Configuración"}/>
             </Row>
             <div className={styles.sub_menu_container}>
                 <SubMenu />

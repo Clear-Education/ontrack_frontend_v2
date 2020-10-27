@@ -22,7 +22,13 @@ const Students = () => {
   const [allData, setAllData] = useState([]);
   const [isLoading, setIsLoading] = useState(true)
   const [selectedData, setSelectedData] = useState();
+  const [showTable, setShowTable] = useState();
   const user = useSelector((store) => store.user);
+
+
+  useEffect(() => {
+    setShowTable(true);
+  }, [])
 
   const url = `${config.api_url}/alumnos/list`;
   useSWR(url, () => {
@@ -30,7 +36,7 @@ const Students = () => {
       setIsLoading(false);
       setAllData(result.result.results)
     })
-  }); 
+  });
 
 
   async function addStudent(e, data) {
@@ -98,71 +104,73 @@ const Students = () => {
             xs={12}
             style={{ marginTop: 20 }}
           >
-            <MUIDataTable
-              data={allData}
-              options={MTConfig("Alumnos").options}
-              localization={MTConfig().localization}
-              columns={[
+            {showTable &&
+              <MUIDataTable
+                data={allData}
+                options={MTConfig("Alumnos").options}
+                localization={MTConfig().localization}
+                columns={[
 
-                {
-                  name: "id",
-                  label: "Id",
-                  options: {
-                    display: false,
-                    filter: false
-                  },
-
-                },
-                {
-                  name: "nombre",
-                  label: "Nombre",
-                },
-                {
-                  name: "apellido",
-                  label: "Apellido",
-                },
-                {
-                  name: "legajo",
-                  label: "Legajo",
-                },
-                {
-                  name: "email",
-                  label: "Email",
-                },
-                {
-                  name: "actions",
-                  label: "Acciones",
-                  options: {
-                    customBodyRender: (value, tableMeta, updateValue) => {
-                      return (<>
-                        <div style={{ display: 'flex' }}>
-                          <Modal
-                            title="Editar Alumno"
-                            body={<AddEditStudentForm data={selectedData} handleSubmitAction={editStudent} />}
-                            button={
-                              <IconButton onClick={() => setSelectedData(tableMeta.rowData[0])} >
-                                <EditIcon />
-                              </IconButton>
-                            }
-                          />
-
-                          <Modal
-                            title="¿Seguro que deseas eliminar este alumno?"
-                            body={<DeleteForm data={selectedData} handleSubmitAction={deleteStudent} />}
-                            button={
-                              <IconButton onClick={() => setSelectedData(tableMeta.rowData[0])} >
-                                <Delete />
-                              </IconButton>
-                            }
-                          />
-                        </div>
-                      </>)
+                  {
+                    name: "id",
+                    label: "Id",
+                    options: {
+                      display: false,
+                      filter: false
                     },
-                    filter: false
+
                   },
-                }
-              ]}
-            />
+                  {
+                    name: "nombre",
+                    label: "Nombre",
+                  },
+                  {
+                    name: "apellido",
+                    label: "Apellido",
+                  },
+                  {
+                    name: "legajo",
+                    label: "Legajo",
+                  },
+                  {
+                    name: "email",
+                    label: "Email",
+                  },
+                  {
+                    name: "actions",
+                    label: "Acciones",
+                    options: {
+                      customBodyRender: (value, tableMeta, updateValue) => {
+                        return (<>
+                          <div style={{ display: 'flex' }}>
+                            <Modal
+                              title="Editar Alumno"
+                              body={<AddEditStudentForm data={selectedData} handleSubmitAction={editStudent} />}
+                              button={
+                                <IconButton onClick={() => setSelectedData(tableMeta.rowData[0])} >
+                                  <EditIcon />
+                                </IconButton>
+                              }
+                            />
+
+                            <Modal
+                              title="¿Seguro que deseas eliminar este alumno?"
+                              body={<DeleteForm data={selectedData} handleSubmitAction={deleteStudent} />}
+                              button={
+                                <IconButton onClick={() => setSelectedData(tableMeta.rowData[0])} >
+                                  <Delete />
+                                </IconButton>
+                              }
+                            />
+                          </div>
+                        </>)
+                      },
+                      filter: false
+                    },
+                  }
+                ]}
+              />
+            }
           </Col>
         </Row>
 

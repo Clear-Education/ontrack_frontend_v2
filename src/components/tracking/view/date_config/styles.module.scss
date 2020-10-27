@@ -9,7 +9,7 @@
     display: block;
 }
 .viwer_date{
-    font-size: 12px;
+    font-size: 14px;
 }
 .title_container{
   display: flex;
@@ -28,4 +28,8 @@
   color: var(--red);
   font-weight: 600;
   margin-bottom: 15px;
+}
+
+.display_none {
+  display: none;
 }
