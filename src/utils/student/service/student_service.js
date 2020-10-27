@@ -81,7 +81,7 @@ export async function getStudentsCourseExamService(token, course_id, schoolYearI
 
 
 export async function addStudentService(token, data) {
-  const parseStudentData = [data]
+  const parseStudentData = !!data.length ? data : [data];
   return await addStudentCrud(token, parseStudentData).then((result) => {
     if (result.success) {
       Alert.success("Alumno agregado correctamente", {

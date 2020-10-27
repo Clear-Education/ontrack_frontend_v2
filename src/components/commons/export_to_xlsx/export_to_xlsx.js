@@ -2,7 +2,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
 
-const ExportToXlsx = ({ fileData }) => {
+const ExportToXlsx = ({ fileData, template_name }) => {
 
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const fileExtension = '.xlsx';
@@ -12,7 +12,7 @@ const ExportToXlsx = ({ fileData }) => {
         const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const data = new Blob([excelBuffer], { type: fileType });
-        FileSaver.saveAs(data, 'plantilla_notas_ontrack' + fileExtension);
+        FileSaver.saveAs(data, template_name + fileExtension);
     }
 
     return (

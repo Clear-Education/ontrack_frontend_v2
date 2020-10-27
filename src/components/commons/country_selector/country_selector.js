@@ -1,30 +1,8 @@
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import { useEffect, useState } from 'react';
-import styles from './country_selector.module.scss'
+import styles from './styles.module.scss'
 import { Row, Col } from 'react-bootstrap';
 import { motion } from 'framer-motion';
-
-
-const list = {
-    visible: {
-        opacity: 1,
-        transition: {
-            when: "beforeChildren",
-            staggerChildren: 0.1,
-        },
-    },
-    hidden: {
-        opacity: 0,
-        transition: {
-            when: "afterChildren",
-        },
-    },
-};
-
-const item = {
-    visible: { opacity: 1, x: 0 },
-    hidden: { opacity: 0, x: -100 },
-};
 
 const CountrySelector = ({ setState, previousValue, color }) => {
 
@@ -48,14 +26,13 @@ const CountrySelector = ({ setState, previousValue, color }) => {
 
     return (
         <Row lg={12} md={12} sm={12} xs={12}>
-            <motion.span
-                initial="hidden"
-                animate="visible"
-                variants={list}
-                style={{ listStyleType: "none", marginLeft: "0", display: 'flex', width: '100%' }}
+            <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className={styles.container}
             >
                 <Col lg={6} md={6} sm={12} xs={12} className={styles.country_container}>
-                    <motion.li variants={item}>
                         <CountryDropdown
                             defaultOptionLabel="Seleccione un país"
                             value={country}
@@ -71,11 +48,10 @@ const CountrySelector = ({ setState, previousValue, color }) => {
                                 backgroundColor: color ? '#f1f1f1' : 'unset'
                             }}
                         />
-                    </motion.li>
                 </Col>
 
                 <Col lg={6} md={6} sm={12} xs={12} className={styles.region_container}>
-                    <motion.li variants={item}>
+            
                         <RegionDropdown
                             disableWhenEmpty={true}
                             country={country}
@@ -93,10 +69,10 @@ const CountrySelector = ({ setState, previousValue, color }) => {
                                 backgroundColor: color ? '#f1f1f1' : 'unset'
                             }}
                         />
-                    </motion.li>
+         
                 </Col>
 
-            </motion.span>
+            </motion.div>
         </Row>
     )
 
