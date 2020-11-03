@@ -8,9 +8,10 @@ import styles from './styles.module.scss';
 import DoneIcon from '@material-ui/icons/Done';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { convertDateToSendOnQuery } from "../../../../utils/commons/common_services";
+import Delete from '@material-ui/icons/Delete';
 
 
-const DateFilter = ({handleSend}) => {
+const DateFilter = ({ handleSend }) => {
 
     const [endDate, setEndDate] = useState(new Date());
     const [startDate, setStartDate] = useState(new Date());
@@ -29,15 +30,15 @@ const DateFilter = ({handleSend}) => {
     const handleOpenFilter = () => {
         setShowFilter(!showFilter)
     }
+    
+    const handleDeleteFilter = () =>{
+        handleSend();
+    }
 
     const handleSendFilter = () =>{
-        const from = convertDateToSendOnQuery(startDate);
+        const from =  convertDateToSendOnQuery(startDate);
         const to = convertDateToSendOnQuery(endDate);
-        handleSend(from,to).then((result)=>{
-            if(result.success){
-                handleOpenFilter();
-            }
-        });
+        handleSend(from, to);
     }
 
 
@@ -84,9 +85,14 @@ const DateFilter = ({handleSend}) => {
                             <DoneIcon />
                         </IconButton>
                     </div>
+                    <div  onClick={handleDeleteFilter}>
+                        <IconButton>
+                            <Delete />
+                        </IconButton>
+                    </div>
                     <div onClick={handleOpenFilter} >
                         <IconButton>
-                            <CancelIcon/>
+                            <CancelIcon />
                         </IconButton>
                     </div>
                 </div>
