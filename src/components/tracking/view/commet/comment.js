@@ -52,18 +52,18 @@ export const Comment = ({ commentData }) => {
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
             <Col lg={1} md={1} sm={1} xs={1}>
                 <Avatar
-                    src={owner.picture ?
-                        `${owner.picture}`
+                    src={owner?.picture ?
+                        `${owner?.picture}`
                         :
                         config.default_picture}
                 />
             </Col>
             <Col lg={11} md={11} sm={11} xs={11} className={styles.header_container}>
-                <span className={styles.highlight}>{owner.name} {owner.last_name}</span> comentó {" "}
+                <span className={styles.highlight}>{owner?.name} {owner?.last_name}</span> comentó {" "}
                 <span className={styles.dot}></span>
                 <span className={styles.post_date}> {commentData.fecha_creacion} : </span>
 
-                {user.user.id === owner.id &&
+                {user.user.id === owner?.id &&
                     <div className={styles.more_options}>
                         <IconButton onClick={handleOpen}>
                             <MoreVertIcon />

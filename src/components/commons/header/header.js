@@ -58,11 +58,6 @@ const Header = () => {
 
         <Col lg={4} md={4} sm={4} xs={4}>
           <Col lg={12} md={12} sm={12} xs={12} className={styles.info_container}>
-            <div className={styles.notification_container}>
-              {/* <IconButton>
-                <NotificationsIcon />
-              </IconButton> */}
-            </div>
             <div className={styles.user_info_container} onClick={handleOpen}>
               <div className={styles.avatar_container}>
                 <Avatar

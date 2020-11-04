@@ -20,9 +20,9 @@ import EditPostForm from "./edit_post";
 const Post = ({ postData, handleSubmitPost }) => {
 
     const [openComments, setOpenComments] = useState(false);
-    const owner = postData.usuario.usuario;
-    const tracking = postData.seguimiento;
-    const comments = postData.comentarios;
+    const owner = postData?.usuario?.usuario;
+    const tracking = postData?.seguimiento;
+    const comments = postData?.comentarios;
     const user = useSelector((store) => store.user);
     const [openMoreOptions, setOpenMoreOptions] = useState(false);
     const url = `${config.api_url}/actualizaciones/${tracking.id}/list/`;
@@ -41,7 +41,7 @@ const Post = ({ postData, handleSubmitPost }) => {
 
     async function handleEditPost(data) {
         const DATA = {
-            id: postData.id,
+            id: postData?.id,
             cuerpo: data.cuerpo,
             files: data.files
         }
@@ -59,19 +59,19 @@ const Post = ({ postData, handleSubmitPost }) => {
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
             <Col lg={1} md={1} sm={1} xs={1}>
                 <Avatar
-                    src={owner.picture ?
-                        `${owner.picture}`
+                    src={owner?.picture ?
+                        `${owner?.picture}`
                         :
                         config.default_picture}
                 />
             </Col>
             <Col lg={11} md={11} sm={11} xs={11} className={styles.header_container}>
-                <span className={styles.highlight}>{owner.name} {owner.last_name}</span> publicó en
+                <span className={styles.highlight}>{owner?.name} {owner?.last_name}</span> publicó en
                 <span className={styles.highlight}>: {tracking.nombre} </span>
                 <span className={styles.dot}></span>
-                <span className={styles.post_date}> {postData.fecha_creacion} : </span>
+                <span className={styles.post_date}> {postData?.fecha_creacion} : </span>
                 <div className={styles.more_options}>
-                    {user.user.id === owner.id &&
+                    {user.user.id === owner?.id &&
                         <IconButton onClick={handleOpen}>
                             <MoreVertIcon />
                         </IconButton>
@@ -105,10 +105,10 @@ const Post = ({ postData, handleSubmitPost }) => {
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.content_container}>
                     <Col lg={12} md={12} sm={12} xs={12}>
                         <p className="text-break">
-                            {postData.cuerpo}
+                            {postData?.cuerpo}
                         </p>
                         <div style={{ overflow: 'auto', display: 'flex' }}>
-                            {postData.adjuntos.map((file, i) => {
+                            {postData?.adjuntos.map((file, i) => {
                                 const url = file.file;
                                 return <div className={styles.file_container} onClick={() => handleOpenFile(url)}>{file.upload_name}</div>
                             })}

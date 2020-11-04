@@ -1,0 +1,27 @@
+
+  .csv_container{
+    margin: 20px auto;
+    background: var(--medium-gray);
+    padding: 20px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .message_alert{
+    text-align: center;
+    padding: 20px 0px 20px 0px;
+    background: #bd7676;
+    border-radius: 10px;
+    text-indent: 20px;
+    color: var( --white);
+    font-weight: 600;
+    margin-bottom: 20px;
+    width: 50%;
+    margin-top: 20px;
+}
+.form_container{
+  padding: 30px;
+  padding-left: 100px;
+}

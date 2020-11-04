@@ -183,7 +183,7 @@ const AdminSideBar = () => {
                 lg={7}
                 md={7}
                 sm={7}
-                xs={7}
+                xs={7} 
                 className={styles.navigations_container}
                 title="Cuentas de usuario"
                 onClick={changeSelected.bind(this, "accounts")}
@@ -195,6 +195,9 @@ const AdminSideBar = () => {
             </Link>
           </Col>
         </Row>
+        <div className={styles.logout_container} onClick={(e)=>logout(e)}>
+          <img src="/icons/logout_icon.svg" style={{ width: '35px', display: 'inline' }} />
+        </div>
       </div>
     </>
   );

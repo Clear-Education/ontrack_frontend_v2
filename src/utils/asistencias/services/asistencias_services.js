@@ -2,8 +2,8 @@ import { getAsistenciasCrud, addAsistenciasCrud, addMultipleAsistenciasCrud, edi
 import Alert from "react-s-alert";
 
 
-export async function getAsistenciasService(token, curso_id, fecha_desde) {
-    return await getAsistenciasCrud(token, curso_id, fecha_desde).then((result) => {
+export async function getAsistenciasService(token, curso_id,alumno_id, dates) {
+    return await getAsistenciasCrud(token, curso_id, alumno_id,dates).then((result) => {
         if (result.success) {
 
         } else {

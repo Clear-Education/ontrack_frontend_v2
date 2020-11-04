@@ -32,7 +32,8 @@
 }
 .structure_items_container{
     height: 500px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .structure_item_container:hover{

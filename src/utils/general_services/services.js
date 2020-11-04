@@ -78,7 +78,7 @@ export const parseSubjectsToShowOnTable = (subjects) =>{
 
 
 export const parsePostData = (postData, currentTracking) =>{
-    const USER = currentTracking.integrantes.filter((integrante)=>{return integrante.usuario.id === postData.usuario});
+    const USER = currentTracking.integrantes.filter((integrante)=>{return integrante.usuario.id === postData?.usuario});
     let newData = {
         ...postData,
         usuario: USER[0],

@@ -30,6 +30,8 @@
     "next-redux-wrapper": "^6.0.2",
     "nprogress": "^0.2.0",
     "react": "16.13.1",
+    "react-big-calendar": "^0.28.2",
+    "react-booking-calendar": "^1.0.3",
     "react-bootstrap": "^1.2.2",
     "react-country-region-selector": "^2.1.0",
     "react-dom": "16.13.1",

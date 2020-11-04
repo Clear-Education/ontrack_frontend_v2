@@ -110,7 +110,7 @@ export async function deleteStudentCrud(token, data) {
 
 
 
-export async function getStudentsCourseCrud(token, course_id, schoolYearId) { //trae los alumnos de un curso para un año lectivo
+export async function getStudentsCourseCrud(token, course_id, schoolYearId, student_id) { //trae los alumnos de un curso para un año lectivo
   return await axios
     .get(`${config.api_url}/alumnos/curso/list/`, {
       headers: {
@@ -118,6 +118,7 @@ export async function getStudentsCourseCrud(token, course_id, schoolYearId) { //
       },
       params: {
         curso: course_id,
+        alumno: student_id,
         anio_lectivo: schoolYearId
       }
     })
@@ -184,6 +185,26 @@ export async function deleteMultipleStudentsCourseCrud(token, data) {
         Authorization: `Token ${token}`
       },
       data: data
+    })
+    .then((json) => {
+      let response = {
+        success: true,
+        result: json.data,
+      };
+      return response;
+    })
+    .catch((error) => {
+      return errorHandler(error);
+    });
+}
+
+
+export async function getOneStudentCourseCrud(token, student_id) {
+  return await axios
+    .get(`${config.api_url}/alumnos/curso/${student_id}/`, {
+      headers: {
+        Authorization: `Token ${token}`
+      },
     })
     .then((json) => {
       let response = {
