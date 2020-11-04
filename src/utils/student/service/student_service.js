@@ -7,7 +7,8 @@ import {
   addMultipleStudentsCourseCrud,
   deleteMultipleStudentsCourseCrud,
   getStudentCrud,
-  getStudentsCourseExamCrud
+  getStudentsCourseExamCrud,
+  getOneStudentCourseCrud
 } from "../cruds/student_cruds";
 
 import Alert from "react-s-alert";
@@ -45,8 +46,8 @@ export async function getStudentService(token, student_id) {
   })
 }
 
-export async function getStudentsCourseService(token, course_id, schoolYearId) {
-  return await getStudentsCourseCrud(token, course_id, schoolYearId).then((result) => {
+export async function getStudentsCourseService(token, course_id, schoolYearId, student_id) {
+  return await getStudentsCourseCrud(token, course_id, schoolYearId, student_id).then((result) => {
     if (result.success) {
 
     } else {
@@ -164,6 +165,23 @@ export async function addMultipleStudentsCourseService(token, data) {
       Alert.success("Se modificaron los alumnos del curso correctamente", {
         effect: "stackslide",
       });
+    } else {
+      result.result.forEach((element) => {
+        Alert.error(element.message, {
+          effect: "stackslide",
+        });
+      });
+    }
+    return result;
+  })
+}
+
+
+
+export async function getOneStudentCourseService(token, student_id) {
+  return await getOneStudentCourseCrud(token, student_id).then((result) => {
+    if (result.success) {
+
     } else {
       result.result.forEach((element) => {
         Alert.error(element.message, {

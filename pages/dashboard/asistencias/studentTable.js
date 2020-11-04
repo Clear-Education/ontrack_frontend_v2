@@ -18,6 +18,7 @@ import Delete from '@material-ui/icons/Delete';
 import DeleteForm from '../../../src/components/commons/delete_form/deleteForm';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import CalendarView from "../../../src/components/asistencias/calendar/calendar_view";
 
 
 const theme = createMuiTheme({
@@ -133,10 +134,6 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
         setDateAgregarAsistencia(null)
     }
 
-    const handleAddAssistance = (e, data) => {
-        return handleAdd(e, data);
-    }
-
     async function handleEditAssistance(e, datos) {
         return handleEdit(e, datos).then((result) => {
             if (result.success) {
@@ -237,6 +234,9 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                 <Row className={styles.table_button_container}>
                     <Col>
                         <button onClick={() => handleTableToShow('add')} className="ontrack_btn add_btn" style={{ padding: 10 }}>Agregar Asistencias</button>
+                    </Col>
+                    <Col>
+                        <button onClick={() => handleTableToShow('view')} className="ontrack_btn add_btn" style={{ padding: 10 }}>Ver Asistencias</button>
                     </Col>
                     <Col>
                         <button onClick={() => handleTableToShow('ver')} className="ontrack_btn add_btn" style={{ padding: 10 }}>Modificar Asistencias</button>
@@ -361,6 +361,8 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
                             </Col>
                         </Row>
+                        : tableToShow === 'view' ? 
+                        <CalendarView  calendarData = {data}/>
                         :
                         null
                 }
