@@ -54,7 +54,7 @@ export async function addMultipleAsistenciasCrud(data, auth_token) {
 
 
 //OBTENER LA LISTA DE ASISTENCIAS DE UN CURSO PARA UN FECHA DETERMINADA
-export async function getAsistenciasCrud(auth_token, curso_id, fecha_desde) {
+export async function getAsistenciasCrud(auth_token, curso_id, alumno_id, dates) {
     return axios
         .get(`${config.api_url}/asistencias/list`, {
             headers: {
@@ -62,7 +62,9 @@ export async function getAsistenciasCrud(auth_token, curso_id, fecha_desde) {
             },
             params: {
                 curso: curso_id,
-                fecha_desde: fecha_desde
+                fecha_desde: dates.from,
+                fecha_hasta: dates.to,
+                alumno_curso: alumno_id,
             }
         })
         .then(json => {

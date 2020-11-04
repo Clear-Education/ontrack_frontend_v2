@@ -15,10 +15,11 @@
   display: flex;
   margin-right: 35px;
   cursor: pointer;
+  z-index: 9998;
 }
 .info_container {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   height: 100%;
 }

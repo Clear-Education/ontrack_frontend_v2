@@ -12,6 +12,7 @@ import Head from "next/head";
 import Alert from "react-s-alert";
 import { useEffect, useState } from 'react';
 import "react-s-alert/dist/s-alert-css-effects/stackslide.css";
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import SideBar from '../src/components/commons/sidebar';
 import { Row, Col } from 'react-bootstrap';
 import { validateFirstLogin, validateLoggedInUser } from '../src/utils/Auth';

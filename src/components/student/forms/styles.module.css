@@ -24,3 +24,10 @@
     margin-top: 10px;
     display: inline-block;
   }
+
+  .adornment{
+    height: 1px;
+    width: 100%;
+    background: var(--medium-gray);
+    margin: 20px 0px;
+  }

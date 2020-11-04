@@ -97,7 +97,7 @@ const CSVForm = ({ data, handleClose, refreshData }) => {
             </div>
             <Row lg={12} md={12} sm={12} xs={12}>
                 <Col lg={12} md={12} sm={12} xs={12}>
-                    <ExportToXlsx fileData={parseStudentsDataToExport(data.students)} />
+                    <ExportToXlsx fileData={parseStudentsDataToExport(data.students)} template_name="plantilla_notas_ontrack"/>
                 </Col>
                 <Col lg={12} md={12} sm={12} xs={12} className={styles.form_container}>
                     <Form

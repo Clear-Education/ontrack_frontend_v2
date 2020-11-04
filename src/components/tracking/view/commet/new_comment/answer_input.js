@@ -8,8 +8,8 @@ import NewPost from "../../new_post/new_post";
 
 const AnswerInput = ({ postData, handleSubmitPost, handleModal }) => {
 
-    const father = postData.usuario.usuario;
-    const parent_post = postData.id;
+    const father = postData?.usuario?.usuario;
+    const parent_post = postData?.id;
     const user = useSelector((store) => store.user);
     return (
         <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
