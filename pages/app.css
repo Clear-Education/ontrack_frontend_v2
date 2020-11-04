@@ -26,6 +26,9 @@ body {
 .right {
   text-align: right;
 }
+.rbc-day-bg{
+  cursor: pointer;
+}
 
 #dashboard_container {
   margin-left: 230px;

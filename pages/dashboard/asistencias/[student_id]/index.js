@@ -8,18 +8,21 @@ import { useRouter } from "next/dist/client/router";
 import { convertDateToSendOnQuery } from "../../../../src/utils/commons/common_services";
 import { getOneStudentCourseService } from "../../../../src/utils/student/service/student_service";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
+import BackLink from '../../../../src/components/commons/back_link/back_link';
+import styles from './styles.module.scss';
 
+require('moment/locale/es.js');
+import moment from 'moment';
 
 const localizer = momentLocalizer(moment);
 
 const StudentCalendar = () => {
-    const startDate = convertDateToSendOnQuery(new Date(new Date().getFullYear(), 0, 1));
     const [loading, setLoading] = useState();
     const [studentId, setStudentId] = useState();
+    const [studentData, setStudentData] = useState();
+    const [events, setEvents] = useState([]);
     const user = useSelector((store) => store.user);
     const router = useRouter();
-    const [studentData, setStudentData] = useState();
 
     useEffect(() => {
         let params = Object.values(router.query);
@@ -33,8 +36,28 @@ const StudentCalendar = () => {
             getOneStudentCourseService(user.user.token, studentId).then((result) => {
                 if (result.success) {
                     setStudentData(result.result.alumno);
-                    getAsistenciasService(user.user.token, null, studentId, startDate).then((result) => {
+                    const from = convertDateToSendOnQuery(new Date(new Date().getFullYear(), 0, 1));
+                    const to = convertDateToSendOnQuery(new Date());
+                    const dates = {
+                        from: from,
+                        to: to
+                    }
+                    getAsistenciasService(user.user.token, null, studentId, dates).then((result) => {
                         setLoading(false);
+                        if (result.success) {
+                            let events = [];
+                            result.result.results.map((event) => {
+                                const EVENT_DATA = {
+                                    id: event.id,
+                                    title: event.asistio ? 'PRESENTE' : 'AUSENTE',
+                                    allDay: true,
+                                    start: new Date(event.fecha),
+                                    end: new Date(event.fecha)
+                                }
+                                events.push(EVENT_DATA);
+                            })
+                            setEvents(events);
+                        }
                     })
                 } else {
                     setLoading(false);
@@ -49,20 +72,28 @@ const StudentCalendar = () => {
     return (
         loading ? <BackgroundLoader show={loading} /> :
             <Row lg={12} md={12} sm={12} xs={12}>
+                <div className={styles.sub_menu_container}>
+                    <BackLink url={'/dashboard/asistencias'}/>
+                </div>
+
                 <Col lg={12} md={12} sm={12} xs={12}>
                     <TitlePage title={`Asistencias de ${studentData?.nombre} ${studentData?.apellido}`} />
                 </Col>
                 <Col lg={12} md={12} sm={12} xs={12}>
-                    <div style={{ height: '500pt' }}>
+                    <div style={{ height: '500pt', width: '90%', marginTop: '20px' }}>
                         <Calendar
-                            events={[]}
+                            events={events}
                             startAccessor="start"
                             endAccessor="end"
                             defaultDate={moment().toDate()}
                             localizer={localizer}
                             selectable
-                            onSelectSlot = {(info)=>{console.log(info)}}
                             views={['month']}
+                            messages={{
+                                next: "Sig",
+                                previous: "Ant",
+                                today: "Hoy",
+                            }}
                         />
                     </div>
                 </Col>
