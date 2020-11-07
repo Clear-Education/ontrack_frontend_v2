@@ -86,65 +86,59 @@ const Estadisticas = () => {
         setAlumnoSeleccionado(student.id);
     }
 
+
     const handlePrintPage = () => {
-        if(thirdSection){
+
+        if (!firstSection && !secondSection) {
             const input = document.getElementById('estadisticas');
-            const student = tracking?.alumnos.filter((alumno)=>{return alumno.alumno.id === alumnoSeleccionado})[0];
-            html2canvas(input).then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'px', "a4");
-    
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-    
-                const widthRatio = pageWidth / canvas.width;
-                const heightRatio = pageHeight / canvas.height;
-                const ratio = widthRatio > heightRatio ? heightRatio : widthRatio;
-    
-                const canvasWidth = canvas.width * ratio;
-                const canvasHeight = canvas.height * ratio;
-    
-                const marginX = (pageWidth - canvasWidth) / 2;
-    
-                pdf.setFontSize(10)
-                pdf.text(5, 10, `Reporte del Seguimiento: ${tracking.nombre}`);
-                pdf.setFontSize(8);
-                pdf.text(5, 20, `Fecha de Reporte: ${new Date().toLocaleString()}`);
-                pdf.text(5, 30, `Generado por: ${user.user.name} ${user.user.last_name}`);
-                pdf.text(5, 40, `Integrantes:`);
-                let line = 40;
-                tracking.integrantes.map((integrante,i)=>{
-                    line = i === 0 ? (i+1)*10 + line : line + 10;
-                    return pdf.text(5, line, `- ${integrante.usuario.name} ${integrante.usuario.last_name}`)
+            const student = tracking?.alumnos.filter((alumno) => { return alumno.alumno.id === alumnoSeleccionado })[0];
+            html2canvas(input, { scrollY: -window.scrollY })
+                .then((canvas) => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF({
+                        orientation: "portrait",
+                    });
+                    const imgProps = pdf.getImageProperties(imgData);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    pdf.setFontSize(10);
+                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width; pdf.setFontSize(10)
+                    pdf.text(5, 5, `Reporte del Seguimiento: ${tracking.nombre}`);
+                    pdf.setFontSize(8);
+                    pdf.text(5, 9, `Fecha de Reporte: ${new Date().toLocaleString()}`);
+                    pdf.setFontSize(6);
+                    pdf.text(5, 13, `Generado por: ${user.user.name} ${user.user.last_name}`);
+                    pdf.text(5, 16, `Integrantes:`);
+                    let line = 16;
+                    tracking.integrantes.map((integrante, i) => {
+                        console.log(integrante);
+                        line = i === 0 ? (i + 1) * 3 + line : line + 3;
+                        console.log(line);
+                        return pdf.text(5, line, `- ${integrante.rol}: ${integrante.usuario.name} ${integrante.usuario.last_name}`)
+                    })
+                    line = line + 3;
+                    pdf.text(5, line, `Materias:`);
+                    tracking.materias.map((materia, i) => {
+                        line = i === 0 ? (i + 1) * 3 + line : line + 3;
+                        return pdf.text(5, line, `- Nombre: ${materia.nombre} - Año: ${materia.anio.nombre}`)
+                    })
+                    line = line + 3;
+                    pdf.text(5, line, `Plazos: ${fromStoreToViewFormatDate(tracking.fecha_inicio)} - ${fromStoreToViewFormatDate(tracking.fecha_cierre)}`);
+                    line = line + 3;
+                    pdf.text(5, line, `Alumno seleccionado: ${student.alumno.nombre} ${student.alumno.apellido}`)
+                    console.log(pdfHeight, pdfWidth);
+                    pdf.addImage(imgData, 'PNG', 0, line + 1, pdfWidth, pdfHeight);
+
+                    pdf.save(`Reporte ${tracking.nombre}.pdf`);
                 })
-                line = line + 10;
-                pdf.text(5, line, `Materias:`);
-                tracking.materias.map((materia, i)=>{
-                    line = i === 0 ? (i+1)*10 + line : line + 10;
-                    return pdf.text(5, line, `- Nombre: ${materia.nombre} - Año: ${materia.anio.nombre}`)
-                })
-                line = line + 10;
-                pdf.text(5, line, `Plazos:`);
-                line = line + 10;
-                pdf.text(5, line, `Desde: ${fromStoreToViewFormatDate(tracking.fecha_inicio)}`);
-                line = line + 10;
-                pdf.text(5, line, `Hasta: ${fromStoreToViewFormatDate(tracking.fecha_cierre)}`);
-                line = line + 10;
-                pdf.text(5, line, `Alumno seleccionado:`)
-                line = line + 10;
-                pdf.text(5, line, `- ${student.alumno.nombre} ${student.alumno.apellido}`); 
-                
-                pdf.addImage(imgData, 'JPEG', marginX, line + 10, canvasWidth, canvasHeight);
-                pdf.save(`Reporte ${tracking.nombre}.pdf`);
-            });
-        }else{
-            Alert.error("Debe expandir el área de métricas y objetivos", {
+
+        } else {
+            Alert.error("Cierre las secciones de Materias / Participantes y Plazos", {
                 effect: "stackslide",
             });
         }
-        
-    }
 
+
+    }
     // VERIFICA QUE METRICAS TIENE EL SEGUIMIENTO
     useEffect(() => {
         if (tracking.asistencia) {
@@ -283,33 +277,15 @@ const Estadisticas = () => {
                 <Col lg={10} md={10} sm={10} xs={10}>
                     <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
 
-                        {/* SECCIÓN 1 ALUMNOS Y MATERIAS*/}
 
-                        {<div className={styles.collapse_container} onClick={() => setFirstSection(!firstSection)}>Materias {firstSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
-                        <Collapse in={firstSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
-                            <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                                <ConfigTable data={parseSubjectsToShowOnTable(tracking.materias)} tableName={"Materias"} />
-                            </Col>
-                        </Collapse>
-
-                        {/* SECCIÓN DOS PLAZOS Y PARTICIPANTES*/}
-
-                        {<div className={styles.collapse_container} onClick={() => setSecondSection(!secondSection)}>Participantes y Plazos {secondSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
-                        <Collapse in={secondSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
-                            <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
-                                <ConfigTable data={parseParticipantsToShowOnTable(tracking.integrantes)} tableName={"Participantes"} />
-                            </Col>
-                            <Col lg={12} md={12} sm={12} xs={12} className={`${styles.table_container} ${styles.dates_container}`}>
-                                <DateConfig />
-                            </Col>
-                        </Collapse>
-
-                        {/* SECCIÓN TRES METAS Y OBJETIVOS*/}
                         <div id="estadisticas">
+                            {/* SECCIÓN TRES METAS Y OBJETIVOS*/}
                             {<div className={styles.collapse_container} onClick={() => setThirdSection(!thirdSection)}>Metas y Objetivos del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
-                            <Collapse in={thirdSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
+
+                            <Collapse in={true} timeout="auto" unmountOnExit style={{ width: '100%' }}>
+
                                 <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container}>
-                                    <Col lg={5} md={5} sm={5} xs={5} className={styles.stats_container}>
+                                    <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
                                         <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
                                         {calificacionesData.length != 0 ?
                                             <>
@@ -335,8 +311,8 @@ const Estadisticas = () => {
                                         }
 
                                     </Col>
-                                    <Col lg={5} md={5} sm={5} xs={5} className={styles.stats_container}>
-                                        <h3 className="subtitle mb-2 mt-3">Progreso Asistencias</h3>
+                                    <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
+                                        <h3 className="subtitle mb-2">Progreso Asistencias</h3>
                                         {asistenciasData.length != 0 ?
                                             <>
                                                 <ResponsiveContainer width="100%" height={300} className="mx-auto">
@@ -361,7 +337,7 @@ const Estadisticas = () => {
                                     </Col>
 
                                     <Col lg={12} md={12} sm={12} xs={12} className={styles.stats_container}>
-                                        <h3 className="subtitle mb-2 mt-5">Objetivos Cualitativos</h3>
+                                        <h3 className="subtitle mb-2">Objetivos Cualitativos</h3>
                                         {objetivosCualitativosData.length != 0 ?
                                             <>
                                                 <ResponsiveContainer width="60%" height={300} className="mx-auto">
@@ -388,21 +364,38 @@ const Estadisticas = () => {
                                         }
                                     </Col>
 
+
                                 </Row>
 
                             </Collapse>
                         </div>
+                        {/* SECCIÓN 1 ALUMNOS Y MATERIAS*/}
+
+                        {<div className={styles.collapse_container} onClick={() => setFirstSection(!firstSection)}>Materias {firstSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
+                        <Collapse in={firstSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
+                            <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
+                                <ConfigTable data={parseSubjectsToShowOnTable(tracking.materias)} tableName={"Materias"} />
+                            </Col>
+                        </Collapse>
+
+                        {/* SECCIÓN DOS PLAZOS Y PARTICIPANTES*/}
+
+                        {<div className={styles.collapse_container} onClick={() => setSecondSection(!secondSection)}>Participantes y Plazos {secondSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
+                        <Collapse in={secondSection} timeout="auto" unmountOnExit style={{ width: '100%' }}>
+                            <Col lg={12} md={12} sm={12} xs={12} className={styles.table_container}>
+                                <ConfigTable data={parseParticipantsToShowOnTable(tracking.integrantes)} tableName={"Participantes"} />
+                            </Col>
+                            <Col lg={12} md={12} sm={12} xs={12} className={`${styles.table_container} ${styles.dates_container}`}>
+                                <DateConfig />
+                            </Col>
+                        </Collapse>
                     </Row>
-
-
                     <Col lg={12} md={12} sm={12} xs={12} style={{ margin: '20px 0px 20px 0px' }}>
                         <button className="ontrack_btn add_btn" onClick={handlePrintPage}>Generar Reporte</button>
                     </Col>
 
                 </Col>
             </Row>
-
-
         </Row>
     )
 }
