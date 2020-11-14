@@ -74,7 +74,7 @@ const Estadisticas = () => {
 
     const [firstSection, setFirstSection] = useState();
     const [secondSection, setSecondSection] = useState();
-    const [thirdSection, setThirdSection] = useState();
+    const [thirdSection, setThirdSection] = useState(true);
 
     useEffect(() => {
         if (tracking) {
@@ -87,9 +87,60 @@ const Estadisticas = () => {
     }
 
 
-    const handlePrintPage = () => {
+    const handlePrintPage2 = () => {
+        if (firstSection && secondSection && thirdSection) {
+            const student = tracking?.alumnos.filter((alumno) => { return alumno.alumno.id === alumnoSeleccionado })[0];
+            const input = document.getElementById('estadisticas');
+            let totalHeight = input.offsetHeight;
+            const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+            const pdfWidth = pdf.internal.pageSize.width;
+            const pdfHeight = pdf.internal.pageSize.height;
+            window.scrollTo(0, 0);
+            html2canvas(input).then((canvas) => {
+                const widthRatio = pdfWidth / canvas.width;
+                const sX = 0;
+                const sWidth = canvas.width;
+                const sHeight = pdfHeight + ((pdfHeight - pdfHeight * widthRatio) / widthRatio);
+                const dX = 0;
+                const dY = 0;
+                const dWidth = sWidth;
+                const dHeight = sHeight;
+                let pageCnt = 1;
+                pdf.setFontSize(10);
+                pdf.text(5, 10, `Reporte del Seguimiento: ${tracking.nombre}`);
+                pdf.setFontSize(8);
+                pdf.text(5, 18, `Fecha de Reporte: ${new Date().toLocaleString()}`);
+                pdf.text(5, 26, `Alumno: ${student.alumno.nombre} ${student.alumno.apellido}`)
+                while (totalHeight > 0) {
+                    totalHeight -= sHeight;
+                    let sY = sHeight * (pageCnt - 1);
+                    const childCanvas = document.createElement('CANVAS');
+                    childCanvas.setAttribute('width', sWidth);
+                    childCanvas.setAttribute('height', sHeight);
+                    const childCanvasCtx = childCanvas.getContext('2d');
+                    childCanvasCtx.drawImage(canvas, sX, sY, sWidth, sHeight, dX, dY, dWidth, dHeight);
 
-        if (!firstSection && !secondSection) {
+                    if (pageCnt > 1) {
+                        pdf.addPage();
+                    }
+                    pdf.setPage(pageCnt);
+                    pdf.addImage(childCanvas.toDataURL('image/png'), 'PNG', 0, 27, canvas.width * widthRatio, 0);
+                    pageCnt++;
+                }
+
+                pdf.save(`Reporte ${tracking.nombre}.pdf`);
+            });
+            window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
+        }
+        else {
+            Alert.error("Abra todas las secciones para obtener un reporte completo", {
+                effect: "stackslide",
+            });
+        }
+    }
+
+    /*     const handlePrintPage = () => {
+    
             const input = document.getElementById('estadisticas');
             const student = tracking?.alumnos.filter((alumno) => { return alumno.alumno.id === alumnoSeleccionado })[0];
             html2canvas(input, { scrollY: -window.scrollY })
@@ -100,45 +151,43 @@ const Estadisticas = () => {
                     });
                     const imgProps = pdf.getImageProperties(imgData);
                     const pdfWidth = pdf.internal.pageSize.getWidth();
-                    pdf.setFontSize(10);
+                    pdf.setFontSize(12);
                     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width; pdf.setFontSize(10)
                     pdf.text(5, 5, `Reporte del Seguimiento: ${tracking.nombre}`);
+                    pdf.setFontSize(10);
+                    pdf.text(5, 10, `Fecha de Reporte: ${new Date().toLocaleString()}`);
                     pdf.setFontSize(8);
-                    pdf.text(5, 9, `Fecha de Reporte: ${new Date().toLocaleString()}`);
-                    pdf.setFontSize(6);
-                    pdf.text(5, 13, `Generado por: ${user.user.name} ${user.user.last_name}`);
-                    pdf.text(5, 16, `Integrantes:`);
-                    let line = 16;
+                    pdf.text(5, 15, `Generado por: ${user.user.name} ${user.user.last_name}`);
+                    pdf.text(5, 20, `Integrantes:`);
+                    let line = 20;
                     tracking.integrantes.map((integrante, i) => {
                         console.log(integrante);
-                        line = i === 0 ? (i + 1) * 3 + line : line + 3;
-                        console.log(line);
+                        line = i === 0 ? (i + 1) * 5 + line : line + 5;
                         return pdf.text(5, line, `- ${integrante.rol}: ${integrante.usuario.name} ${integrante.usuario.last_name}`)
                     })
-                    line = line + 3;
+                    line = line + 5;
                     pdf.text(5, line, `Materias:`);
                     tracking.materias.map((materia, i) => {
-                        line = i === 0 ? (i + 1) * 3 + line : line + 3;
+                        line = i === 0 ? (i + 1) * 5 + line : line + 5;
                         return pdf.text(5, line, `- Nombre: ${materia.nombre} - Año: ${materia.anio.nombre}`)
                     })
-                    line = line + 3;
+                    line = line + 5;
                     pdf.text(5, line, `Plazos: ${fromStoreToViewFormatDate(tracking.fecha_inicio)} - ${fromStoreToViewFormatDate(tracking.fecha_cierre)}`);
-                    line = line + 3;
+                    line = line + 5;
                     pdf.text(5, line, `Alumno seleccionado: ${student.alumno.nombre} ${student.alumno.apellido}`)
+                    line = line + 5;
+                    pdf.text(5, line, `Objetivos Cualitativos:`);
+                    estadoObjetivosCualitativos.map((objetivo, i) => {
+                        line = i === 0 ? (i + 1) * 5 + line : line + 5;
+                        return pdf.text(5, line, `- ${objetivo.objetivo.descripcion}: ${objetivo.alcanzada ? "Alcanzado" : "No Alcanzado"}`)
+                    })
                     console.log(pdfHeight, pdfWidth);
                     pdf.addImage(imgData, 'PNG', 0, line + 1, pdfWidth, pdfHeight);
-
+    
                     pdf.save(`Reporte ${tracking.nombre}.pdf`);
                 })
+        } */
 
-        } else {
-            Alert.error("Cierre las secciones de Materias / Participantes y Plazos", {
-                effect: "stackslide",
-            });
-        }
-
-
-    }
     // VERIFICA QUE METRICAS TIENE EL SEGUIMIENTO
     useEffect(() => {
         if (tracking.asistencia) {
@@ -253,7 +302,8 @@ const Estadisticas = () => {
     }, [progresoCalificaciones])
 
     const formatterdata = (value, entry, index) => {
-        return <span className={`${styles.pie_chart_references}`}>{value}</span>
+        console.log(entry, index);
+        return <span className={`${styles.pie_chart_references}`}>{value}: <b>{entry.payload.alcanzada ? "Alcanzado" : "No Alcanzado"}</b></span>
     }
 
     return (
@@ -275,100 +325,98 @@ const Estadisticas = () => {
                     </Row>
                 </Row>
                 <Col lg={10} md={10} sm={10} xs={10}>
-                    <Row lg={12} md={12} sm={12} xs={12} className={styles.container}>
+                    <Row lg={12} md={12} sm={12} xs={12} className={styles.container} id="estadisticas">
 
 
-                        <div id="estadisticas">
-                            {/* SECCIÓN TRES METAS Y OBJETIVOS*/}
-                            {<div className={styles.collapse_container} onClick={() => setThirdSection(!thirdSection)}>Metas y Objetivos del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
 
-                            <Collapse in={true} timeout="auto" unmountOnExit style={{ width: '100%' }}>
+                        {/* SECCIÓN TRES METAS Y OBJETIVOS*/}
+                        {<div className={styles.collapse_container}>Metas y Objetivos del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
 
-                                <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container}>
-                                    <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
-                                        <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
-                                        {calificacionesData.length != 0 ?
-                                            <>
-                                                <ResponsiveContainer width="100%" height={300} className="mx-auto">
-                                                    <LineChart
-                                                        data={calificacionesData}
-                                                        className="mb-3"
+                        <Collapse in={true} timeout="auto" unmountOnExit style={{ width: '100%' }}>
+
+                            <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container} >
+
+                                <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
+                                    <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
+                                    {calificacionesData.length != 0 ?
+                                        <>
+                                            <ResponsiveContainer width="100%" height={300} className="mx-auto">
+                                                <LineChart
+                                                    data={calificacionesData}
+                                                    className="mb-3"
+                                                >
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="fecha" label={{ value: 'Fecha', position: 'insideBottom', offset: -5 }}>
+
+                                                    </XAxis>
+                                                    <YAxis type="number" domain={[4, 10]} label={{ value: 'Calificación', angle: -90, position: 'insideLeft' }} />
+                                                    <Tooltip />
+                                                    <Legend verticalAlign="top" height={36} />
+                                                    <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
+                                                    <Line type="monotone" dataKey="promedio" stroke="#004d67" activeDot={{ r: 8 }} />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </>
+                                        :
+                                        "No configurado"
+                                    }
+
+                                </Col>
+                                <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
+                                    <h3 className="subtitle mb-2">Progreso Asistencias</h3>
+                                    {asistenciasData.length != 0 ?
+                                        <>
+                                            <ResponsiveContainer width="100%" height={300} className="mx-auto">
+                                                <LineChart
+                                                    data={asistenciasData}
+                                                    className="mb-3"
+                                                >
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="fecha" label={{ value: 'Fecha', position: 'insideBottom', offset: -5 }}>
+
+                                                    </XAxis>
+                                                    <YAxis type="number" domain={[0, 100]} label={{ value: 'Asistencia', angle: -90, position: 'insideLeft' }} />
+                                                    <Tooltip />
+                                                    <Legend verticalAlign="top" height={36} />
+                                                    <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
+                                                    <Line type="monotone" dataKey="porcentaje" stroke="#8884d8" activeDot={{ r: 8 }} />
+                                                </LineChart>
+                                            </ResponsiveContainer>
+                                        </>
+                                        : "No configurado"
+                                    }
+                                </Col>
+                                <Col lg={12} md={12} sm={12} xs={12} className={styles.stats_container}>
+                                    <h3 className="subtitle mb-2">Objetivos Cualitativos</h3>
+                                    {objetivosCualitativosData.length != 0 ?
+                                        <>
+                                            <ResponsiveContainer width="60%" height={300} className="mx-auto">
+                                                <PieChart>
+                                                    <Tooltip content={<CustomTooltip />} />
+                                                    <Legend verticalAlign="bottom" formatter={formatterdata} />
+                                                    <Pie
+                                                        data={objetivosCualitativosData}
+                                                        labelLine={false}
+                                                        outerRadius={80}
+                                                        fill="#8884d8"
+                                                        dataKey="value"
                                                     >
-                                                        <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis dataKey="fecha">
+                                                        {
+                                                            objetivosCualitativosData.map((objeto, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
 
-                                                        </XAxis>
-                                                        <YAxis type="number" domain={[4, 10]} />
-                                                        <Tooltip />
-                                                        <Legend verticalAlign="top" height={36} />
-                                                        <ReferenceLine y={tracking.promedio.value} label="Objetivo" stroke="red" /* alwaysShow */ ifOverflow="extendDomain" />
-                                                        <Line type="monotone" dataKey="promedio" stroke="#004d67" activeDot={{ r: 8 }} />
-                                                    </LineChart>
-                                                </ResponsiveContainer>
-                                            </>
-                                            :
-                                            "No configurado"
-                                        }
+                                                        }
+                                                    </Pie>
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        </>
+                                        :
+                                        "No configurado"
+                                    }
+                                </Col>
+                            </Row>
 
-                                    </Col>
-                                    <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
-                                        <h3 className="subtitle mb-2">Progreso Asistencias</h3>
-                                        {asistenciasData.length != 0 ?
-                                            <>
-                                                <ResponsiveContainer width="100%" height={300} className="mx-auto">
-                                                    <LineChart
-                                                        data={asistenciasData}
-                                                        className="mb-3"
-                                                    >
-                                                        <CartesianGrid strokeDasharray="3 3" />
-                                                        <XAxis dataKey="fecha">
+                        </Collapse>
 
-                                                        </XAxis>
-                                                        <YAxis type="number" domain={[0, 100]} />
-                                                        <Tooltip />
-                                                        <Legend verticalAlign="top" height={36} />
-                                                        <ReferenceLine y={tracking.asistencia.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
-                                                        <Line type="monotone" dataKey="porcentaje" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                                    </LineChart>
-                                                </ResponsiveContainer>
-                                            </>
-                                            : "No configurado"
-                                        }
-                                    </Col>
-
-                                    <Col lg={12} md={12} sm={12} xs={12} className={styles.stats_container}>
-                                        <h3 className="subtitle mb-2">Objetivos Cualitativos</h3>
-                                        {objetivosCualitativosData.length != 0 ?
-                                            <>
-                                                <ResponsiveContainer width="60%" height={300} className="mx-auto">
-                                                    <PieChart>
-                                                        <Tooltip content={<CustomTooltip />} />
-                                                        <Legend verticalAlign="top" formatter={formatterdata} />
-                                                        <Pie
-                                                            data={objetivosCualitativosData}
-                                                            labelLine={false}
-                                                            outerRadius={80}
-                                                            fill="#8884d8"
-                                                            dataKey="value"
-                                                        >
-                                                            {
-                                                                objetivosCualitativosData.map((objeto, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)
-
-                                                            }
-                                                        </Pie>
-                                                    </PieChart>
-                                                </ResponsiveContainer>
-                                            </>
-                                            :
-                                            "No configurado"
-                                        }
-                                    </Col>
-
-
-                                </Row>
-
-                            </Collapse>
-                        </div>
                         {/* SECCIÓN 1 ALUMNOS Y MATERIAS*/}
 
                         {<div className={styles.collapse_container} onClick={() => setFirstSection(!firstSection)}>Materias {firstSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
@@ -391,7 +439,7 @@ const Estadisticas = () => {
                         </Collapse>
                     </Row>
                     <Col lg={12} md={12} sm={12} xs={12} style={{ margin: '20px 0px 20px 0px' }}>
-                        <button className="ontrack_btn add_btn" onClick={handlePrintPage}>Generar Reporte</button>
+                        <button className="ontrack_btn add_btn" onClick={handlePrintPage2}>Generar Reporte</button>
                     </Col>
 
                 </Col>
