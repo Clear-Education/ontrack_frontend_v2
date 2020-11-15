@@ -81,11 +81,13 @@ const CalendarView = ({ calendarData }) => {
 
                             return (
                                 <>
-                                     <Link href={`asistencias/${tableMeta.rowData[0]}`}> 
-                                        <IconButton>
-                                            <ArrowForwardIosIcon />
-                                        </IconButton>
-                                     </Link>
+                                    <Link href={`asistencias/${tableMeta.rowData[0]}`}>
+                                        <a target="_blank">
+                                            <IconButton>
+                                                <ArrowForwardIosIcon />
+                                            </IconButton>
+                                        </a>
+                                    </Link>
                                 </>
                             )
                         },

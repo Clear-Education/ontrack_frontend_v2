@@ -34,7 +34,7 @@ export async function getOneDepartmentService(id, token) {
 export async function addDepartmentService(data, token) {
     return await addDepartmentCrud(data, token).then((result) => {
         if (result.success) {
-            Alert.success("Carrera creada correctamente", {
+            Alert.success("Especialidad creada correctamente", {
                 effect: "stackslide",
             });
         } else {
@@ -51,7 +51,7 @@ export async function addDepartmentService(data, token) {
 export async function editDepartmentService(data, token) {
     return await editDepartmentCrud(data, token).then((result) => {
         if (result.success) {
-            Alert.success("Carrera editada correctamente", {
+            Alert.success("Especialidad editada correctamente", {
                 effect: "stackslide",
             });
         } else {
@@ -69,7 +69,7 @@ export async function editDepartmentService(data, token) {
 export async function deleteDepartmentService(token, data) {
     return await deleteDepartmentCrud(token, data).then((result) => {
         if (result.success) {
-            Alert.success("Carrera eliminada correctamente", {
+            Alert.success("Especialidad eliminada correctamente", {
                 effect: "stackslide",
             });
         } else {
