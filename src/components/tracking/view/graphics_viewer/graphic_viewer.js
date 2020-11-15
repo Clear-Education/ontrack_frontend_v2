@@ -116,7 +116,7 @@ const GraphicViewer = ({ student, tracking }) => {
     return (
         <div>
             {calificacionesData.length != 0 &&
-                <div className={styles.container} style={{paddingTop:'15px'}}>
+                <div className={styles.container} style={{ paddingTop: '15px' }}>
                     <h6 className="subtitle mb-2">Progreso Calificaciones</h6>
                     <ResponsiveContainer width="100%" height={200} className="mx-auto">
                         <LineChart
@@ -124,9 +124,9 @@ const GraphicViewer = ({ student, tracking }) => {
                             className="mb-3"
                         >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="fecha">
+                            <XAxis dataKey="fecha" label={{ value: 'Fecha', position: 'insideBottom', offset: -5, fontSize: 14 }}>
                             </XAxis>
-                            <YAxis type="number" domain={[4, 10]} />
+                            <YAxis type="number" domain={[4, 10]} label={{ value: 'Calificación', angle: -90, position: 'insideLeft', offset: 10, fontSize: 14 }} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
                             <ReferenceLine y={tracking.promedio?.value} label="Objetivo" stroke="red"  /* alwaysShow */ ifOverflow="extendDomain" />
@@ -145,9 +145,9 @@ const GraphicViewer = ({ student, tracking }) => {
                             className="mb-3"
                         >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="fecha">
+                            <XAxis dataKey="fecha" label={{ value: 'Fecha', position: 'insideBottom', offset: -5, fontSize: 14 }}>
                             </XAxis>
-                            <YAxis type="number" domain={[0, 100]} />
+                            <YAxis type="number" domain={[0, 100]} label={{ value: 'Asistencia', angle: -90, position: 'insideLeft', offset: 10, fontSize: 14 }} />
                             <Tooltip />
                             <Legend formatter={formatterdata} verticalAlign="bottom" align="right" />
                             <ReferenceLine y={tracking.asistencia?.value} label="Objetivo" stroke="red" ifOverflow="extendDomain" />
