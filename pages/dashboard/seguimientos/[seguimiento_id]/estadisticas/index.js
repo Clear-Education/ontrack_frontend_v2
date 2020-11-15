@@ -139,55 +139,6 @@ const Estadisticas = () => {
         }
     }
 
-    /*     const handlePrintPage = () => {
-    
-            const input = document.getElementById('estadisticas');
-            const student = tracking?.alumnos.filter((alumno) => { return alumno.alumno.id === alumnoSeleccionado })[0];
-            html2canvas(input, { scrollY: -window.scrollY })
-                .then((canvas) => {
-                    const imgData = canvas.toDataURL('image/png');
-                    const pdf = new jsPDF({
-                        orientation: "portrait",
-                    });
-                    const imgProps = pdf.getImageProperties(imgData);
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    pdf.setFontSize(12);
-                    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width; pdf.setFontSize(10)
-                    pdf.text(5, 5, `Reporte del Seguimiento: ${tracking.nombre}`);
-                    pdf.setFontSize(10);
-                    pdf.text(5, 10, `Fecha de Reporte: ${new Date().toLocaleString()}`);
-                    pdf.setFontSize(8);
-                    pdf.text(5, 15, `Generado por: ${user.user.name} ${user.user.last_name}`);
-                    pdf.text(5, 20, `Integrantes:`);
-                    let line = 20;
-                    tracking.integrantes.map((integrante, i) => {
-                        console.log(integrante);
-                        line = i === 0 ? (i + 1) * 5 + line : line + 5;
-                        return pdf.text(5, line, `- ${integrante.rol}: ${integrante.usuario.name} ${integrante.usuario.last_name}`)
-                    })
-                    line = line + 5;
-                    pdf.text(5, line, `Materias:`);
-                    tracking.materias.map((materia, i) => {
-                        line = i === 0 ? (i + 1) * 5 + line : line + 5;
-                        return pdf.text(5, line, `- Nombre: ${materia.nombre} - Año: ${materia.anio.nombre}`)
-                    })
-                    line = line + 5;
-                    pdf.text(5, line, `Plazos: ${fromStoreToViewFormatDate(tracking.fecha_inicio)} - ${fromStoreToViewFormatDate(tracking.fecha_cierre)}`);
-                    line = line + 5;
-                    pdf.text(5, line, `Alumno seleccionado: ${student.alumno.nombre} ${student.alumno.apellido}`)
-                    line = line + 5;
-                    pdf.text(5, line, `Objetivos Cualitativos:`);
-                    estadoObjetivosCualitativos.map((objetivo, i) => {
-                        line = i === 0 ? (i + 1) * 5 + line : line + 5;
-                        return pdf.text(5, line, `- ${objetivo.objetivo.descripcion}: ${objetivo.alcanzada ? "Alcanzado" : "No Alcanzado"}`)
-                    })
-                    console.log(pdfHeight, pdfWidth);
-                    pdf.addImage(imgData, 'PNG', 0, line + 1, pdfWidth, pdfHeight);
-    
-                    pdf.save(`Reporte ${tracking.nombre}.pdf`);
-                })
-        } */
-
     // VERIFICA QUE METRICAS TIENE EL SEGUIMIENTO
     useEffect(() => {
         if (tracking.asistencia) {
@@ -302,7 +253,6 @@ const Estadisticas = () => {
     }, [progresoCalificaciones])
 
     const formatterdata = (value, entry, index) => {
-        console.log(entry, index);
         return <span className={`${styles.pie_chart_references}`}>{value}: <b>{entry.payload.alcanzada ? "Alcanzado" : "No Alcanzado"}</b></span>
     }
 

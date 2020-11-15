@@ -1,15 +1,13 @@
 import MaterialTable from "material-table";
 import { useState, useEffect } from "react";
 import styles from './styles.module.css'
-import useSWR, { mutate } from "swr";
 import { useSelector } from "react-redux";
 import { getExamsService, editExamsService, deleteExamsService } from "../../../../../utils/exam/services/exam_services";
-import config from "../../../../../utils/config";
 import { Col } from "react-bootstrap";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import MTConfig from "../../../../../utils/table_options/MT_config";
 import TextField from '@material-ui/core/TextField';
-
+import {fromApiToDateInputFormatDate} from '../../../../../utils/commons/common_services'
 
 const ExamsTable = (props) => {
 
@@ -17,9 +15,9 @@ const ExamsTable = (props) => {
     const [selectedSchoolYear, setSelectedSchoolYear] = useState(props.schoolYear)
     const [selectedExams, setSelectedExams] = useState()
     const user = useSelector((store) => store.user);
-    const [isLoading, setIsLoading] = useState(false)
-    const url = `${config.api_url}/materia/${selectedSubject.id}/evaluacion/list/`
+    const [isLoading, setIsLoading] = useState()
     const [examsArray, setExamsArray] = useState([]);
+    const [ponderacion,setPonderacion] = useState(0);
 
     const [nameError, setNameError] = React.useState({
         error: false,
@@ -64,6 +62,7 @@ const ExamsTable = (props) => {
                 />
             )
         },
+        { title: 'Fecha', field: 'fecha', type: 'date'},
         {
             title: 'Ponderación', field: 'ponderacion', type: 'numeric', editComponent: (props) => (
                 <TextField
@@ -115,11 +114,16 @@ const ExamsTable = (props) => {
     }, [props.schoolYear]);
 
     useEffect(() => {
-        setSelectedSchoolYear(props.schoolYear)
-        getExamsService(user.user.token, selectedSubject.id, props.schoolYear).then((result) => {
-            setIsLoading(false)
-            setExamsArray(result.result)
-        })
+        if(selectedSchoolYear){
+            setSelectedSchoolYear(props.schoolYear)
+            getExamsService(user.user.token, selectedSubject.id, props.schoolYear).then((result) => {
+                setIsLoading(false)
+                result.result.map((exam)=>{
+                    exam.fecha = fromApiToDateInputFormatDate(exam.fecha);
+                })
+                setExamsArray(result.result)
+            })
+        }
     }, [selectedSchoolYear]);
 
     useEffect(() => {
@@ -134,11 +138,13 @@ const ExamsTable = (props) => {
         let newExam = {
             nombre: data.nombre,
             ponderacion: data.ponderacion,
+            fecha: data.fecha,
             materia: selectedSubject.id,
             anio_lectivo: selectedSchoolYear
         }
         let newExamsArray = [...examsArray];
         newExamsArray.push(newExam);
+        checkWeighing(newExamsArray);
         setExamsArray(newExamsArray);
         return;
     }
@@ -150,6 +156,7 @@ const ExamsTable = (props) => {
         })
         editedExam[0].nombre = data.nombre;
         editedExam[0].ponderacion = data.ponderacion;
+        editedExam[0].fecha = data.fecha;
         examsArray.map((exam) => {
             if (exam.id === editedExam.id) {
                 exam = { ...editedExam[0] };
@@ -166,6 +173,7 @@ const ExamsTable = (props) => {
                 materia: selectedSubject.id,
             }
         }
+        checkWeighing(newExamsArray);
         setExamsArray(newExamsArray);
         return
     }
@@ -176,19 +184,41 @@ const ExamsTable = (props) => {
         if (!!examsArray.length) {
             editExamsService(user.user.token, examsArray).then((result) => {
                 setIsLoading(false);
+                parseExams();
             })
         } else {
             deleteExamsService(user.user.token, examsArray).then((result) => {
                 setIsLoading(false);
+                parseExams();
             })
         }
 
+    }
+
+
+    const parseExams = () =>{
+        examsArray.map((exam)=>{
+            exam.fecha = fromApiToDateInputFormatDate(exam.fecha);
+        })
+    }
+
+
+    const checkWeighing = (examArray) =>{
+        const arrayList = examArray ? examArray : examsArray;
+        let ponderacion = 0;
+        arrayList.forEach(exam => {
+            ponderacion += parseFloat(+exam.ponderacion)
+        });
+        setPonderacion(ponderacion.toPrecision(1) === '1');
     }
 
     return (
         <>
             {selectedSchoolYear && selectedSchoolYear !== 'Seleccionar' ?
                 <>
+                    <div className={styles.message_alert}>
+                        Recuerde que los cambios se hacen efectivos una vez que hace click en "Guardar exámenes"
+                    </div>
                     <MaterialTable
                         title={<span style={{ position: 'absolute', top: '25px', fontWeight: 600 }}>Exámenes</span>}
                         columns={columnsHeader}
@@ -258,6 +288,7 @@ const ExamsTable = (props) => {
                                         }
                                         resolve()
                                         return editExam(newData, oldData).then(() => {
+                                            checkWeighing();
                                             return
                                         })
                                     }, 600)
@@ -271,8 +302,16 @@ const ExamsTable = (props) => {
                     />
 
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
+                        {!ponderacion && ponderacion!== 0 && <div className={styles.message_alert}>Las ponderaciones deben sumar 1</div>}
                         {!isLoading ?
-                            <button className="ontrack_btn_modal ontrack_btn add_btn" type="button" onClick={handleExams}>Guardar Exámenes</button>
+                            <button 
+                                className="ontrack_btn_modal ontrack_btn add_btn" 
+                                type="button" 
+                                onClick={handleExams}
+                                disabled={!ponderacion}
+                                >
+                                Guardar Exámenes
+                            </button>
                             :
                             <button className="ontrack_btn_modal ontrack_btn add_btn" disabled>
                                 <CircularProgress

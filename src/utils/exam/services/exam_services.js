@@ -1,5 +1,6 @@
 import { getExamsCrud, addExamsCrud, deleteExamsCrud, editExamsCrud } from "../cruds/exam_cruds";
 import Alert from "react-s-alert";
+import { convertDateToSend } from "../../commons/common_services";
 
 
 export async function getExamsService(token,subject_id,_anio_lectivo_id){
@@ -34,6 +35,9 @@ export async function addExamsService(token,data){
 
 
 export async function editExamsService(token,data){
+    data.map((exam)=>{
+      exam.fecha = convertDateToSend(exam.fecha);
+    })
     return await editExamsCrud(token,data).then((result)=>{
       if (result.success) {
         Alert.success("Exámen editado correctamente", {

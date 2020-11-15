@@ -25,14 +25,21 @@ export const convertDate3 = (inputFormat) => {
     return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join("-");
 }
 
-
-
-
 export const fromStoreToDateInputFormatDate = (date) => {
     let datearray = date?.split("-");
     const year = +datearray[0];
     const month = datearray[1] - 1;
     const day = +datearray[2]
+    let newDate = new Date(year, month, day);
+    return newDate;
+}
+
+
+export const fromApiToDateInputFormatDate = (date) => {
+    let datearray = date?.split("/");
+    const day = +datearray[0];
+    const month = datearray[1] - 1;
+    const year = +datearray[2]
     let newDate = new Date(year, month, day);
     return newDate;
 }
