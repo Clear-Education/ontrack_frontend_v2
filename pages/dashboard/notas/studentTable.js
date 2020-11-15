@@ -22,6 +22,8 @@ import DeleteForm from '../../../src/components/commons/delete_form/deleteForm';
 import CSVForm from "../../../src/components/notas/add_csv_form";
 import { mutate } from "swr";
 import config from "../../../src/utils/config";
+import { getExamService } from "../../../src/utils/exam/services/exam_services";
+import { fromApiToDateInputFormatDate } from "../../../src/utils/commons/common_services";
 
 
 const theme = createMuiTheme({
@@ -33,13 +35,12 @@ const theme = createMuiTheme({
             main: '#ff9100',
         },
     },
-
+ 
 });
 
 const url = `${config.api_url}/calificaciones/list/`;
 
 const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
-
     const [minDate, setMinDate] = useState("");
     const [maxDate, setMaxDate] = useState("");
     const [addStudentAssistance, setAddStudentAssistance] = useState([]);
@@ -48,15 +49,13 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
     const [tableToShow, setTableToShow] = useState();
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState(false);
-
-
+    const [examDate,setExamDate] = useState()
 
     async function getCalificacionesCurso() {
         getNotasCursoService(user.user.token, data.curso, data.exam).then((result) => {
             setIsLoading(false);
             let students = [];
             result.result.results.forEach((element) => {
-
                 const dataStudent = {
                     nombre: element.alumno.nombre,
                     apellido: element.alumno.apellido,
@@ -91,9 +90,16 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
         if (minDate == "") {
             getSchoolYear()
         }
-
-
     }, [tableToShow]);
+
+    useEffect(()=>{
+        getExamService(user.user.token,data.exam).then((result)=>{
+            if(result.success){
+                const PARSED_DATE = fromApiToDateInputFormatDate(result.result.fecha);
+                setExamDate(PARSED_DATE);
+            }
+        })
+    },[])
 
     async function getStudentCourseExam (){
         getStudentsCourseExamService(user.user.token, data.curso, data.school_year, data.exam).then((result) => {
@@ -170,6 +176,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                             title="Agregar Calificación por CSV"
                             body={<CSVForm 
                                     data={{...data,students:addStudentAssistance}}
+                                    examDate={examDate}
                                     refreshData = {handleRefreshData}
                                     />}
                             button={ 
@@ -235,8 +242,9 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                                                 title="Agregar Calificación"
                                                                 body={<AddNotasForm
                                                                     data={selectedData}
-                                                                    minDate={minDate}
+                                                                    minDate={minDate} 
                                                                     maxDate={maxDate}
+                                                                    examDate={examDate}
                                                                     handleSubmitAction={handleAddNota} />}
                                                                 button={
                                                                     <IconButton onClick={() => setSelectedData(addStudentAssistance[dataIndex])} >

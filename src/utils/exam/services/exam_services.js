@@ -1,4 +1,4 @@
-import { getExamsCrud, addExamsCrud, deleteExamsCrud, editExamsCrud } from "../cruds/exam_cruds";
+import { getExamsCrud, addExamsCrud, deleteExamsCrud, editExamsCrud, getExamCrud } from "../cruds/exam_cruds";
 import Alert from "react-s-alert";
 import { convertDateToSend } from "../../commons/common_services";
 
@@ -16,6 +16,22 @@ export async function getExamsService(token,subject_id,_anio_lectivo_id){
           }
           return result;
     })
+}
+
+
+export async function getExamService(token,exam_id){
+  return await getExamCrud(token,exam_id).then((result)=>{
+      if (result.success) {
+          
+        } else {
+          result.result.forEach((element) => {
+            Alert.error(element.message, {
+                effect: "stackslide",
+            });
+          });
+        }
+        return result;
+  })
 }
 
 export async function addExamsService(token,data){
