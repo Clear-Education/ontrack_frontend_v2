@@ -127,6 +127,7 @@ const YearForm = (props) => {
                                     <FormControl variant="outlined">
                                         <ColorPicker
                                             name='color'
+                                            required
                                             variant="outlined"
                                             value={state.color}
                                             label={"Color"}

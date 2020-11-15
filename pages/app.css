@@ -150,9 +150,7 @@ body {
 }
 
 /* TABLE */
-/* .MuiTable-root{
-  margin-left: 45px;
-} */
+
 h6.MuiTypography-root {
   text-align: left;
   color: var(--black);
@@ -286,6 +284,11 @@ button:focus {
 outline: none !important;
 }
 
+
+/* CALENDAR */
+.rbc-toolbar, .rbc-toolbar-label{
+  text-transform: capitalize;
+}
 
 @media (max-width: 600px) {
   .ontrack_btn_modal {

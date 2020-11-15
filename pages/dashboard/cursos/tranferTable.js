@@ -104,7 +104,7 @@ const TransferList = ({ changeAction, data }) => {
                                     checked={checked.indexOf(value) !== -1}
                                 />
                             </ListItemIcon>
-                            <ListItemText primary={`${value.nombre} ${value.apellido}`} />
+                            <ListItemText primary={`${value.nombre} ${value.apellido} - Legajo: ${value.legajo}`} />
                         </ListItem>
                     );
                 })}

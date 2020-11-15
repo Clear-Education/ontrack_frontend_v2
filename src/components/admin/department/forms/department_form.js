@@ -153,6 +153,7 @@ const DepartmentForm = (props) => {
                                             variant="outlined"
                                             value={state.color}
                                             label={"Color"}
+                                            required
                                             inputProps={{ value: state.color }}
                                             onChange={(color) => handleChangeColor(color)}
                                         />

@@ -59,11 +59,11 @@ const SubjectForm = (props) => {
     const user = useSelector((store) => store.user);
     const [schoolYearData, setSchoolYearData] = useState();
 
-    useEffect(()=>{
+    useEffect(() => {
         getSchoolYearService(user.user.token).then((result) => {
-           setSchoolYearData(result.result);
-       })
-   },[])
+            setSchoolYearData(result.result);
+        })
+    }, [])
 
     const hadleValidation = (prop, value) => {
         setValidation({
@@ -137,6 +137,7 @@ const SubjectForm = (props) => {
                                 <motion.li variants={item}>
                                     <FormControl variant="outlined">
                                         <ColorPicker
+                                            required
                                             name='color'
                                             variant="outlined"
                                             value={state.color}
