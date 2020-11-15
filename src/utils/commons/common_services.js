@@ -82,6 +82,15 @@ export const convertDateFromStoreToSend = (date) => {
 }
 
 
+export const parseCalendarDates = (date) =>{
+    let formatDate = new Date(date);
+    const year = formatDate.getFullYear();
+    const month = formatDate.getMonth() + 1;
+    const day = formatDate.getDate() + 1;
+    let newDate = `${year}-${month}-${day}`;
+    return newDate;
+}
+
 export const parseCsvToJson = (file, handleOnLoad) => {
     let fileData = [];
     let reader = new FileReader();

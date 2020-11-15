@@ -78,6 +78,28 @@ export async function getAsistenciasCrud(auth_token, curso_id, alumno_id, dates)
         .catch(error => errorHandler(error));
 }
 
+export async function getAsistencias2Crud(auth_token, curso_id, date) {
+    return axios
+        .get(`${config.api_url}/asistencias/list`, {
+            headers: {
+                Authorization: `Token ${auth_token}`,
+            },
+            params: {
+                curso: curso_id,
+                fecha_desde: date
+            }
+        })
+        .then(json => {
+            let response = {
+                success: true,
+                result: json.data,
+            };
+
+            return response;
+        })
+        .catch(error => errorHandler(error));
+}
+
 export async function editAsistenciasCrud(auth_token, data) {
     let parsedData
     if (data.descripcion == "" || data.descripcion == null) {
