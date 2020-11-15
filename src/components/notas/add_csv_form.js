@@ -17,11 +17,11 @@ const INITIAL_STATE = {
     evaluacion: '',
     calificaciones: []
 }
-const CSVForm = ({ data, handleClose, refreshData }) => {
+const CSVForm = ({ data, examDate, handleClose, refreshData }) => {
     const user = useSelector((store) => store.user);
     const [minDate, setMinDate] = useState("");
     const [maxDate, setMaxDate] = useState("");
-    const [state, setState] = useState(INITIAL_STATE);
+    const [state, setState] = useState({...INITIAL_STATE, fecha: examDate || '' });
 
     useEffect(() => {
         getOneSchoolYearService(user.user.token, data.school_year).then((result) => {
@@ -77,7 +77,7 @@ const CSVForm = ({ data, handleClose, refreshData }) => {
                     <FormLabel className="left" component="legend">Fecha del Exámen</FormLabel>
                     <KeyboardDatePicker
                         clearable
-                        value={state.fecha ? state.fecha : null}
+                        value={state.fecha ? state.fecha : examDate ? examDate : null}
                         placeholder="DD/MM/YYYY"
                         onChange={date => handleDate(date)}
                         minDate={new Date(minDate)}

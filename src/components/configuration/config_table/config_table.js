@@ -21,34 +21,6 @@ const ConfigTable = ({tableName, data}) => {
     });
 
     useEffect(() => {
-        const STUDENT_ACTION_COLUM = {
-            name: "actions",
-            label: "Acciones",
-            options: {
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <div style={{ display: 'flex' }}>
-                            <button onClick={()=>{console.log(tableMeta.rowData)}}>alert</button>
-                        </div>
-                    )
-                },
-            },
-        }
-
-        const PARTICIPANT_ACTION_COLUM = {
-            name: "actions",
-            label: "Acciones",
-            options: {
-                customBodyRender: (value, tableMeta, updateValue) => {
-                    return (
-                        <div style={{ display: 'flex' }}>
-                            <button onClick={()=>{console.log(tableMeta.rowData)}}>alert</button>
-                        </div>
-                    )
-                },
-            },
-        }
-
         let columsCopy = tableName === 'Alumnos' ? [...Colums.students] : tableName === 'Materias' ? [...Colums.subjects] : [...Colums.participants];
         setColums(columsCopy);
     }, [])

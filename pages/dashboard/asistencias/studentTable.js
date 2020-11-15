@@ -3,7 +3,7 @@ import MUIDataTable from "mui-datatables"
 import { useState, useEffect } from "react";
 import MTConfig from "../../../src/utils/table_options/MT_config";
 import { getStudentsCourseService } from '../../../src/utils/student/service/student_service';
-import { getAsistenciasService } from "../../../src/utils/asistencias/services/asistencias_services";
+import { getAsistencias2Service } from "../../../src/utils/asistencias/services/asistencias_services";
 import { getOneSchoolYearService } from "../../../src/utils/school_year/services/school_year_services";
 import { useSelector } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core";
@@ -52,8 +52,8 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     async function getAsistencias() {
-        getAsistenciasService(user.user.token, data.curso, selectedDate).then((result) => {
-            setIsLoading(false);
+        getAsistencias2Service(user.user.token, data.curso, selectedDate).then((result) => {
+            setIsLoading(false); 
             let studentsCourseAssistance = []
             result.result.results?.forEach((element) => {
                 const dataAssistance = {

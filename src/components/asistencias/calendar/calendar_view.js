@@ -33,7 +33,6 @@ const CalendarView = ({ calendarData }) => {
                 }
                 students.push(dataStudent);
             })
-            console.log(students);
             setStudents(students);
         })
 
