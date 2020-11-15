@@ -78,7 +78,6 @@ export async function editStudentCrud(token, data) {
       return response;
     })
     .catch((error) => {
-      console.log(error);
       return errorHandler(error);
     });
 }

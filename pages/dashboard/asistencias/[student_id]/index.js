@@ -5,7 +5,7 @@ import BackgroundLoader from '../../../../src/components/commons/background_load
 import { getAsistenciasService } from "../../../../src/utils/asistencias/services/asistencias_services";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/dist/client/router";
-import { convertDateToSendOnQuery } from "../../../../src/utils/commons/common_services";
+import { convertDateToSendOnQuery, parseCalendarDates } from "../../../../src/utils/commons/common_services";
 import { getOneStudentCourseService } from "../../../../src/utils/student/service/student_service";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import BackLink from '../../../../src/components/commons/back_link/back_link';
@@ -47,12 +47,13 @@ const StudentCalendar = () => {
                         if (result.success) {
                             let events = [];
                             result.result.results.map((event) => {
+                                const date = parseCalendarDates(event.fecha);
                                 const EVENT_DATA = {
                                     id: event.id,
                                     title: event.asistio ? 'PRESENTE' : 'AUSENTE',
                                     allDay: true,
-                                    start: new Date(event.fecha),
-                                    end: new Date(event.fecha)
+                                    start: date,
+                                    end: date
                                 }
                                 events.push(EVENT_DATA);
                             })

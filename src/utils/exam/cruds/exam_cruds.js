@@ -23,6 +23,25 @@ export async function getExamsCrud(token,subject_id,_anio_lectivo_id){
     });
 }
 
+export async function getExamCrud(token,exam_id){
+  return await axios
+  .get(`${config.api_url}/evaluacion/${exam_id}`,{ 
+      headers:{
+          Authorization: `Token ${token}`
+      }
+  })
+  .then((json) => {
+    let response = {
+      success: true,
+      result: json.data,
+    };
+    return response;
+  })
+  .catch((error) => {
+    return errorHandler(error);
+  });
+}
+
 export async function addExamsCrud(token,data){
     return await axios
     .post(`${config.api_url}/evaluacion/`,data,{

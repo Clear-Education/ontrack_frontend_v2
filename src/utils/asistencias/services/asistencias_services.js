@@ -1,4 +1,4 @@
-import { getAsistenciasCrud, addAsistenciasCrud, addMultipleAsistenciasCrud, editAsistenciasCrud, deleteAsistenciasCrud } from "../cruds/asistencias_cruds";
+import { getAsistenciasCrud, addAsistenciasCrud, addMultipleAsistenciasCrud, editAsistenciasCrud, deleteAsistenciasCrud, getAsistencias2Crud } from "../cruds/asistencias_cruds";
 import Alert from "react-s-alert";
 
 
@@ -16,6 +16,22 @@ export async function getAsistenciasService(token, curso_id,alumno_id, dates) {
         return result;
     })
 }
+
+export async function getAsistencias2Service(token, curso_id, date) {
+    return await getAsistencias2Crud(token,curso_id,date).then((result) => {
+        if (result.success) {
+
+        } else {
+            result.result.forEach((element) => {
+                Alert.error(element.message, {
+                    effect: "stackslide",
+                });
+            });
+        }
+        return result;
+    })
+}
+
 
 export async function addAsistenciasService(data, token) {
     return await addAsistenciasCrud(data, token).then((result) => {

@@ -45,10 +45,15 @@ const VALIDATE_INITIAL_STATE = {
 
 
 const AddNotasForm = (props) => {
-    const [state, setState] = useState({ ...INITIAL_STATE, ["evaluacion"]: props.data.evaluacion, ["alumno"]: props.data.id, ["fecha_desde"]: props.minDate, ["fecha_hasta"]: props.maxDate });
-    const [date, setDate] = useState(null)
+    const [state, setState] = useState({ ...INITIAL_STATE, ["evaluacion"]: props.data.evaluacion, ["alumno"]: props.data.id, ["fecha_desde"]: props.minDate, ["fecha_hasta"]: props.maxDate});
+    const [date, setDate] = useState(props.examDate || null)
     const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE);
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(()=>{
+        let dateFormatted = convertDate(props.examDate);
+        setState({ ...state, ["fecha"]: dateFormatted });
+    },[])
 
     const hadleValidation = (prop, value) => {
 
