@@ -87,9 +87,9 @@ const Department = (props) => {
               </Col>
               <Col className={styles.add_new_structure}>
                 <Modal
-                  title="Agregar Carrera"
+                  title="Agregar Especialidad"
                   body={<DepartmentForm handleSubmitAction={addDepartment} />}
-                  button={<button className="ontrack_btn add_btn">Nueva Carrera</button>
+                  button={<button className="ontrack_btn add_btn">Nueva Especialidad</button>
                   }
                 />
               </Col>
@@ -114,7 +114,7 @@ const Department = (props) => {
                             <Col lg={3} md={3} sm={3} xs={3} className={styles.actions_container}>
 
                               <Modal
-                                title="Editar Carrera"
+                                title="Editar Especialidad"
                                 body={<DepartmentForm handleSubmitAction={editDepartment} data={selectedData} />}
                                 button={
                                   <IconButton onClick={() => setSelectedData(department)} >
@@ -124,7 +124,7 @@ const Department = (props) => {
                               />
 
                               <Modal
-                                title="¿Seguro que deseas eliminar esta carrera?"
+                                title="¿Seguro que deseas eliminar esta especialidad?"
                                 body={<DeleteForm data={selectedData} handleSubmitAction={deleteDepartment} />}
                                 button={
                                   <IconButton onClick={() => setSelectedData(department)} >
