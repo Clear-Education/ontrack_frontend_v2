@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import styles from './styles.module.css'
 import { useSelector } from "react-redux";
 import { getExamsService, editExamsService, deleteExamsService } from "../../../../../utils/exam/services/exam_services";
+import { getOneSchoolYearService } from "../../../../../utils/school_year/services/school_year_services";
 import { Col } from "react-bootstrap";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import MTConfig from "../../../../../utils/table_options/MT_config";
 import TextField from '@material-ui/core/TextField';
-import {fromApiToDateInputFormatDate} from '../../../../../utils/commons/common_services'
+import { fromApiToDateInputFormatDate, fromStoreToViewFormatDate, convertFormatToDatePicker } from '../../../../../utils/commons/common_services'
+import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 const ExamsTable = (props) => {
 
@@ -17,7 +19,11 @@ const ExamsTable = (props) => {
     const user = useSelector((store) => store.user);
     const [isLoading, setIsLoading] = useState()
     const [examsArray, setExamsArray] = useState([]);
-    const [ponderacion,setPonderacion] = useState(0);
+    const [ponderacion, setPonderacion] = useState(0);
+    const [schoolYearData, setSchoolYearData] = useState();
+
+    console.log(ponderacion);
+
 
     const [nameError, setNameError] = React.useState({
         error: false,
@@ -27,6 +33,13 @@ const ExamsTable = (props) => {
     });
 
     const [ponderacionError, setPonderacionError] = React.useState({
+        error: false,
+        label: "",
+        helperText: "",
+        validateInput: false
+    });
+
+    const [fechaError, setFechaError] = React.useState({
         error: false,
         label: "",
         helperText: "",
@@ -62,7 +75,37 @@ const ExamsTable = (props) => {
                 />
             )
         },
-        { title: 'Fecha', field: 'fecha', type: 'date'},
+        {
+            title: 'Fecha', field: 'fecha', type: 'date', editComponent: props => (
+                <DatePicker
+                    format="dd/MM/yyyy"
+                    value={props.value || null}
+                    onChange={props.onChange}
+                    clearable
+                    InputProps={{
+                        style: {
+                            fontSize: 13,
+                        }
+                    }}
+                    minDate={new Date(schoolYearData.fecha_desde)}
+                    maxDate={new Date(schoolYearData.fecha_hasta)}
+                    invalidDateMessage="Formato de fecha inválido"
+                    minDateMessage="La fecha seleccionada es menor a la fecha de inicio del año lectivo"
+                    maxDateMessage="La fecha seleccionada es mayor a la fecha de fin del año lectivo"
+                    required
+                    error={
+                        !props.value && fechaError.validateInput && props.rowData.submitted
+                            ? fechaError.error
+                            : false
+                    }
+                    helperText={
+                        !props.value && fechaError.validateInput && props.rowData.submitted
+                            ? fechaError.helperText
+                            : ""
+                    }
+                />
+            )
+        },
         {
             title: 'Ponderación', field: 'ponderacion', type: 'numeric', editComponent: (props) => (
                 <TextField
@@ -106,6 +149,17 @@ const ExamsTable = (props) => {
     };
 
     useEffect(() => {
+        if (selectedSchoolYear) {
+            getOneSchoolYearService(user.user.token, selectedSchoolYear).then((result) => {
+                let añoLectivo = result.result;
+                añoLectivo.fecha_desde = convertFormatToDatePicker(añoLectivo.fecha_desde);
+                añoLectivo.fecha_hasta = convertFormatToDatePicker(añoLectivo.fecha_hasta);
+                setSchoolYearData(añoLectivo);
+            })
+        }
+    }, [selectedSchoolYear])
+
+    useEffect(() => {
         setSelectedSchoolYear(props.schoolYear)
         getExamsService(user.user.token, selectedSubject.id, props.schoolYear).then((result) => {
             setIsLoading(false)
@@ -114,12 +168,14 @@ const ExamsTable = (props) => {
     }, [props.schoolYear]);
 
     useEffect(() => {
-        if(selectedSchoolYear){
+        if (selectedSchoolYear) {
             setSelectedSchoolYear(props.schoolYear)
             getExamsService(user.user.token, selectedSubject.id, props.schoolYear).then((result) => {
                 setIsLoading(false)
-                result.result.map((exam)=>{
-                    exam.fecha = fromApiToDateInputFormatDate(exam.fecha);
+                result.result.map((exam) => {
+                    if (exam.fecha) {
+                        exam.fecha = fromApiToDateInputFormatDate(exam.fecha);
+                    }
                 })
                 setExamsArray(result.result)
             })
@@ -196,14 +252,14 @@ const ExamsTable = (props) => {
     }
 
 
-    const parseExams = () =>{
-        examsArray.map((exam)=>{
+    const parseExams = () => {
+        examsArray.map((exam) => {
             exam.fecha = fromApiToDateInputFormatDate(exam.fecha);
         })
     }
 
 
-    const checkWeighing = (examArray) =>{
+    const checkWeighing = (examArray) => {
         const arrayList = examArray ? examArray : examsArray;
         let ponderacion = 0;
         arrayList.forEach(exam => {
@@ -231,7 +287,7 @@ const ExamsTable = (props) => {
                             onRowAdd: newData =>
                                 new Promise((resolve, reject) => {
                                     setTimeout(() => {
-                                        if (!newData.nombre || !newData.ponderacion) {
+                                        if (!newData.nombre || !newData.ponderacion || !newData.fecha) {
                                             if (!newData.nombre) {
                                                 newData.submitted = true;
                                                 setNameError({
@@ -250,6 +306,16 @@ const ExamsTable = (props) => {
                                                     validateInput: true
                                                 });
                                             }
+                                            if (!newData.fecha) {
+                                                newData.submitted = true;
+                                                setFechaError({
+                                                    error: true,
+                                                    label: "required",
+                                                    helperText: "La fecha del exámen es requerido.",
+                                                    validateInput: true
+                                                });
+                                            }
+
                                             reject();
                                             return
                                         }
@@ -263,7 +329,7 @@ const ExamsTable = (props) => {
                             onRowUpdate: (newData, oldData) =>
                                 new Promise((resolve, reject) => {
                                     setTimeout(() => {
-                                        if (!newData.nombre || !newData.ponderacion) {
+                                        if (!newData.nombre || !newData.ponderacion || !newData.fecha) {
                                             if (!newData.nombre) {
                                                 newData.submitted = true;
                                                 setNameError({
@@ -302,14 +368,14 @@ const ExamsTable = (props) => {
                     />
 
                     <Col lg={12} md={12} sm={12} xs={12} className={styles.input_container}>
-                        {!ponderacion && ponderacion!== 0 && <div className={styles.message_alert}>Las ponderaciones deben sumar 1</div>}
+                        {!ponderacion && ponderacion !== 0 && <div className={styles.message_alert}>Las ponderaciones deben sumar 1</div>}
                         {!isLoading ?
-                            <button 
-                                className="ontrack_btn_modal ontrack_btn add_btn" 
-                                type="button" 
+                            <button
+                                className="ontrack_btn_modal ontrack_btn add_btn"
+                                type="button"
                                 onClick={handleExams}
                                 disabled={!ponderacion}
-                                >
+                            >
                                 Guardar Exámenes
                             </button>
                             :
