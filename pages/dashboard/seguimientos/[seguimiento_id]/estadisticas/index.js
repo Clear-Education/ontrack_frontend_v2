@@ -20,6 +20,7 @@ import Alert from "react-s-alert";
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { fromStoreToViewFormatDate } from "../../../../../src/utils/commons/common_services";
+import { getActualSchoolYearService } from "../../../../../src/utils/school_year/services/school_year_services";
 
 
 const container = {
@@ -64,6 +65,7 @@ const Estadisticas = () => {
     const [asistenciasData, setAsistenciasData] = useState([]);
     const [estadoObjetivosCualitativos, setEstadoObjetivosCualitativos] = useState([]);
     const [objetivosCualitativosData, setObjetivosCualitativosData] = useState([]);
+    const [añoActual, setAñoActual] = useState();
 
     const tracking = useSelector((store) => store.currentTracking);
     const user = useSelector((store) => store.user);
@@ -82,61 +84,116 @@ const Estadisticas = () => {
         }
     }, [tracking])
 
+    useEffect(() => {
+        getActualSchoolYearService(user.user.token).then(result => {
+            setAñoActual(result.result);
+        })
+    }, [])
+
     const handleSelectStudent = (student) => {
         setAlumnoSeleccionado(student.id);
     }
 
+    const dateFormatter = (date) => {
+        let datearray = date?.split("-");
+        let formatDate = '10/10/1997';
+        if (!!datearray?.length) {
+            const day = +datearray[0];
+            const month = datearray[1];
+            const year = +datearray[2]
+            formatDate = `${day}/${month}/${year}`
+        }
+        return formatDate;
+    }
+
 
     const handlePrintPage2 = () => {
-        if (firstSection && secondSection && thirdSection) {
-            const student = tracking?.alumnos.filter((alumno) => { return alumno.alumno.id === alumnoSeleccionado })[0];
-            const input = document.getElementById('estadisticas');
-            let totalHeight = input.offsetHeight;
-            const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
-            const pdfWidth = pdf.internal.pageSize.width;
-            const pdfHeight = pdf.internal.pageSize.height;
-            window.scrollTo(0, 0);
-            html2canvas(input).then((canvas) => {
-                const widthRatio = pdfWidth / canvas.width;
-                const sX = 0;
-                const sWidth = canvas.width;
-                const sHeight = pdfHeight + ((pdfHeight - pdfHeight * widthRatio) / widthRatio);
-                const dX = 0;
-                const dY = 0;
-                const dWidth = sWidth;
-                const dHeight = sHeight;
-                let pageCnt = 1;
-                pdf.setFontSize(10);
-                pdf.text(5, 10, `Reporte del Seguimiento: ${tracking.nombre}`);
-                pdf.setFontSize(8);
-                pdf.text(5, 18, `Fecha de Reporte: ${new Date().toLocaleString()}`);
-                pdf.text(5, 26, `Alumno: ${student.alumno.nombre} ${student.alumno.apellido}`)
-                while (totalHeight > 0) {
-                    totalHeight -= sHeight;
-                    let sY = sHeight * (pageCnt - 1);
-                    const childCanvas = document.createElement('CANVAS');
-                    childCanvas.setAttribute('width', sWidth);
-                    childCanvas.setAttribute('height', sHeight);
-                    const childCanvasCtx = childCanvas.getContext('2d');
-                    childCanvasCtx.drawImage(canvas, sX, sY, sWidth, sHeight, dX, dY, dWidth, dHeight);
+        const student = tracking?.alumnos.filter((alumno) => { return alumno.alumno.id === alumnoSeleccionado })[0];
+        const input = document.getElementById('estadisticas');
+        let totalHeight = input.offsetHeight;
+        const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
+        const pdfWidth = pdf.internal.pageSize.width;
+        const pdfHeight = pdf.internal.pageSize.height;
+        window.scrollTo(0, 0);
+        html2canvas(input).then((canvas) => {
+            const widthRatio = pdfWidth / canvas.width;
+            const sX = 0;
+            const sWidth = canvas.width;
+            const sHeight = pdfHeight + ((pdfHeight - pdfHeight * widthRatio) / widthRatio);
+            const dX = 0;
+            const dY = 0;
+            const dWidth = sWidth;
+            const dHeight = sHeight;
+            let pageCnt = 1;
+            pdf.setFontSize(10);
+            pdf.text(5, 10, `Reporte del Seguimiento: ${tracking.nombre}`);
+            pdf.setFontSize(8);
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(5, 18, `Fecha de Reporte: ${new Date().toLocaleString()}`);
+            pdf.text(5, 26, `Alumno:`);
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(8, 34, `- ${student.alumno.nombre} ${student.alumno.apellido}`)
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(5, 42, `Integrantes:`);
+            let line = 42;
+            pdf.setFont('helvetica', 'normal');
+            tracking.integrantes.map((integrante, i) => {
+                line = i === 0 ? (i + 1) * 8 + line : line + 8;
+                return pdf.text(8, line, `- ${integrante.rol}: ${integrante.usuario.name} ${integrante.usuario.last_name}`)
+            })
+            line = line + 8;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(5, line, `Materias:`);
+            pdf.setFont('helvetica', 'normal');
+            tracking.materias.map((materia, i) => {
+                line = i === 0 ? (i + 1) * 8 + line : line + 8;
+                return pdf.text(8, line, `- Nombre: ${materia.nombre} - Año: ${materia.anio.nombre}`)
+            })
+            line = line + 8;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(5, line, `Plazos del seguimiento:`);
+            line = line + 8;
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(8, line, `- Fecha Desde: ${fromStoreToViewFormatDate(tracking.fecha_inicio)}`);
+            line = line + 8;
+            pdf.text(8, line, `- Fecha Hasta: ${fromStoreToViewFormatDate(tracking.fecha_cierre)}`);
+            line = line + 8;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(5, line, `Progreso Calificaciones al día ${new Date().toLocaleDateString()}`);
+            line = line + 8;
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(8, line, `- Calificación: ${progresoCalificaciones[progresoCalificaciones.length - 1].valor}`);
+            line = line + 8;
+            pdf.text(8, line, `- Fecha última actualización: ${dateFormatter(progresoCalificaciones[progresoCalificaciones.length - 1].fecha_relacionada)}`);
+            line = line + 8;
+            pdf.setFont('helvetica', 'bold');
+            pdf.text(5, line, `Progreso Asistencias al día ${new Date().toLocaleDateString()}`);
+            line = line + 8;
+            pdf.setFont('helvetica', 'normal');
+            pdf.text(8, line, `- Asistencia: ${Number.parseFloat((progresoAsistencias[progresoAsistencias.length - 1].valor) * 100).toFixed(2)} %`);
+            line = line + 8;
+            pdf.text(8, line, `- Fecha última actualización: ${dateFormatter(progresoAsistencias[progresoAsistencias.length - 1].fecha_relacionada)}`);
 
-                    if (pageCnt > 1) {
-                        pdf.addPage();
-                    }
-                    pdf.setPage(pageCnt);
-                    pdf.addImage(childCanvas.toDataURL('image/png'), 'PNG', 0, 27, canvas.width * widthRatio, 0);
-                    pageCnt++;
+            while (totalHeight > 0) {
+                totalHeight -= sHeight;
+                let sY = sHeight * (pageCnt - 1);
+                const childCanvas = document.createElement('CANVAS');
+                childCanvas.setAttribute('width', sWidth);
+                childCanvas.setAttribute('height', sHeight);
+                const childCanvasCtx = childCanvas.getContext('2d');
+                childCanvasCtx.drawImage(canvas, sX, sY, sWidth, sHeight, dX, dY, dWidth, dHeight);
+
+                if (pageCnt > 1) {
+                    pdf.addPage();
                 }
+                pdf.setPage(pageCnt);
+                pdf.addImage(childCanvas.toDataURL('image/png'), 'PNG', 0, line + 5, canvas.width * widthRatio, 0);
+                pageCnt++;
+            }
 
-                pdf.save(`Reporte ${tracking.nombre}.pdf`);
-            });
-            window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
-        }
-        else {
-            Alert.error("Abra todas las secciones para obtener un reporte completo", {
-                effect: "stackslide",
-            });
-        }
+            pdf.save(`Reporte ${tracking.nombre}.pdf`);
+        });
+        window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
     }
 
     // VERIFICA QUE METRICAS TIENE EL SEGUIMIENTO
@@ -169,7 +226,10 @@ const Estadisticas = () => {
                     if (result.status === 204) {
                         const asistenciaData = [];
                         const noData = {}
-                        asistenciaData.push(noData);
+                        const data = {
+                            valor: 1
+                        }
+                        asistenciaData.push(data);
                         setProgresoAsistencias(asistenciaData);
 
                     } else {
@@ -231,7 +291,6 @@ const Estadisticas = () => {
 
                 progresoAsistenciasAlumno.push(data);
             })
-
             setAsistenciasData(progresoAsistenciasAlumno);
         }
     }, [progresoAsistencias])
@@ -272,10 +331,14 @@ const Estadisticas = () => {
                                 <StudentViewer students={tracking?.alumnos} handleSelectStudent={handleSelectStudent} />
                             </div>
                         </Col>
+                        <Col lg={10} md={10} sm={10} xs={10}>
+                            {añoActual && <div className={styles.info_message}>Las siguientes métricas y objetivos corresponden al {añoActual.nombre}, el cuál inicia el {fromStoreToViewFormatDate(añoActual.fecha_desde)} y finaliza el {fromStoreToViewFormatDate(añoActual.fecha_hasta)}</div>}
+                        </Col>
                     </Row>
                 </Row>
+
                 <Col lg={10} md={10} sm={10} xs={10}>
-                    <Row lg={12} md={12} sm={12} xs={12} className={styles.container} id="estadisticas">
+                    <Row lg={12} md={12} sm={12} xs={12} className={styles.container} >
 
 
 
@@ -284,7 +347,7 @@ const Estadisticas = () => {
 
                         <Collapse in={true} timeout="auto" unmountOnExit style={{ width: '100%' }}>
 
-                            <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container} >
+                            <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container} id="estadisticas" >
 
                                 <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
                                     <h3 className="subtitle mb-2">Progreso Calificaciones</h3>
