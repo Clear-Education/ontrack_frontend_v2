@@ -22,9 +22,6 @@ const ExamsTable = (props) => {
     const [ponderacion, setPonderacion] = useState(0);
     const [schoolYearData, setSchoolYearData] = useState();
 
-    console.log(ponderacion);
-
-
     const [nameError, setNameError] = React.useState({
         error: false,
         label: "",
@@ -111,12 +108,12 @@ const ExamsTable = (props) => {
                 <TextField
                     type="number"
                     error={
-                        !props.value && ponderacionError.validateInput && props.rowData.submitted
+                        ponderacionError.validateInput && props.rowData.submitted
                             ? ponderacionError.error
                             : false
                     }
                     helperText={
-                        !props.value && ponderacionError.validateInput && props.rowData.submitted
+                        ponderacionError.validateInput && props.rowData.submitted
                             ? ponderacionError.helperText
                             : ""
                     }
@@ -136,6 +133,12 @@ const ExamsTable = (props) => {
         },
     ];
 
+
+    useEffect(() => {
+        if (examsArray) {
+            checkWeighing(examsArray)
+        }
+    }, [examsArray])
 
 
     const filterData = (data) => {
@@ -263,9 +266,11 @@ const ExamsTable = (props) => {
         const arrayList = examArray ? examArray : examsArray;
         let ponderacion = 0;
         arrayList.forEach(exam => {
-            ponderacion += parseFloat(+exam.ponderacion)
+            ponderacion = Math.round((parseFloat(ponderacion) + parseFloat(exam.ponderacion)) * 100) / 100;
+
         });
-        setPonderacion(ponderacion.toPrecision(1) === '1');
+        setPonderacion(ponderacion == 1);
+        //setPonderacion(ponderacion.toPrecision(1) === "1")
     }
 
     return (
@@ -287,7 +292,7 @@ const ExamsTable = (props) => {
                             onRowAdd: newData =>
                                 new Promise((resolve, reject) => {
                                     setTimeout(() => {
-                                        if (!newData.nombre || !newData.ponderacion || !newData.fecha) {
+                                        if (!newData.nombre || (!newData.ponderacion || !(newData.ponderacion > 0 && newData.ponderacion <= 1)) || !newData.fecha) {
                                             if (!newData.nombre) {
                                                 newData.submitted = true;
                                                 setNameError({
@@ -297,7 +302,7 @@ const ExamsTable = (props) => {
                                                     validateInput: true
                                                 });
                                             }
-                                            if (!newData.ponderacion) {
+                                            if (!newData.ponderacion || !(newData.ponderacion > 0 && newData.ponderacion <= 1)) {
                                                 newData.submitted = true;
                                                 setPonderacionError({
                                                     error: true,
@@ -329,7 +334,7 @@ const ExamsTable = (props) => {
                             onRowUpdate: (newData, oldData) =>
                                 new Promise((resolve, reject) => {
                                     setTimeout(() => {
-                                        if (!newData.nombre || !newData.ponderacion || !newData.fecha) {
+                                        if (!newData.nombre || (!newData.ponderacion || !(newData.ponderacion > 0 && newData.ponderacion <= 1)) || !newData.fecha) {
                                             if (!newData.nombre) {
                                                 newData.submitted = true;
                                                 setNameError({
@@ -339,7 +344,7 @@ const ExamsTable = (props) => {
                                                     validateInput: true
                                                 });
                                             }
-                                            if (!newData.ponderacion) {
+                                            if (!newData.ponderacion || !(newData.ponderacion > 0 && newData.ponderacion <= 1)) {
                                                 newData.submitted = true;
                                                 setPonderacionError({
                                                     error: true,
