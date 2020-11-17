@@ -53,17 +53,19 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
     async function getAsistencias() {
         getAsistencias2Service(user.user.token, data.curso, selectedDate).then((result) => {
-            setIsLoading(false); 
+            setIsLoading(false);
             let studentsCourseAssistance = []
             result.result.results?.forEach((element) => {
                 const dataAssistance = {
                     id_asistencia: element.id,
-                    asistio: element.asistio === 1 ? "Asistió" : "No Asistió",
+                    asistio: element.asistio === 1 ? true : false,
                     descripcion: element.descripcion,
                     fecha: element.fecha,
                     nombre: element.alumno_curso.alumno.nombre,
                     apellido: element.alumno_curso.alumno.apellido,
                     legajo: element.alumno_curso.alumno.legajo,
+                    email: element.alumno_curso.alumno.email,
+
                 }
                 studentsCourseAssistance.push(dataAssistance)
             })
@@ -113,7 +115,7 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
         if (selectedDate != "") {
             getAsistencias()
         }
-    }, [selectedDate])
+    }, [selectedDate, fechaValida])
 
 
     const handleChangeAssistance = (event, index) => {
@@ -127,20 +129,25 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
         }
     }
 
+    const handleChangeEditAssistance = (event, index) => {
+        let newArray = [...editStudentAssistance];
+        if (event.target.name == "no_asistio" && event.target.checked == true) {
+            newArray[index]["asistio"] = !(event.target.checked)
+            setEditStudentAssistance(newArray)
+        } else if (event.target.name == "asistio" && event.target.checked == true) {
+            newArray[index][event.target.name] = event.target.checked
+            setEditStudentAssistance(newArray)
+        }
+
+        return handleEdit(newArray[index]).then(result => {
+        })
+    }
+
     const handleTableToShow = (table) => {
         setTableToShow(table);
         setFechaValida(false)
         setDateVerAsistencia(null)
         setDateAgregarAsistencia(null)
-    }
-
-    async function handleEditAssistance(e, datos) {
-        return handleEdit(e, datos).then((result) => {
-            if (result.success) {
-                getAsistencias()
-            }
-            return result;
-        });
     }
 
     const handleDeleteAssistance = (e, data) => {
@@ -361,10 +368,10 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
 
                             </Col>
                         </Row>
-                        : tableToShow === 'view' ? 
-                        <CalendarView  calendarData = {data}/>
-                        :
-                        null
+                        : tableToShow === 'view' ?
+                            <CalendarView calendarData={data} />
+                            :
+                            null
                 }
 
                 {
@@ -402,40 +409,27 @@ const StudentTable = ({ data, handleAdd, handleEdit, handleDelete }) => {
                                             label: "Legajo",
                                         },
                                         {
-                                            name: "fecha",
-                                            label: "Fecha",
-                                        },
-                                        {
-                                            name: "asistio",
-                                            label: "Asistencia",
+                                            name: "email",
+                                            label: "Email",
                                         },
                                         {
                                             name: "actions",
-                                            label: "Acciones",
+                                            label: "Asistencia",
                                             options: {
                                                 customBodyRenderLite: (dataIndex) => {
-                                                    return (<>
+                                                    return (
                                                         <div style={{ display: 'flex' }}>
-                                                            <Modal
-                                                                title="Editar Asistencia"
-                                                                body={<EditAsistenciaForm data={selectedData} handleSubmitAction={handleEditAssistance} />}
-                                                                button={
-                                                                    <IconButton onClick={() => setSelectedData(editStudentAssistance[dataIndex])} >
-                                                                        <EditIcon />
-                                                                    </IconButton>
-                                                                }
+                                                            <FormControlLabel
+                                                                control={<Checkbox checked={editStudentAssistance[dataIndex].asistio} onChange={(e) => handleChangeEditAssistance(e, dataIndex)} name="asistio" />}
+                                                                label="Asistió"
                                                             />
-                                                            <Modal
-                                                                title="¿Seguro que deseas eliminar la asistencia de este alumno?"
-                                                                body={<DeleteForm data={selectedData} handleSubmitAction={handleDeleteAssistance} />}
-                                                                button={
-                                                                    <IconButton onClick={() => setSelectedData(editStudentAssistance[dataIndex])} >
-                                                                        <Delete />
-                                                                    </IconButton>
-                                                                }
+                                                            <FormControlLabel
+                                                                control={<Checkbox
+                                                                    checked={(editStudentAssistance[dataIndex].asistio === false)} onChange={(e) => handleChangeEditAssistance(e, dataIndex)} name="no_asistio" />}
+                                                                label="No Asistió"
                                                             />
                                                         </div>
-                                                    </>)
+                                                    )
                                                 },
                                                 filter: false
                                             },

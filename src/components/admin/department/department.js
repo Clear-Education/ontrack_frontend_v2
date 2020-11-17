@@ -82,8 +82,8 @@ const Department = (props) => {
         <Row lg={12} md={12} sm={12} xs={12}>
           <Col lg={11} md={11} sm={11} xs={11} style={{ margin: 'auto' }}>
             <Row>
-              <Col> 
-                <TitlePage title="Especialidades" />
+              <Col>
+                <TitlePage title="Carreras" />
               </Col>
               <Col className={styles.add_new_structure}>
                 <Modal
@@ -143,7 +143,7 @@ const Department = (props) => {
                     )
                   })
                     :
-                    <span className={styles.no_data_msg}>{!isLoading ? "No se han encontrado especialidades, ¡Creá una!" : "Cargando..."}</span>
+                    <span className={styles.no_data_msg}>{!isLoading ? "No se han encontrado carreras, ¡Creá una!" : "Cargando..."}</span>
                   }
                 </Col>
               </Row>
