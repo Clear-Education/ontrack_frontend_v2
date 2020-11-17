@@ -45,7 +45,6 @@ const Header = () => {
   };
 
   return (
-    profileImg ? 
     <div id={styles.header_container}>
       <Row lg={12} md={12} sm={12} xs={12}>
         <Link href="/dashboard">
@@ -82,7 +81,6 @@ const Header = () => {
         </Col>
       </Row>
     </div>
-    : ''
   );
 };
 

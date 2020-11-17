@@ -183,7 +183,7 @@ const SubjectForm = (props) => {
                                                     value={state.anio_lectivo ? state.anio_lectivo : "Seleccionar"}
                                                     onChange={handleChange("anio_lectivo")}
                                                 >
-                                                    <MenuItem value="Seleccionar">
+                                                    <MenuItem disabled value="">
                                                         <em>Seleccionar</em>
                                                     </MenuItem>
                                                     {schoolYearData && schoolYearData.map((schoolYear) => {
