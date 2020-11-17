@@ -95,6 +95,22 @@ const StudentCalendar = () => {
                                 previous: "Ant",
                                 today: "Hoy",
                             }}
+                            eventPropGetter={
+                                (event, start, end, isSelected) => {
+                                  let newStyle = {
+                                      padding: '20px'
+                                  };
+                                  if (event.title === 'AUSENTE'){
+                                    newStyle.backgroundColor = "var(--red)"
+                                  }else{
+                                    newStyle.backgroundColor = "var(--green)"
+                                  }
+                                  return {
+                                    className: "",
+                                    style: newStyle
+                                  };
+                                }
+                              }
                         />
                     </div>
                 </Col>

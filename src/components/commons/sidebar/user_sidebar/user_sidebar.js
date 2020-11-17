@@ -63,7 +63,7 @@ const UserSidebar = () => {
   return (
     <>
       <div className={styles.sidebar_container}>
-        <Row className="center" lg={12} md={12} sm={12} xs={12}  style={{margin:0}}>
+        <Row className="center" lg={12} md={12} sm={12} xs={12} style={{ margin: 0 }}>
           <Col
             className={styles.responsive_col}
             style={{ padding: '0px' }}
@@ -114,14 +114,14 @@ const UserSidebar = () => {
                 <img src="/icons/application.svg" style={{ width: '30%', display: 'inline' }} />
                 <p style={{ marginTop: '10px' }} className={styles.nav_text}>
                   {
-                    user.user.groups === 2 ? "Mis Solicitudes" : "Solicitudes pendientes"
+                    user.user.groups === "Docente" ? "Mis Solicitudes" : "Solicitudes pendientes"
                   }
                 </p>
               </Col>
             </Link>
           </Col>
         </Row>
-        <div className={styles.logout_container} onClick={(e)=>logout(e)}>
+        <div className={styles.logout_container} onClick={(e) => logout(e)}>
           <img src="/icons/logout_icon.svg" style={{ width: '35px', display: 'inline' }} />
         </div>
       </div>

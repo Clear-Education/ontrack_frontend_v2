@@ -101,16 +101,8 @@ export async function getAsistencias2Crud(auth_token, curso_id, date) {
 }
 
 export async function editAsistenciasCrud(auth_token, data) {
-    let parsedData;
-    if (data.descripcion == "" || data.descripcion == null) {
-        parsedData = {
-            asistio: data.asistio === "Asistió" ? 1 : 0
-        }
-    } else {
-        parsedData = {
-            asistio: data.asistio === "Asistió" ? 1 : 0,
-            descripcion: data.descripcion
-        }
+    let parsedData = {
+        asistio: data.asistio === true ? 1 : 0
     }
 
     return axios

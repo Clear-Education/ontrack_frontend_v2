@@ -43,7 +43,7 @@ const GraphicViewer = ({ student, tracking }) => {
                         const data = {
                             valor: 1
                         }
-                        asistenciaData.push(noData);
+                        asistenciaData.push(data);
                         setProgresoAsistencias(asistenciaData);
 
                     } else {

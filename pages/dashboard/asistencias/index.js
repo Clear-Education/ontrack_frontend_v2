@@ -46,8 +46,7 @@ const Asistencias = () => {
         })
     }
 
-    async function editasistencias(e, data) {
-        e.preventDefault();
+    async function editasistencias(data) {
         return await editAsistenciasService(user.user.token, data).then((result) => {
             return result;
         })

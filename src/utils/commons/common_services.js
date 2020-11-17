@@ -82,13 +82,25 @@ export const convertDateFromStoreToSend = (date) => {
 }
 
 
-export const parseCalendarDates = (date) =>{
+export const parseCalendarDates = (date) => {
     let formatDate = new Date(date);
     const year = formatDate.getFullYear();
     const month = formatDate.getMonth() + 1;
     const day = formatDate.getDate() + 1;
     let newDate = `${year}-${month}-${day}`;
     return newDate;
+}
+
+export const convertFormatToDatePicker = (date) => {
+    let datearray = date?.split("-");
+    let formatDate = '10/10/1997';
+    if (!!datearray?.length) {
+        const year = +datearray[0];
+        const month = datearray[1];
+        const day = +datearray[2];
+        formatDate = `${month}-${day}-${year}`
+        return formatDate;
+    }
 }
 
 export const parseCsvToJson = (file, handleOnLoad) => {
@@ -101,7 +113,7 @@ export const parseCsvToJson = (file, handleOnLoad) => {
         workbook.SheetNames.forEach((sheetname) => {
             const sheet = workbook.Sheets[sheetname];
             var XL_row_object = XLXS.utils.sheet_to_json(sheet);
-            fileData = [...XL_row_object].filter((student)=>{ return student.puntaje !== 0});
+            fileData = [...XL_row_object].filter((student) => { return student.puntaje !== 0 });
             handleOnLoad(fileData);
         })
     }
