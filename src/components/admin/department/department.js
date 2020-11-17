@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import config from "../../../utils/config";
-import Alert from "react-s-alert";
 import DepartmentForm from "./forms/department_form";
 import { IconButton } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
@@ -83,7 +82,7 @@ const Department = (props) => {
           <Col lg={11} md={11} sm={11} xs={11} style={{ margin: 'auto' }}>
             <Row>
               <Col>
-                <TitlePage title="Carreras" />
+                <TitlePage title="Especialidades" />
               </Col>
               <Col className={styles.add_new_structure}>
                 <Modal

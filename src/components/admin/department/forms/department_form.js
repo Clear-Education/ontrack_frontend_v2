@@ -174,7 +174,7 @@ const DepartmentForm = (props) => {
                             <Row lg={12} md={12} sm={12} xs={12} className="center" style={{ justifyContent: 'center' }}>
                                 <Col>
                                     {!isLoading ?
-                                        <button className="ontrack_btn_modal ontrack_btn add_btn" type="submit">Guardar Carrera</button>
+                                        <button className="ontrack_btn_modal ontrack_btn add_btn" type="submit">Guardar Especialidad</button>
                                         :
                                         <button className="ontrack_btn_modal ontrack_btn add_btn" disabled>
                                             <CircularProgress
