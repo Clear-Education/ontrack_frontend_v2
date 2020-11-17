@@ -2,8 +2,8 @@ import { getAsistenciasCrud, addAsistenciasCrud, addMultipleAsistenciasCrud, edi
 import Alert from "react-s-alert";
 
 
-export async function getAsistenciasService(token, curso_id,alumno_id, dates) {
-    return await getAsistenciasCrud(token, curso_id, alumno_id,dates).then((result) => {
+export async function getAsistenciasService(token, curso_id, alumno_id, dates) {
+    return await getAsistenciasCrud(token, curso_id, alumno_id, dates).then((result) => {
         if (result.success) {
 
         } else {
@@ -18,7 +18,7 @@ export async function getAsistenciasService(token, curso_id,alumno_id, dates) {
 }
 
 export async function getAsistencias2Service(token, curso_id, date) {
-    return await getAsistencias2Crud(token,curso_id,date).then((result) => {
+    return await getAsistencias2Crud(token, curso_id, date).then((result) => {
         if (result.success) {
 
         } else {
@@ -70,7 +70,7 @@ export async function addMultipleAsistenciasService(data, token) {
 export async function editAsistenciasService(token, data) {
     return await editAsistenciasCrud(token, data).then((result) => {
         if (result.success) {
-            Alert.success("Asistencias editado correctamente", {
+            Alert.success("Asistencia editada correctamente", {
                 effect: "stackslide",
             });
         } else {
