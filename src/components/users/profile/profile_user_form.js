@@ -260,7 +260,7 @@ const UserProfileForm = (props) => {
                                             state.picture !== null ?
                                                 `${state.picture}`
                                                 :
-                                                config.default_picture} className={styles.profile_image} />
+                                                null} className={styles.profile_image} />
                                     <label htmlFor="upload_photo">
                                         <input
                                             id="upload_photo"
