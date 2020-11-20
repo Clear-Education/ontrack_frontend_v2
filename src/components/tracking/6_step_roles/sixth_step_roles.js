@@ -88,9 +88,12 @@ const SixthStepRoles = ({ handleGlobalState, participants }) => {
                                                                 <em>Seleccionar</em>
                                                             </MenuItem>
                                                             {roleData && roleData.map((role) => {
-                                                                return (
-                                                                    <MenuItem value={role.id} key={role.id}>{role.nombre}</MenuItem>
-                                                                )
+                                                                {
+                                                                    if(participant?.groups?.name.toUpperCase() !== 'PEDAGOGÍA' && participant?.role_name?.toUpperCase() !== 'ENCARGADO' && role?.nombre?.toUpperCase() === 'ENCARGADO') return
+                                                                    return (
+                                                                        <MenuItem value={role.id} key={role.id}>{role.nombre}</MenuItem>
+                                                                    )
+                                                                }
                                                             })}
                                                         </Select>
                                                     </FormControl>
