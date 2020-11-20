@@ -138,7 +138,7 @@ const ParticipantsTable = ({ handleGlobalState, currentParticipants }) => {
                                             onRowSelectionChange: (users) => handleSelectUsers(users),
                                             selectToolbarPlacement: 'none',
                                             actionsColumnIndex: -1,
-                                            downloadOptions: { filename: `Materias.csv` },
+                                            downloadOptions: { filename: `Integrantes.csv` },
                                             viewColumns: false,
                                             sort: true,
                                             filter: true,
