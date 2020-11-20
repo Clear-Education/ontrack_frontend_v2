@@ -10,6 +10,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import styles from './styles.module.css'
 
 import { useState, useEffect } from "react";
+import { convertFormatToDatePicker } from "../../utils/commons/common_services";
 
 const list = {
     visible: {
@@ -45,15 +46,16 @@ const VALIDATE_INITIAL_STATE = {
 
 
 const AddNotasForm = (props) => {
-    const [state, setState] = useState({ ...INITIAL_STATE, ["evaluacion"]: props.data.evaluacion, ["alumno"]: props.data.id, ["fecha_desde"]: props.minDate, ["fecha_hasta"]: props.maxDate});
+    const [state, setState] = useState({ ...INITIAL_STATE, ["evaluacion"]: props.data.evaluacion, ["alumno"]: props.data.id, ["fecha_hasta"]: props.maxDate });
     const [date, setDate] = useState(props.examDate || null)
     const [validation, setValidation] = useState(VALIDATE_INITIAL_STATE);
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(()=>{
+    useEffect(() => {
         let dateFormatted = convertDate(props.examDate);
-        setState({ ...state, ["fecha"]: dateFormatted });
-    },[])
+        let fechaDesdeFormatted = convertFormatToDatePicker(props.minDate);
+        setState({ ...state, ["fecha"]: dateFormatted, ["fecha_desde"]: fechaDesdeFormatted });
+    }, [])
 
     const hadleValidation = (prop, value) => {
 
@@ -104,9 +106,9 @@ const AddNotasForm = (props) => {
     const handleSubmit = (e) => {
         setIsLoading(true);
 
-        let dateSelectedFormatted = Date.parse(state["fecha"])
+        let dateSelectedFormatted = Date.parse(convertFormatToDatePicker(state["fecha"]))
         let minimalDate = Date.parse(state["fecha_desde"])
-        let maximalDate = Date.parse(new Date());
+        let maximalDate = Date.parse(new Date().toDateString());
 
         if (validation["puntaje"] === false &&
             (dateSelectedFormatted >= minimalDate && dateSelectedFormatted <= maximalDate)) {

@@ -73,7 +73,7 @@ const ExamsTable = (props) => {
             )
         },
         {
-            title: 'Fecha', field: 'fecha', type: 'date', editComponent: props => (
+            title: 'Fecha Exámen', field: 'fecha', type: 'date', editComponent: props => (
                 <DatePicker
                     format="dd/MM/yyyy"
                     value={props.value || null}
@@ -256,8 +256,12 @@ const ExamsTable = (props) => {
 
 
     const parseExams = () => {
-        examsArray.map((exam) => {
-            exam.fecha = fromApiToDateInputFormatDate(exam.fecha);
+        getExamsService(user.user.token, selectedSubject.id, props.schoolYear).then((result) => {
+            setIsLoading(false)
+            result.result.map(exam => {
+                exam.fecha = fromApiToDateInputFormatDate(exam.fecha);
+            })
+            setExamsArray(result.result);
         })
     }
 
