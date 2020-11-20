@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import config from "../../../utils/config";
-import Alert from "react-s-alert";
 import DepartmentForm from "./forms/department_form";
 import { IconButton } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
@@ -83,13 +82,13 @@ const Department = (props) => {
           <Col lg={11} md={11} sm={11} xs={11} style={{ margin: 'auto' }}>
             <Row>
               <Col>
-                <TitlePage title="Carreras" />
+                <TitlePage title="Carrera" />
               </Col>
               <Col className={styles.add_new_structure}>
                 <Modal
-                  title="Agregar Especialidad"
+                  title="Agregar Carrera"
                   body={<DepartmentForm handleSubmitAction={addDepartment} />}
-                  button={<button className="ontrack_btn add_btn">Nueva Especialidad</button>
+                  button={<button className="ontrack_btn add_btn">Nueva Carrera</button>
                   }
                 />
               </Col>
@@ -114,7 +113,7 @@ const Department = (props) => {
                             <Col lg={3} md={3} sm={3} xs={3} className={styles.actions_container}>
 
                               <Modal
-                                title="Editar Especialidad"
+                                title="Editar Carrera"
                                 body={<DepartmentForm handleSubmitAction={editDepartment} data={selectedData} />}
                                 button={
                                   <IconButton onClick={() => setSelectedData(department)} >
@@ -124,7 +123,7 @@ const Department = (props) => {
                               />
 
                               <Modal
-                                title="¿Seguro que deseas eliminar esta especialidad?"
+                                title="¿Seguro que deseas eliminar esta Carrera?"
                                 body={<DeleteForm data={selectedData} handleSubmitAction={deleteDepartment} />}
                                 button={
                                   <IconButton onClick={() => setSelectedData(department)} >

@@ -2,7 +2,7 @@ import React from 'react';
 import MaterialTable from 'material-table';
 import { useState } from 'react';
 import { useSelector } from "react-redux";
-import { addCoursesService, editCoursesService, deleteCoursesService } from '../../../../utils/course/services/course_services';
+import { addCoursesService, editCoursesService, deleteCoursesService, getCourseService } from '../../../../utils/course/services/course_services';
 import MTConfig from '../../../../utils/table_options/MT_config';
 import TextField from '@material-ui/core/TextField'
 
@@ -67,6 +67,20 @@ export default function CoursesTable(props) {
                 }
             })
     })
+
+    function getCourses() {
+        getCourseService(user.user.token, props.data.id).then(result => {
+            setState({
+                data:
+                    result.result.map(curso => {
+                        return {
+                            id: curso.id,
+                            nombre: curso.nombre
+                        }
+                    })
+            })
+        })
+    }
 
     return (
         <MaterialTable
@@ -155,7 +169,8 @@ export default function CoursesTable(props) {
                         return { ...prevState, data };
                     });
                     const { id } = oldData;
-                    return deleteCoursesService(user.user.token, id).then((result) => {
+                    return deleteCoursesService(user.user.token, id).then(result => {
+                        getCourses();
                         return result;
                     })
                 },

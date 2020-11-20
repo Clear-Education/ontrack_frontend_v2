@@ -36,12 +36,14 @@ export const fromStoreToDateInputFormatDate = (date) => {
 
 
 export const fromApiToDateInputFormatDate = (date) => {
-    let datearray = date?.split("/");
-    const day = +datearray[0];
-    const month = datearray[1] - 1;
-    const year = +datearray[2]
-    let newDate = new Date(year, month, day);
-    return newDate;
+    if(date){
+        let datearray = date?.split("/");
+        const day = +datearray[0];
+        const month = datearray[1] - 1;
+        const year = +datearray[2]
+        let newDate = new Date(year, month, day);
+        return newDate;
+    }
 }
 
 export const fromStoreToViewFormatDate = (date) => {
