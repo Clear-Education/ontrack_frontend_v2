@@ -73,15 +73,9 @@ const DepartmentForm = (props) => {
         setIsLoading(true);
         props.handleSubmitAction(e, state).then((result) => {
             setIsLoading(false)
-            if(result.success){
-            props.handleClose(false);
-            }else {
-                result.result.forEach((element) => {
-                  Alert.error(element.message, {
-                    effect: "stackslide",
-                  });
-                });
-              }
+            if (result.success) {
+                props.handleClose(false);
+            }
         });
     }
 
