@@ -145,12 +145,16 @@ export async function deleteGoalsCrud(auth_token, data) {
         });
 }
 
-export async function getGoalsProgressionStudent(auth_token, data) {
+export async function getGoalsProgressionStudent(auth_token, data, datefilter) {
     return axios
         .get(`${config.api_url}/objetivos/${data.id_objetivo}/alumno/${data.id_alumno}/`, {
             headers: {
                 Authorization: `Token ${auth_token}`,
             },
+            params: {
+                fecha_desde: datefilter?.from,
+                fecha_hasta: datefilter?.to
+            }
         })
         .then(json => {
             let response = {

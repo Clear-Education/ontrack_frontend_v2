@@ -7,16 +7,20 @@ import { Collapse, IconButton } from "@material-ui/core";
 import styles from './styles.module.scss';
 import DoneIcon from '@material-ui/icons/Done';
 import CancelIcon from '@material-ui/icons/Cancel';
-import { convertDateToSendOnQuery } from "../../../../utils/commons/common_services";
+import { convertDateToSendOnQuery, convertFormatToDatePicker } from "../../../../utils/commons/common_services";
 import Delete from '@material-ui/icons/Delete';
 
 
-const DateFilter = ({ handleSend }) => {
+const DateFilter = ({ handleSend, date }) => {
 
     const [endDate, setEndDate] = useState(new Date());
     const [startDate, setStartDate] = useState(new Date());
-    const [showFilter, setShowFilter] = useState();
+    const [minDate, setMinDate] = useState(date ? new Date(convertFormatToDatePicker(date.fecha_desde)) : null);
+    const [maxDate, setMaxDate] = useState(date ? new Date(convertFormatToDatePicker(date.fecha_hasta)) : null);
+    const [errorMinDate, setErrorMinDate] = useState(false);
+    const [errorMaxDate, setErrorMaxDate] = useState(false);
 
+    const [showFilter, setShowFilter] = useState();
 
     const handleStartDate = (date) => {
         setStartDate(date);
@@ -30,13 +34,13 @@ const DateFilter = ({ handleSend }) => {
     const handleOpenFilter = () => {
         setShowFilter(!showFilter)
     }
-    
-    const handleDeleteFilter = () =>{
+
+    const handleDeleteFilter = () => {
         handleSend();
     }
 
-    const handleSendFilter = () =>{
-        const from =  convertDateToSendOnQuery(startDate);
+    const handleSendFilter = () => {
+        const from = convertDateToSendOnQuery(startDate);
         const to = convertDateToSendOnQuery(endDate);
         handleSend(from, to);
     }
@@ -54,7 +58,12 @@ const DateFilter = ({ handleSend }) => {
                             placeholder="DD/MM/YYYY"
                             format="dd/MM/yyyy"
                             invalidDateMessage="Formato de fecha inválido"
+                            minDate={minDate}
+                            maxDate={maxDate}
+                            minDateMessage="La fecha no puede ser menor a la fecha de inicio del año lectivo"
+                            maxDateMessage="La fecha no puede ser mayor a la fecha de fin del año lectivo"
                             required
+                            onError={(error) => setErrorMinDate(error ? true : false)}
                         />
                     </Col>
                     <Col lg={4} md={4} sm={4} xs={4} >
@@ -66,11 +75,14 @@ const DateFilter = ({ handleSend }) => {
                             value={endDate}
                             onChange={(date) => handleEndDate(date)}
                             minDate={startDate}
+                            maxDate={maxDate}
                             minDateMessage="La fecha no puede ser menor al filtro anterior"
+                            maxDateMessage="La fecha no puede ser mayor a la fecha de fin del año lectivo"
                             placeholder="DD/MM/YYYY"
                             format="dd/MM/yyyy"
                             invalidDateMessage="Formato de fecha inválido"
                             required
+                            onError={(error) => setErrorMaxDate(error ? true : false)}
                         />
                     </Col>
 
@@ -80,12 +92,12 @@ const DateFilter = ({ handleSend }) => {
 
             {showFilter ?
                 <div className={styles.filter_icon_container}>
-                    <div onClick={handleSendFilter}>
-                        <IconButton>
+                    <div>
+                        <IconButton disabled={(errorMinDate || errorMaxDate) ? true : false} onClick={handleSendFilter}>
                             <DoneIcon />
                         </IconButton>
                     </div>
-                    <div  onClick={handleDeleteFilter}>
+                    <div onClick={handleDeleteFilter}>
                         <IconButton>
                             <Delete />
                         </IconButton>
