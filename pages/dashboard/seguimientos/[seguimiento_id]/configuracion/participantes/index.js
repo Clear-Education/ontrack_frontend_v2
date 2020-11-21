@@ -99,13 +99,6 @@ const EditParticipants = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
- /*    useEffect(() => {
-        return () => {
-            dispatch({ type: types.RESET_TRACKING_DATA });
-        }
-    }, []); */
-
-
     const validateEmptyData = (name) => {
         if (name === 'role') {
             let roles;

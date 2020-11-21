@@ -122,7 +122,7 @@ const FifthStepParticipants = ({ handleGlobalState }) => {
                                             onRowSelectionChange: (users) => handleSelectUsers(users),
                                             selectToolbarPlacement: 'none',
                                             actionsColumnIndex: -1,
-                                            downloadOptions: { filename: `Materias.csv` },
+                                            downloadOptions: { filename: `Participantes.csv` },
                                             viewColumns: false,
                                             sort: true,
                                             filter: true,
