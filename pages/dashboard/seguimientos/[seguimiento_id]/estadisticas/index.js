@@ -69,6 +69,7 @@ const Estadisticas = () => {
     const [añoActual, setAñoActual] = useState();
     const [fechaDesdeFiltro, setFechaDesdeFiltro] = useState();
     const [fechaHastaFiltro, setFechaHastaFiltro] = useState();
+    const [cambioAlumnoSeleccionado, setCambioAlumnoSeleccionado] = useState(false);
 
     const tracking = useSelector((store) => store.currentTracking);
     const user = useSelector((store) => store.user);
@@ -218,6 +219,7 @@ const Estadisticas = () => {
     //BUSQUEDAS DE PROGRESOS DE OBJETIVOS
     useEffect(() => {
         if (alumnoSeleccionado && alumnoSeleccionado !== "") {
+            setCambioAlumnoSeleccionado(!cambioAlumnoSeleccionado);
             setFechaDesdeFiltro(false);
             setFechaHastaFiltro(false);
 
@@ -409,7 +411,7 @@ const Estadisticas = () => {
 
                         <Collapse in={true} timeout="auto" unmountOnExit style={{ width: '100%' }}>
                             {
-                                añoActual && <DateFilter date={añoActual} handleSend={handleFilterNewsByDates} />
+                                añoActual && <DateFilter date={añoActual} handleSend={handleFilterNewsByDates} cambioAlumno={cambioAlumnoSeleccionado} />
                             }
                             <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container} id="estadisticas" >
 
