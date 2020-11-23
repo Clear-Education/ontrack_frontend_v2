@@ -118,8 +118,8 @@ export async function deleteGoalsService(token, data) {
     })
 }
 
-export async function getGoalsProgressionStudentService(token, data) {
-    return await getGoalsProgressionStudent(token, data).then((result) => {
+export async function getGoalsProgressionStudentService(token, data, date_filter = null) {
+    return await getGoalsProgressionStudent(token, data, date_filter).then((result) => {
         if (result.success) {
 
         } else {

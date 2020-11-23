@@ -19,8 +19,9 @@ import { parseParticipantsToShowOnTable, parseSubjectsToShowOnTable } from "../.
 import Alert from "react-s-alert";
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { fromStoreToViewFormatDate } from "../../../../../src/utils/commons/common_services";
+import { convertDate2, fromStoreToViewFormatDate } from "../../../../../src/utils/commons/common_services";
 import { getActualSchoolYearService } from "../../../../../src/utils/school_year/services/school_year_services";
+import DateFilter from "../../../../../src/components/tracking/view/date_filter/date_filter";
 
 
 const container = {
@@ -66,6 +67,9 @@ const Estadisticas = () => {
     const [estadoObjetivosCualitativos, setEstadoObjetivosCualitativos] = useState([]);
     const [objetivosCualitativosData, setObjetivosCualitativosData] = useState([]);
     const [añoActual, setAñoActual] = useState();
+    const [fechaDesdeFiltro, setFechaDesdeFiltro] = useState();
+    const [fechaHastaFiltro, setFechaHastaFiltro] = useState();
+    const [cambioAlumnoSeleccionado, setCambioAlumnoSeleccionado] = useState(false);
 
     const tracking = useSelector((store) => store.currentTracking);
     const user = useSelector((store) => store.user);
@@ -157,22 +161,28 @@ const Estadisticas = () => {
             pdf.text(8, line, `- Fecha Desde: ${fromStoreToViewFormatDate(tracking.fecha_inicio)}`);
             line = line + 8;
             pdf.text(8, line, `- Fecha Hasta: ${fromStoreToViewFormatDate(tracking.fecha_cierre)}`);
-            line = line + 8;
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(5, line, `Progreso Calificaciones al día ${new Date().toLocaleDateString()}`);
-            line = line + 8;
-            pdf.setFont('helvetica', 'normal');
-            pdf.text(8, line, `- Calificación: ${progresoCalificaciones[progresoCalificaciones.length - 1].valor}`);
-            line = line + 8;
-            pdf.text(8, line, `- Fecha última actualización: ${dateFormatter(progresoCalificaciones[progresoCalificaciones.length - 1].fecha_relacionada)}`);
-            line = line + 8;
-            pdf.setFont('helvetica', 'bold');
-            pdf.text(5, line, `Progreso Asistencias al día ${new Date().toLocaleDateString()}`);
-            line = line + 8;
-            pdf.setFont('helvetica', 'normal');
-            pdf.text(8, line, `- Asistencia: ${Number.parseFloat((progresoAsistencias[progresoAsistencias.length - 1].valor) * 100).toFixed(2)} %`);
-            line = line + 8;
-            pdf.text(8, line, `- Fecha última actualización: ${dateFormatter(progresoAsistencias[progresoAsistencias.length - 1].fecha_relacionada)}`);
+
+            if (metricaPromedio?.id != "") {
+                line = line + 8;
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(5, line, `Progreso Calificaciones ${(fechaDesdeFiltro && fechaHastaFiltro) ? `desde ${convertDate2(fechaDesdeFiltro)} hasta ${convertDate2(fechaHastaFiltro)}` : `desde ${fromStoreToViewFormatDate(añoActual.fecha_desde)} hasta ${fromStoreToViewFormatDate(añoActual.fecha_hasta)} `}`);
+                line = line + 8;
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(8, line, `- Calificación: ${progresoCalificaciones[progresoCalificaciones.length - 1].valor ? progresoCalificaciones[progresoCalificaciones.length - 1].valor : `No definido`}`);
+                line = line + 8;
+                pdf.text(8, line, `- Fecha última actualización: ${progresoCalificaciones[progresoCalificaciones.length - 1].fecha_relacionada ? dateFormatter(progresoCalificaciones[progresoCalificaciones.length - 1].fecha_relacionada) : `No definido`}`);
+            }
+            if (metricaAsistencia?.id != "") {
+                line = line + 8;
+                pdf.setFont('helvetica', 'bold');
+                pdf.text(5, line, `Progreso Asistencias ${(fechaDesdeFiltro && fechaHastaFiltro) ? `desde ${convertDate2(fechaDesdeFiltro)} hasta ${convertDate2(fechaHastaFiltro)}` : `desde ${fromStoreToViewFormatDate(añoActual.fecha_desde)} hasta ${fromStoreToViewFormatDate(añoActual.fecha_hasta)}`}`);
+                line = line + 8;
+                pdf.setFont('helvetica', 'normal');
+                pdf.text(8, line, `- Asistencia: ${Number.parseFloat((progresoAsistencias[progresoAsistencias.length - 1].valor) * 100).toFixed(2)} %`);
+                line = line + 8;
+                pdf.text(8, line, `- Fecha última actualización: ${progresoAsistencias[progresoAsistencias.length - 1].fecha_relacionada ? dateFormatter(progresoAsistencias[progresoAsistencias.length - 1].fecha_relacionada) : `No definido`}`);
+
+            }
 
             while (totalHeight > 0) {
                 totalHeight -= sHeight;
@@ -209,6 +219,9 @@ const Estadisticas = () => {
     //BUSQUEDAS DE PROGRESOS DE OBJETIVOS
     useEffect(() => {
         if (alumnoSeleccionado && alumnoSeleccionado !== "") {
+            setCambioAlumnoSeleccionado(!cambioAlumnoSeleccionado);
+            setFechaDesdeFiltro(false);
+            setFechaHastaFiltro(false);
 
             if (tracking.cualitativos.length !== 0) {
                 getStudentGoalsService(user.user.token, alumnoSeleccionado, tracking.id).then((result) => {
@@ -315,6 +328,57 @@ const Estadisticas = () => {
         return <span className={`${styles.pie_chart_references}`}>{value}: <b>{entry.payload.alcanzada ? "Alcanzado" : "No Alcanzado"}</b></span>
     }
 
+    async function handleFilterNewsByDates(from, to) {
+        const FILTER_DATE = {
+            from: from,
+            to: to
+        }
+        setFechaDesdeFiltro(from);
+        setFechaHastaFiltro(to);
+        const dataCalificaciones = {
+            id_objetivo: metricaPromedio?.id,
+            id_alumno: alumnoSeleccionado
+        }
+        const dataAsistencia = {
+            id_objetivo: metricaAsistencia?.id,
+            id_alumno: alumnoSeleccionado
+        }
+
+        if (metricaAsistencia?.id != "") {
+            getGoalsProgressionStudentService(user.user.token, dataAsistencia, FILTER_DATE).then((result) => {
+                if (result.status === 204) {
+                    const asistenciaData = [];
+                    const noData = {}
+                    const data = {
+                        valor: 1
+                    }
+                    asistenciaData.push(data);
+                    setProgresoAsistencias(asistenciaData);
+
+                } else {
+                    setProgresoAsistencias(result.result.results);
+                }
+            })
+        }
+
+        if (metricaPromedio && metricaPromedio?.id != "") {
+            getGoalsProgressionStudentService(user.user.token, dataCalificaciones, FILTER_DATE).then((result) => {
+                if (result.status === 204) {
+                    const calificacionesData = [];
+                    const noData = {}
+                    const data = {
+                        valor: -1
+                    }
+                    calificacionesData.push(noData);
+                    setProgresoCalificaciones(calificacionesData);
+
+                } else {
+                    setProgresoCalificaciones(result.result.results);
+                }
+            })
+        }
+    }
+
     return (
         <Row lg={12} md={12} sm={12} xs={12}>
             <div className={styles.sub_menu_container}>
@@ -346,7 +410,9 @@ const Estadisticas = () => {
                         {<div className={styles.collapse_container}>Metas y Objetivos del seguimiento {thirdSection ? <ExpandLessIcon /> : <ExpandMoreIcon />}</div>}
 
                         <Collapse in={true} timeout="auto" unmountOnExit style={{ width: '100%' }}>
-
+                            {
+                                añoActual && <DateFilter date={añoActual} handleSend={handleFilterNewsByDates} cambioAlumno={cambioAlumnoSeleccionado} />
+                            }
                             <Row lg={12} md={12} sm={12} xs={12} className={styles.stats_row_container} id="estadisticas" >
 
                                 <Col lg={5} md={5} sm={5} xs={5} className={`${styles.stats_container} mt-0`}>
