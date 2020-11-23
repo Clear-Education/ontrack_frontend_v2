@@ -23,6 +23,7 @@ const Novedades = ({ trackingId }) => {
     const [divHeight, setDivHeight] = useState();
     const [showMore, setShowMore] = useState();
     const [nextUrl, setNextUrl] = useState();
+    const [date, setDate] = useState();
 
     useSWR(url, () => {
         getNovedadesService(user.user.token, trackingId).then((result) => {
@@ -36,6 +37,16 @@ const Novedades = ({ trackingId }) => {
     useEffect(() => {
         setDivHeight(divRef.current.clientHeight + 100)
     }, [divRef])
+
+    useEffect(() => {
+        if (currentTracking) {
+            const fechasSeguimiento = {
+                fecha_desde: currentTracking.fecha_inicio,
+                fecha_hasta: currentTracking.fecha_cierre
+            }
+            setDate(fechasSeguimiento);
+        }
+    }, [])
 
     const handleShowMore = () => {
         getMoreNovedadesService(user.user.token, nextUrl).then((result) => {
@@ -108,7 +119,7 @@ const Novedades = ({ trackingId }) => {
                     <Col lg={11} md={11} sm={11} xs={11}>
                         <TitlePage title={"Novedades del Seguimiento"} fontSize={16} />
                     </Col>
-                    <DateFilter handleSend={handleFilterNewsByDates} />
+                    {date && <DateFilter handleSend={handleFilterNewsByDates} date={date} novedades={true} />}
                 </Row>
 
                 <Row lg={12} md={12} sm={12} xs={12} className={styles.new_post_container}>
